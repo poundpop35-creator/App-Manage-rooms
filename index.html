@@ -387,7 +387,7 @@ body{transition:background .3s}
       <input class="form-input" id="newEventSub" type="text" placeholder="เช่น รายชื่อผู้เข้าพักและรถรับส่ง">
     </div>
     <div id="createEventErr" style="display:none;color:#dc2626;font-size:13px;margin-bottom:8px;font-family:Sarabun,sans-serif"></div>
-    <button class="primary-btn teal" onclick="createEvent()">✨ สร้างงาน</button>
+    <button class="primary-btn teal" onclick="doCreateEvent()">✨ สร้างงาน</button>
   </div>
 </div>
 
@@ -705,7 +705,7 @@ function openCreateEvent(){
   openModal('createEventModal');
 }
 
-async function createEvent(){
+async function doCreateEvent(){
   const rawId = document.getElementById('newEventId').value.trim();
   const id = rawId.replace(/\s+/g,'-'); // ไม่บังคับ lowercase แล้ว
   const name = document.getElementById('newEventName').value.trim();
