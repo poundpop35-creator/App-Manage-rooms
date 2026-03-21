@@ -1193,6 +1193,13 @@ function initThemeGrid(){
     </div>`).join('');
 }
 
+
+function applyCurrentTheme(){
+  const saved = localStorage.getItem(THEME_KEY());
+  if (saved && saved !== 'white') applyTheme(saved, false);
+  else applyTheme('white', false);
+}
+
 function applyTheme(id, save){
   const t = THEMES.find(x=>x.id===id) || THEMES[0];
   const root = document.documentElement;
