@@ -494,6 +494,7 @@ body{transition:background .3s}
     <button class="abtn abtn-teal" onclick="openEventSelect()">📋 เปลี่ยนงาน</button>
     <button class="abtn abtn-gray" onclick="downloadTemplate()" title="ดาวน์โหลดไฟล์ตัวอย่าง">📥 Template</button>
     <button class="abtn abtn-blue" onclick="document.getElementById('fileInput').click()">📂 โหลด Excel</button>
+    <button class="abtn abtn-gray" id="downloadExcelBtn" onclick="downloadCurrentExcel()" style="display:none" title="ดาวน์โหลดข้อมูลปัจจุบันเป็น Excel">⬇️ ดาวน์โหลด Excel</button>
     <input type="file" id="fileInput" accept=".xlsx,.xls"/>
     <span class="admin-status" id="adminStatus">ยังไม่ได้โหลดไฟล์</span>
     <div class="vsep"></div>
@@ -758,6 +759,8 @@ function applyEventSettings(ev){
 // ════ SHOW APP ════
 function showApp(updatedAt){
   applyCurrentTheme();
+  const dlBtn=document.getElementById('downloadExcelBtn');
+  if(dlBtn) dlBtn.style.display=guestData.length?'':'none';
   document.getElementById('landingModal').classList.remove('show');
   document.getElementById('stickyTop').style.display='block';
   document.getElementById('mainContent').style.display='block';
@@ -1021,6 +1024,7 @@ function loadExcel(file){
       document.getElementById('saveBtn').disabled=false;
       guestData=mapped;hotelColors=colors;
       populateFilters();renderSummary(guestData);renderCards(guestData);
+      const dlBtn2=document.getElementById('downloadExcelBtn');if(dlBtn2)dlBtn2.style.display='';
       document.getElementById('welcomeView').style.display='none';document.getElementById('guestView').style.display='block';
       const cc=document.getElementById('countChip');cc.textContent=guestData.length+' รายการ';cc.style.display='inline';
       showToast('โหลดสำเร็จ',`${mapped.length} รายการ — กด "บันทึกขึ้น Cloud"`,'ok');
@@ -1235,6 +1239,49 @@ function downloadTemplate(){
   a.click();
   URL.revokeObjectURL(a.href);
   showToast('ดาวน์โหลด Template สำเร็จ ✅','เปิดไฟล์แล้วกรอกข้อมูลผู้เข้าพักได้เลย','ok');
+}
+
+
+// ════ DOWNLOAD CURRENT EXCEL ════
+function downloadCurrentExcel(){
+  if(!guestData||!guestData.length){showToast('ไม่มีข้อมูล','ยังไม่มีข้อมูลผู้เข้าพักในระบบ','err');return;}
+
+  // สร้าง CSV-style data แล้วแปลงเป็น Excel format ผ่าน SheetJS
+  const headers = [
+    'ลำดับ','ชื่อ - สกุล','หน่วยงาน','จังหวัดที่ตั้งของหน่วยงาน',
+    'ประเภทการเข้าพัก','ชื่อ - สกุล__1','หน่วยงาน__1','จังหวัดที่ตั้งของหน่วยงาน__1',
+    'โรงแรม','เลขห้อง','ทะเบียนรถรับส่ง','เวลา',
+    'ผู้ประสานงาน ที่ โรงแรม','ติดต่อ','ผู้ประสานงาน ที่ กรม','หมายเหตุ'
+  ];
+
+  const rows = guestData.map(g => [
+    g.seq, g.name1, g.dept1, g.prov1,
+    g.type, g.name2==='-'?'':g.name2, g.dept2==='-'?'':g.dept2, g.prov2==='-'?'':g.prov2,
+    g.hotel, g.room, g.car, g.time,
+    g.coord1, g.phone, g.coord2, g.note
+  ]);
+
+  // ใช้ SheetJS สร้างไฟล์ Excel
+  const wb = XLSX.utils.book_new();
+  const wsData = [headers, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // กำหนดความกว้างคอลัมน์
+  ws['!cols'] = [
+    {wch:8},{wch:28},{wch:36},{wch:22},{wch:22},
+    {wch:28},{wch:36},{wch:22},{wch:26},{wch:14},
+    {wch:18},{wch:20},{wch:30},{wch:18},{wch:28},{wch:30}
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'รายชื่อผู้เข้าพัก');
+
+  // ชื่อไฟล์ใส่ event id และวันที่
+  const now = new Date();
+  const dateStr = `${now.getDate()}${now.getMonth()+1}${now.getFullYear()+543}`;
+  const filename = `GuestList_${currentEventId||'event'}_${dateStr}.xlsx`;
+
+  XLSX.writeFile(wb, filename);
+  showToast('ดาวน์โหลดสำเร็จ ✅',`${filename} — ${guestData.length} รายการ`,'ok');
 }
 
 // ════ HELPERS ════
