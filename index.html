@@ -423,7 +423,7 @@ body{transition:background .3s}
     <div class="modal-icon">👥</div>
     <div class="modal-title">จัดการผู้ดูแลระบบ</div>
     <div class="modal-sub">เพิ่ม / ลบ / เปลี่ยนรหัสผ่าน Admin</div>
-    <div style="overflow-x:auto;margin-bottom:14px"><table class="user-table"><thead><tr><th>Username</th><th>Role</th><th>สมัครเมื่อ</th><th></th></tr></thead><tbody id="userTableBody"></tbody></table></div>
+    <div style="overflow-x:auto;margin-bottom:14px"><table class="user-table"><thead><tr><th>Username</th><th>สถานะ</th><th>Password</th><th>สมัครเมื่อ</th><th></th></tr></thead><tbody id="userTableBody"></tbody></table></div>
     <hr class="modal-divider" style="margin-top:0">
     <div style="font-size:13px;font-weight:700;margin-bottom:10px">➕ เพิ่ม Admin รอง</div>
     <div class="form-row">
@@ -870,6 +870,12 @@ async function doLogin(){
       ['loginUser','loginPass'].forEach(id=>document.getElementById(id).classList.add('err'));
       document.getElementById('loginPass').value='';return;
     }
+    if (rows[0].status==='pending'){
+      document.getElementById('loginError').textContent='บัญชีนี้รอการอนุมัติจาก Super Admin';
+      document.getElementById('loginError').classList.add('show');
+      document.getElementById('loginPass').value='';
+      showLoading(false);return;
+    }
     currentUser={id:rows[0].id,username:rows[0].username,role:rows[0].role};
     sessionStorage.setItem(SESSION_KEY,JSON.stringify(currentUser));
     closeModal('authModal');
@@ -890,7 +896,7 @@ async function doRegister(){
   try {
     const exist=await sb(`/rest/v1/admins?username=eq.${encodeURIComponent(u)}&select=id`);
     if (exist&&exist.length){showLoading(false);err.textContent='Username นี้ถูกใช้แล้ว';err.classList.add('show');document.getElementById('regUser').classList.add('err');return;}
-    const r=await sb('/rest/v1/admins',{method:'POST',body:JSON.stringify({username:u,password:p,role:'sub'})});
+    const r=await sb('/rest/v1/admins',{method:'POST',body:JSON.stringify({username:u,password:p,role:'sub',status:'pending'})});
     const c=Array.isArray(r)?r[0]:r;
     currentUser={id:c.id,username:c.username,role:c.role};
     sessionStorage.setItem(SESSION_KEY,JSON.stringify(currentUser));
@@ -929,16 +935,29 @@ async function openUserModal(){ openModal('userModal'); await refreshUserTable()
 async function refreshUserTable(){
   try {
     const rows=await sb('/rest/v1/admins?select=*&order=created_at.asc');
-    document.getElementById('userTableBody').innerHTML=rows.map(r=>{
+    // แยก pending ออกมาแสดงก่อน
+    const pending = rows.filter(r=>r.status==='pending');
+    const active  = rows.filter(r=>r.status!=='pending');
+    const allRows = [...pending, ...active];
+    document.getElementById('userTableBody').innerHTML=allRows.map(r=>{
       const isSelf=r.id===currentUser.id,isSuper=r.role==='super';
+      const isPending=r.status==='pending';
       const dt=r.created_at?new Date(r.created_at).toLocaleDateString('th-TH'):'—';
-      return`<tr><td style="font-weight:600">${r.username}${isSelf?' <span style="color:var(--text3);font-size:10px">(คุณ)</span>':''}</td>
-      <td><span class="role-chip ${r.role==='super'?'role-super':'role-sub'}">${r.role==='super'?'Super':'Admin รอง'}</span></td>
-      <td style="color:var(--text2)">${dt}</td>
-      <td style="text-align:right;white-space:nowrap">
-        ${!isSuper?`<button class="tbl-btn tbl-btn-blue" onclick="openChangePw(${r.id},'${r.username}')">เปลี่ยนรหัส</button>`:''}
-        ${!isSuper&&!isSelf?`<button class="tbl-btn tbl-btn-red" onclick="deleteAdmin(${r.id},'${r.username}')">ลบ</button>`:''}
-      </td></tr>`;
+      const statusBadge=isPending
+        ?`<span style="background:#fef9c3;color:#854d0e;border:1px solid #fde68a;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700">⏳ รออนุมัติ</span>`
+        :`<span style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700">✅ ใช้งานได้</span>`;
+      const pwCell=isSuper?'—':`<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#f1f5f9;padding:2px 8px;border-radius:4px;cursor:pointer;user-select:all" title="คลิกเพื่อคัดลอก" onclick="navigator.clipboard&&navigator.clipboard.writeText('${r.password||''}').then(()=>showToast('คัดลอกรหัสผ่านแล้ว','','ok'))">${r.password||'—'}</span>`;
+      return`<tr style="${isPending?'background:#fffbeb':''}">
+        <td style="font-weight:600">${r.username}${isSelf?' <span style="color:var(--text3);font-size:10px">(คุณ)</span>':''}</td>
+        <td>${statusBadge}</td>
+        <td style="font-size:12px">${pwCell}</td>
+        <td style="color:var(--text2);font-size:12px">${dt}</td>
+        <td style="text-align:right;white-space:nowrap;min-width:160px">
+          ${isPending?`<button class="tbl-btn" style="color:#16a34a;font-weight:700" onclick="approveAdmin(${r.id},'${r.username}')">✅ อนุมัติ</button>`:''}
+          ${!isSuper?`<button class="tbl-btn tbl-btn-blue" onclick="openChangePw(${r.id},'${r.username}')">เปลี่ยนรหัส</button>`:''}
+          ${!isSuper&&!isSelf?`<button class="tbl-btn tbl-btn-red" onclick="deleteAdmin(${r.id},'${r.username}')">ลบ</button>`:''}
+        </td>
+      </tr>`;
     }).join('');
   } catch(e){showToast('โหลดรายชื่อ Admin ไม่ได้',e.message,'err');}
 }
@@ -946,11 +965,21 @@ async function addAdmin(){
   const u=document.getElementById('newUsername').value.trim(), p=document.getElementById('newPassword').value.trim();
   const err=document.getElementById('addUserError');err.textContent='';err.classList.remove('show');
   if (!u||!p){err.textContent='กรุณากรอกข้อมูลให้ครบ';err.classList.add('show');return;}
-  try { await sb('/rest/v1/admins',{method:'POST',body:JSON.stringify({username:u,password:p,role:'sub'})});
+  try { await sb('/rest/v1/admins',{method:'POST',body:JSON.stringify({username:u,password:p,role:'sub',status:'active'})});
     document.getElementById('newUsername').value='';document.getElementById('newPassword').value='';
     await refreshUserTable(); showToast('เพิ่ม Admin รองสำเร็จ',`Username: ${u}`,'ok');
   } catch(e){err.textContent='เพิ่มไม่ได้: '+e.message;err.classList.add('show');}
 }
+
+async function approveAdmin(id, username){
+  if (!confirm(`อนุมัติ Admin "${username}" ให้ใช้งานได้?`)) return;
+  try {
+    await sb(`/rest/v1/admins?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({status:'active'})});
+    await refreshUserTable();
+    showToast(`อนุมัติ ${username} สำเร็จ ✅`,'สามารถเข้าสู่ระบบได้แล้ว','ok');
+  } catch(e){showToast('อนุมัติไม่สำเร็จ',e.message,'err');}
+}
+
 async function deleteAdmin(id,username){
   if (!confirm(`ลบ Admin "${username}"?`)) return;
   try { await sb(`/rest/v1/admins?id=eq.${id}`,{method:'DELETE',headers:{'Prefer':''}});
