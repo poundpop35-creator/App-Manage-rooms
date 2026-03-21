@@ -849,7 +849,8 @@ function switchTab(tab){
   document.getElementById('registerForm').style.display = isLogin?'none':'block';
   document.getElementById('tabLogin').classList.toggle('active',isLogin);
   document.getElementById('tabRegister').classList.toggle('active',!isLogin);
-  document.getElementById('loginError').classList.remove('show');
+  const le=document.getElementById('loginError');
+  le.classList.remove('show');le.style.color='';le.style.background='';le.style.border='';le.style.borderRadius='';le.style.padding='';
   document.getElementById('regError').textContent='';document.getElementById('regError').classList.remove('show');
   ['loginUser','loginPass','regUser','regPass','regPass2'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('err');}});
   setTimeout(()=>document.getElementById(isLogin?'loginUser':'regUser').focus(),80);
@@ -898,11 +899,24 @@ async function doRegister(){
     if (exist&&exist.length){showLoading(false);err.textContent='Username นี้ถูกใช้แล้ว';err.classList.add('show');document.getElementById('regUser').classList.add('err');return;}
     const r=await sb('/rest/v1/admins',{method:'POST',body:JSON.stringify({username:u,password:p,role:'sub',status:'pending'})});
     const c=Array.isArray(r)?r[0]:r;
-    currentUser={id:c.id,username:c.username,role:c.role};
-    sessionStorage.setItem(SESSION_KEY,JSON.stringify(currentUser));
-    showLoading(false);closeModal('authModal');
-    showToast(`สมัครสำเร็จ! ยินดีต้อนรับ ${currentUser.username} 🎉`,'','ok');
-    openEventSelect();
+    showLoading(false);
+    // แสดง success message แล้วกลับหน้า login
+    document.getElementById('regUser').value='';
+    document.getElementById('regPass').value='';
+    document.getElementById('regPass2').value='';
+    switchTab('login');
+    document.getElementById('loginError').textContent='';
+    document.getElementById('loginError').classList.remove('show');
+    // แสดง success notice แทน error
+    const notice = document.getElementById('loginError');
+    notice.textContent='✅ สมัครสำเร็จ! กรุณารอ Super Admin อนุมัติก่อนเข้าใช้งาน';
+    notice.style.color='#16a34a';
+    notice.style.background='#f0fdf4';
+    notice.style.border='1px solid #bbf7d0';
+    notice.style.borderRadius='6px';
+    notice.style.padding='8px 10px';
+    notice.classList.add('show');
+    showToast('สมัครสำเร็จ! 🎉',`รอ Super Admin อนุมัติ "${c.username}" ก่อนเข้าใช้งาน`,'ok');
   } catch(e){showLoading(false);err.textContent='สมัครไม่สำเร็จ: '+e.message;err.classList.add('show');}
 }
 
