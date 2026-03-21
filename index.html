@@ -501,7 +501,7 @@ body{transition:background .3s}
     <button class="abtn abtn-red"   onclick="clearData()">🗑 ล้างข้อมูล</button>
     <div class="vsep" id="superSep" style="display:none"></div>
     <button class="abtn abtn-purple" id="manageUsersBtn" style="display:none" onclick="openUserModal()">👥 Admin</button>
-    <button class="abtn abtn-gray"   id="settingsBtn"    style="display:none" onclick="openSettingsModal()">🎨 ตั้งค่า</button>
+    <button class="abtn abtn-gray"   id="settingsBtn" onclick="openSettingsModal()">🎨 ตั้งค่า</button>
     <button class="abtn abtn-gray" onclick="openModal('helpModal')">📖 วิธีใช้</button>
   </div>
 </div>
@@ -757,6 +757,7 @@ function applyEventSettings(ev){
 
 // ════ SHOW APP ════
 function showApp(updatedAt){
+  applyCurrentTheme();
   document.getElementById('landingModal').classList.remove('show');
   document.getElementById('stickyTop').style.display='block';
   document.getElementById('mainContent').style.display='block';
@@ -912,7 +913,8 @@ function showAdminUI(){
   document.getElementById('adminBar').classList.add('show');
   document.getElementById('loginBtn').style.display='none';document.getElementById('logoutBtn').style.display='';
   document.getElementById('adminRoleLbl').textContent=isSuper?`⚙️ Super Admin`:`⚙️ ${currentUser.username}`;
-  ['superSep','manageUsersBtn','settingsBtn'].forEach(id=>document.getElementById(id).style.display=isSuper?'':'none');
+  ['superSep','manageUsersBtn'].forEach(id=>document.getElementById(id).style.display=isSuper?'':'none');
+  document.getElementById('settingsBtn').style.display='';
 }
 
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -1172,10 +1174,10 @@ const THEMES = [
   {id:'navy',    label:'กรมท่า',    bg:'#1e293b', surface:'#0f172a', border:'#334155', dark:true},
   {id:'dark',    label:'มืด',       bg:'#111827', surface:'#1f2937', border:'#374151', dark:true},
 ];
-const THEME_KEY = 'dmsc_theme';
+const THEME_KEY = () => `dmsc_theme_${currentEventId||'default'}`;
 
 function initThemeGrid(){
-  const saved = localStorage.getItem(THEME_KEY) || 'white';
+  const saved = localStorage.getItem(THEME_KEY()) || 'white';
   const grid = document.getElementById('themeGrid');
   if (!grid) return;
   grid.innerHTML = THEMES.map(t => `
@@ -1209,15 +1211,14 @@ function applyTheme(id, save){
     document.querySelectorAll('.guest-card,.stat-card,.modal,.loading-box').forEach(el=>el.style.background='');
   }
   if (save){
-    localStorage.setItem(THEME_KEY, id);
+    localStorage.setItem(THEME_KEY(), id);
     initThemeGrid();
   }
 }
 
 // Apply saved theme on load
 (function(){
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved && saved !== 'white') applyTheme(saved, false);
+  // theme applied in showApp via applyCurrentTheme()
 })();
 
 
