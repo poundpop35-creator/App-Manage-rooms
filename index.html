@@ -509,7 +509,8 @@ body{transition:background .3s}
     <span class="admin-status" id="adminStatus">ยังไม่ได้โหลดไฟล์</span>
     <div class="vsep"></div>
     <button class="abtn abtn-green" id="saveBtn" onclick="saveData()" disabled>☁️ บันทึกขึ้น Cloud</button>
-    <button class="abtn abtn-red"   onclick="clearData()">🗑 ล้างข้อมูล</button>
+    <button class="abtn abtn-red" onclick="clearData()">🗑 ล้างข้อมูล</button>
+    <button class="abtn" id="deleteEventBtn" onclick="deleteCurrentEvent()" style="background:#7f1d1d;color:#fca5a5;display:none" title="ลบงานนี้ออกจากระบบถาวร">🗑️ ลบงานนี้</button>
     <div class="vsep" id="superSep" style="display:none"></div>
     <button class="abtn abtn-purple" id="manageUsersBtn" style="display:none" onclick="openUserModal()">👥 Admin</button>
     <button class="abtn abtn-gray"   id="settingsBtn" onclick="openSettingsModal()">🎨 ตั้งค่า</button>
@@ -769,6 +770,8 @@ function applyEventSettings(ev){
 // ════ SHOW APP ════
 function showApp(updatedAt){
   applyCurrentTheme();
+  // แสดงปุ่มลบงานถ้า login อยู่
+  if(currentUser&&currentEventId) document.getElementById('deleteEventBtn').style.display='';
   const dlBtn=document.getElementById('downloadExcelBtn');
   if(dlBtn) dlBtn.style.display=guestData.length?'':'none';
   document.getElementById('landingModal').classList.remove('show');
@@ -948,6 +951,8 @@ function showAdminUI(){
   document.getElementById('adminRoleLbl').textContent=isSuper?`⚙️ Super Admin`:`⚙️ ${currentUser.username}`;
   ['superSep','manageUsersBtn'].forEach(id=>document.getElementById(id).style.display=isSuper?'':'none');
   document.getElementById('settingsBtn').style.display='';
+  // แสดงปุ่มลบงาน — จะเช็คสิทธิ์อีกทีตอนคลิก
+  if(currentEventId) document.getElementById('deleteEventBtn').style.display='';
 }
 
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -1394,6 +1399,61 @@ document.addEventListener('click', e=>{
     box.style.display='none';
   }
 });
+
+
+// ════ DELETE EVENT ════
+async function deleteCurrentEvent(){
+  if (!currentUser||!currentEventId) return;
+
+  // โหลดข้อมูลงานเพื่อเช็คสิทธิ์
+  showLoading(true,'กำลังตรวจสอบสิทธิ์...');
+  try {
+    const events = await sb(`/rest/v1/events?id=eq.${encodeURIComponent(currentEventId)}&select=*`);
+    showLoading(false);
+    if (!events||!events.length){showToast('ไม่พบงานนี้','','err');return;}
+    const ev = events[0];
+
+    // เช็คสิทธิ์: super admin ลบได้ทุกงาน, admin รองลบได้เฉพาะงานที่ตัวเองสร้าง
+    const isSuper = currentUser.role==='super';
+    const isOwner = ev.created_by===currentUser.username;
+    if (!isSuper&&!isOwner){
+      showToast('ไม่มีสิทธิ์ลบงานนี้',`งานนี้สร้างโดย ${ev.created_by}`,'err');
+      return;
+    }
+
+    // ยืนยันก่อนลบ
+    const confirmed = confirm(
+      `⚠️ ลบงาน "${ev.name}" ออกจากระบบถาวร?
+
+` +
+      `รหัสงาน: ${ev.id}
+` +
+      `ข้อมูลผู้เข้าพักทั้งหมดจะหายไปและไม่สามารถกู้คืนได้
+
+` +
+      `พิมพ์ชื่องานเพื่อยืนยัน: "${ev.name}"`
+    );
+    if (!confirmed) return;
+
+    // ขอให้พิมพ์ชื่องานยืนยัน
+    const typed = window.prompt(`พิมพ์ชื่องาน "${ev.name}" เพื่อยืนยันการลบ:`);
+    if (typed!==ev.name){
+      showToast('ยกเลิกการลบ','ชื่องานไม่ตรงกัน','err');
+      return;
+    }
+
+    showLoading(true,'กำลังลบงาน...');
+    // ลบ guests ของงานนี้ก่อน
+    await sb(`/rest/v1/guests?event_id=eq.${encodeURIComponent(currentEventId)}`,{method:'DELETE',headers:{'Prefer':''}});
+    // ลบ event
+    await sb(`/rest/v1/events?id=eq.${encodeURIComponent(currentEventId)}`,{method:'DELETE',headers:{'Prefer':''}});
+
+    showLoading(false);
+    showToast(`ลบงาน "${ev.name}" สำเร็จ`,'','ok');
+    // กลับไปหน้าเลือกงาน
+    setTimeout(()=>{ location.href = location.pathname; }, 1200);
+  } catch(e){showLoading(false);showToast('ลบไม่สำเร็จ',e.message,'err');}
+}
 
 // ════ HELPERS ════
 function showLoading(show,txt='กำลังโหลด...'){document.getElementById('loadingTxt').textContent=txt;document.getElementById('loadingOverlay').classList.toggle('show',show);}
