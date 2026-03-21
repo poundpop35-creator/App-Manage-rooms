@@ -276,6 +276,16 @@ body{transition:background .3s}
         <button class="event-code-btn" style="background:#1a56db" onclick="goToEvent()">เข้าดู</button>
       </div>
       <div class="event-err" id="eventErr" style="display:none">ไม่พบงานนี้ กรุณาตรวจสอบรหัสงาน</div>
+
+      <!-- ค้นหาจากชื่องาน -->
+      <div style="width:100%;max-width:480px;position:relative">
+        <input class="event-code-input" id="eventNameSearch" placeholder="🔍 หรือค้นหาจากชื่องาน เช่น ประชุมกรม"
+          autocomplete="off" style="width:100%;padding-right:14px"
+          oninput="searchEventByName(this.value)">
+        <div id="eventSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid #c8d3e0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;max-height:280px;overflow-y:auto"></div>
+      </div>
+      <div class="event-err" id="eventNameErr" style="display:none">ไม่พบงานที่ตรงกัน</div>
+
       <div class="event-divider">หรือ</div>
       <button class="primary-btn teal" style="max-width:360px;width:100%;background:#1a56db" onclick="openAuthModal('login')">🔐 Admin — เข้าสู่ระบบ / สมัคร</button>
     </div>
@@ -1333,6 +1343,57 @@ function downloadCurrentExcel(){
   XLSX.writeFile(wb, filename);
   showToast('ดาวน์โหลดสำเร็จ ✅',`${filename} — ${guestData.length} รายการ`,'ok');
 }
+
+
+// ════ SEARCH EVENT BY NAME ════
+let searchTimer = null;
+async function searchEventByName(q){
+  const box = document.getElementById('eventSearchResults');
+  const err = document.getElementById('eventNameErr');
+  err.style.display='none';
+  if (!q||q.trim().length<2){box.style.display='none';return;}
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(async ()=>{
+    try {
+      // ดึงงานทั้งหมดแล้ว filter ใน browser (ไม่เกิน 100 งาน)
+      const events = await sb('/rest/v1/events?select=id,name,subtitle,logo,logo_img&order=created_at.desc&limit=100');
+      const kw = q.trim().toLowerCase();
+      const matched = events.filter(ev=>
+        ev.name.toLowerCase().includes(kw) ||
+        (ev.subtitle||'').toLowerCase().includes(kw) ||
+        ev.id.toLowerCase().includes(kw)
+      );
+      if (!matched.length){
+        box.style.display='none';
+        err.style.display='block';
+        return;
+      }
+      box.innerHTML = matched.map(ev=>{
+        const logoHtml = ev.logo_img
+          ? `<img src="${ev.logo_img}" style="width:32px;height:32px;object-fit:cover;border-radius:7px">`
+          : `<div style="width:32px;height:32px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px">${ev.logo||'🏨'}</div>`;
+        return `<div onclick="selectEvent('${ev.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f0f4f8;transition:background .15s" onmouseover="this.style.background='#f0f4f8'" onmouseout="this.style.background=''">
+          ${logoHtml}
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
+            <div style="font-size:11px;color:#64748b">${ev.subtitle||''} <span style="color:#94a3b8;font-family:'IBM Plex Mono',monospace">· ${ev.id}</span></div>
+          </div>
+          <div style="color:#94a3b8;font-size:16px">›</div>
+        </div>`;
+      }).join('');
+      box.style.display='block';
+    } catch(e){ box.style.display='none'; }
+  }, 350);
+}
+
+// ปิด dropdown เมื่อกดที่อื่น
+document.addEventListener('click', e=>{
+  const box = document.getElementById('eventSearchResults');
+  const inp = document.getElementById('eventNameSearch');
+  if (box && inp && !box.contains(e.target) && e.target!==inp){
+    box.style.display='none';
+  }
+});
 
 // ════ HELPERS ════
 function showLoading(show,txt='กำลังโหลด...'){document.getElementById('loadingTxt').textContent=txt;document.getElementById('loadingOverlay').classList.toggle('show',show);}
