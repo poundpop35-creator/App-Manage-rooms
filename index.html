@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -24,276 +25,283 @@
 body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
 /* STICKY TOP */
-.sticky-top{position:sticky;top:0;z-index:100;background:var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);flex-wrap:nowrap;min-width:0}
-.logo-wrap{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--cyan));box-shadow:0 2px 8px rgba(26,86,219,.25)}
+.sticky-top{position:sticky;top:0;z-index:100;background:var(–surface);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.header{background:var(–surface);border-bottom:1px solid var(–border);padding:13px 24px;display:flex;align-items:center;gap:10px;box-shadow:var(–shadow);flex-wrap:nowrap;min-width:0}
+.logo-wrap{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(–accent),var(–cyan));box-shadow:0 2px 8px rgba(26,86,219,.25)}
 .logo-wrap img{width:38px;height:38px;object-fit:cover;border-radius:10px}
 .hd-text{min-width:0;flex:1;overflow:hidden}
 .hd-title{font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hd-sub{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-sub{font-size:11px;color:var(–text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hd-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:nowrap}
-.chip{padding:3px 9px;border-radius:20px;font-size:11px;border:1px solid;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
-.chip-blue{background:#eff6ff;border-color:#bfdbfe;color:var(--accent)}
-.chip-green{background:var(--green-bg);border-color:var(--green-br);color:var(--green)}
-.icon-btn{background:var(--surface);border:1.5px solid var(--border);color:#1e293b;font-size:12px;font-weight:700;padding:6px 11px;border-radius:7px;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;display:flex;align-items:center;gap:4px;box-shadow:var(--shadow);white-space:nowrap}
-.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
-.icon-btn.warn{border-color:var(--yellow-br);color:var(--yellow);background:var(--yellow-bg)}
-.icon-btn.share{border-color:var(--green-br);color:var(--green);background:var(--green-bg)}
+.chip{padding:3px 9px;border-radius:20px;font-size:11px;border:1px solid;font-family:‘IBM Plex Mono’,monospace;white-space:nowrap}
+.chip-blue{background:#eff6ff;border-color:#bfdbfe;color:var(–accent)}
+.chip-green{background:var(–green-bg);border-color:var(–green-br);color:var(–green)}
+.icon-btn{background:var(–surface);border:1.5px solid var(–border);color:#1e293b;font-size:12px;font-weight:700;padding:6px 11px;border-radius:7px;cursor:pointer;transition:all .2s;font-family:‘Sarabun’,sans-serif;display:flex;align-items:center;gap:4px;box-shadow:var(–shadow);white-space:nowrap}
+.icon-btn:hover{border-color:var(–accent);color:var(–accent)}
+.icon-btn.warn{border-color:var(–yellow-br);color:var(–yellow);background:var(–yellow-bg)}
+.icon-btn.share{border-color:var(–green-br);color:var(–green);background:var(–green-bg)}
 .icon-btn.share:hover{background:#dcfce7}
 
 /* ADMIN BAR */
-.admin-bar{background:var(--yellow-bg);border-bottom:2px solid var(--yellow-br);padding:10px 24px;display:none;align-items:center;gap:8px;flex-wrap:wrap}
+.admin-bar{background:var(–yellow-bg);border-bottom:2px solid var(–yellow-br);padding:10px 24px;display:none;align-items:center;gap:8px;flex-wrap:wrap}
 .admin-bar.show{display:flex}
 .admin-lbl{font-size:12px;font-weight:800;color:#92400e;white-space:nowrap;display:flex;align-items:center;gap:5px}
-.vsep{width:1px;height:24px;background:var(--border2);flex-shrink:0}
-.abtn{border:none;padding:7px 13px;border-radius:7px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.vsep{width:1px;height:24px;background:var(–border2);flex-shrink:0}
+.abtn{border:none;padding:7px 13px;border-radius:7px;font-size:12px;font-family:‘Sarabun’,sans-serif;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
 .abtn:hover{transform:translateY(-1px)}.abtn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-.abtn-blue{background:var(--accent);color:#fff}.abtn-blue:hover{background:var(--accent2)}
-.abtn-green{background:var(--green);color:#fff}.abtn-green:hover{background:#15803d}
-.abtn-red{background:var(--red);color:#fff}.abtn-red:hover{background:#b91c1c}
-.abtn-purple{background:var(--purple);color:#fff}.abtn-purple:hover{background:#6d28d9}
+.abtn-blue{background:var(–accent);color:#fff}.abtn-blue:hover{background:var(–accent2)}
+.abtn-green{background:var(–green);color:#fff}.abtn-green:hover{background:#15803d}
+.abtn-red{background:var(–red);color:#fff}.abtn-red:hover{background:#b91c1c}
+.abtn-purple{background:var(–purple);color:#fff}.abtn-purple:hover{background:#6d28d9}
 .abtn-teal{background:#1a56db;color:#fff}.abtn-teal:hover{background:#1e40af}
-.abtn-gray{background:var(--surface);border:1.5px solid var(--border2);color:#1e293b;font-weight:700}.abtn-gray:hover{border-color:var(--accent);color:var(--accent)}
-.admin-status{font-size:11px;color:#1e293b;font-weight:600;font-family:'IBM Plex Mono',monospace;flex:1;min-width:140px}
+.abtn-gray{background:var(–surface);border:1.5px solid var(–border2);color:#1e293b;font-weight:700}.abtn-gray:hover{border-color:var(–accent);color:var(–accent)}
+.admin-status{font-size:11px;color:#1e293b;font-weight:600;font-family:‘IBM Plex Mono’,monospace;flex:1;min-width:140px}
 #fileInput,#logoFileInput{display:none}
 
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.72);z-index:200;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.show{display:flex}
 .modal{background:#fff;border:1.5px solid #d1d9e6;border-radius:18px;padding:28px 24px;width:100%;max-width:440px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.35);max-height:92vh;overflow-y:auto}
-.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;transition:color .2s}
-.modal-close:hover{color:var(--text)}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(–text3);font-size:20px;cursor:pointer;line-height:1;transition:color .2s}
+.modal-close:hover{color:var(–text)}
 .modal-icon{font-size:32px;text-align:center;margin-bottom:8px}
 .modal-title{font-size:17px;font-weight:700;text-align:center;margin-bottom:3px}
-.modal-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px}
+.modal-sub{font-size:13px;color:var(–text2);text-align:center;margin-bottom:20px}
 .form-group{margin-bottom:13px}
-.form-label{font-size:13px;color:var(--text2);margin-bottom:5px;display:block;font-weight:600}
-.form-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);padding:10px 12px;border-radius:var(--r);font-size:14px;font-family:'Sarabun',sans-serif;transition:border-color .2s}
-.form-input:focus{outline:none;border-color:var(--accent);background:#fff}
-.form-input.err{border-color:var(--red);background:var(--red-bg)}
-.form-hint{font-size:11px;color:var(--text3);margin-top:3px}
-.form-error{font-size:12px;color:var(--red);margin-top:3px;display:none}
+.form-label{font-size:13px;color:var(–text2);margin-bottom:5px;display:block;font-weight:600}
+.form-input{width:100%;background:var(–surface2);border:1.5px solid var(–border);color:var(–text);padding:10px 12px;border-radius:var(–r);font-size:14px;font-family:‘Sarabun’,sans-serif;transition:border-color .2s}
+.form-input:focus{outline:none;border-color:var(–accent);background:#fff}
+.form-input.err{border-color:var(–red);background:var(–red-bg)}
+.form-hint{font-size:11px;color:var(–text3);margin-top:3px}
+.form-error{font-size:12px;color:var(–red);margin-top:3px;display:none}
 .form-error.show{display:block}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.primary-btn{width:100%;background:var(--accent);color:#fff;border:none;padding:11px;border-radius:var(--r);font-size:14px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
-.primary-btn:hover{background:var(--accent2);transform:translateY(-1px)}
-.primary-btn.green{background:var(--green)}.primary-btn.green:hover{background:#15803d}
+.primary-btn{width:100%;background:var(–accent);color:#fff;border:none;padding:11px;border-radius:var(–r);font-size:14px;font-family:‘Sarabun’,sans-serif;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+.primary-btn:hover{background:var(–accent2);transform:translateY(-1px)}
+.primary-btn.green{background:var(–green)}.primary-btn.green:hover{background:#15803d}
 .primary-btn.teal{background:#1a56db}.primary-btn.teal:hover{background:#1e40af}
-.modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.modal-divider{border:none;border-top:1px solid var(–border);margin:16px 0}
 
 /* AUTH TABS */
-.auth-tabs{display:flex;background:var(--surface2);border-radius:var(--r);padding:3px;margin-bottom:18px;gap:3px}
-.auth-tab{flex:1;padding:7px;border:none;background:none;border-radius:6px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;color:#475569;transition:all .2s}
-.auth-tab.active{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+.auth-tabs{display:flex;background:var(–surface2);border-radius:var(–r);padding:3px;margin-bottom:18px;gap:3px}
+.auth-tab{flex:1;padding:7px;border:none;background:none;border-radius:6px;font-size:13px;font-family:‘Sarabun’,sans-serif;font-weight:700;cursor:pointer;color:#475569;transition:all .2s}
+.auth-tab.active{background:var(–surface);color:var(–accent);box-shadow:var(–shadow)}
 
 /* EVENT SELECTOR */
 .event-landing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;text-align:center;gap:20px}
 .event-landing-icon{font-size:56px}
 .event-landing-title{font-size:22px;font-weight:700}
-.event-landing-sub{font-size:14px;color:var(--text2);max-width:360px;line-height:1.8}
+.event-landing-sub{font-size:14px;color:var(–text2);max-width:360px;line-height:1.8}
 .event-code-box{display:flex;gap:8px;width:100%;max-width:360px}
-.event-code-input{flex:1;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:11px 14px;border-radius:var(--r);font-size:14px;font-family:'IBM Plex Mono',monospace;transition:border-color .2s;box-shadow:var(--shadow)}
-.event-code-input:focus{outline:none;border-color:var(--accent)}
-.event-code-btn{background:#1a56db;color:#fff;border:none;padding:11px 20px;border-radius:var(--r);font-size:14px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.event-code-input{flex:1;background:var(–surface);border:1.5px solid var(–border);color:var(–text);padding:11px 14px;border-radius:var(–r);font-size:14px;font-family:‘IBM Plex Mono’,monospace;transition:border-color .2s;box-shadow:var(–shadow)}
+.event-code-input:focus{outline:none;border-color:var(–accent)}
+.event-code-btn{background:#1a56db;color:#fff;border:none;padding:11px 20px;border-radius:var(–r);font-size:14px;font-family:‘Sarabun’,sans-serif;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
 .event-code-btn:hover{background:#1e40af}
-.event-err{font-size:13px;color:var(--red);margin-top:-10px}
-.event-divider{color:var(--text3);font-size:13px;display:flex;align-items:center;gap:10px;width:100%;max-width:360px}
-.event-divider::before,.event-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.event-err{font-size:13px;color:var(–red);margin-top:-10px}
+.event-divider{color:var(–text3);font-size:13px;display:flex;align-items:center;gap:10px;width:100%;max-width:360px}
+.event-divider::before,.event-divider::after{content:’’;flex:1;height:1px;background:var(–border)}
 
 /* EVENT LIST (admin) */
 .event-list{display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px}
-.event-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
-.event-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.event-card-logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden}
+.event-card{background:var(–surface);border:1.5px solid var(–border);border-radius:var(–rlg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:var(–shadow)}
+.event-card:hover{border-color:var(–accent);box-shadow:var(–shadow-md);transform:translateY(-1px)}
+.event-card-logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(–accent),var(–cyan));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden}
 .event-card-logo img{width:40px;height:40px;object-fit:cover;border-radius:10px}
 .event-card-info{flex:1;min-width:0}
 .event-card-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.event-card-sub{font-size:11px;color:var(--text2)}
-.event-card-id{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:2px}
-.event-card-arrow{color:var(--text3);font-size:18px;flex-shrink:0}
-.new-event-card{border-style:dashed;border-color:var(--border2);background:var(--surface2)}
-.new-event-card:hover{border-color:var(--accent);background:#eff6ff}
+.event-card-sub{font-size:11px;color:var(–text2)}
+.event-card-id{font-size:10px;color:var(–text3);font-family:‘IBM Plex Mono’,monospace;margin-top:2px}
+.event-card-arrow{color:var(–text3);font-size:18px;flex-shrink:0}
+.new-event-card{border-style:dashed;border-color:var(–border2);background:var(–surface2)}
+.new-event-card:hover{border-color:var(–accent);background:#eff6ff}
 
 /* SHARE MODAL */
 .share-url-box{display:flex;gap:8px;align-items:center}
-.share-url-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);padding:10px 12px;border-radius:var(--r);font-size:12px;font-family:'IBM Plex Mono',monospace;cursor:text}
-.share-copy-btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:var(--r);font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0}
-.share-copy-btn:hover{background:var(--accent2)}
-.share-qr{width:160px;height:160px;border-radius:var(--r);border:1px solid var(--border);margin:0 auto;display:block;background:var(--surface2)}
+.share-url-input{flex:1;background:var(–surface2);border:1.5px solid var(–border);color:var(–text2);padding:10px 12px;border-radius:var(–r);font-size:12px;font-family:‘IBM Plex Mono’,monospace;cursor:text}
+.share-copy-btn{background:var(–accent);color:#fff;border:none;padding:10px 16px;border-radius:var(–r);font-size:13px;font-family:‘Sarabun’,sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.share-copy-btn:hover{background:var(–accent2)}
+.share-qr{width:160px;height:160px;border-radius:var(–r);border:1px solid var(–border);margin:0 auto;display:block;background:var(–surface2)}
 .share-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.share-method-btn{border:1.5px solid var(--border);background:var(--surface);border-radius:var(--r);padding:10px;text-align:center;cursor:pointer;transition:all .2s;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:600;color:var(--text2)}
-.share-method-btn:hover{border-color:var(--accent);color:var(--accent);background:#eff6ff}
+.share-method-btn{border:1.5px solid var(–border);background:var(–surface);border-radius:var(–r);padding:10px;text-align:center;cursor:pointer;transition:all .2s;font-size:13px;font-family:‘Sarabun’,sans-serif;font-weight:600;color:var(–text2)}
+.share-method-btn:hover{border-color:var(–accent);color:var(–accent);background:#eff6ff}
 
 /* USER TABLE */
 .user-table{width:100%;border-collapse:collapse}
-.user-table th{background:var(--surface2);color:var(--text2);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(--border)}
-.user-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.user-table th{background:var(–surface2);color:var(–text2);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;text-align:left;font-weight:600;border-bottom:1px solid var(–border)}
+.user-table td{padding:9px 10px;border-bottom:1px solid var(–border);font-size:13px;vertical-align:middle}
 .user-table tr:last-child td{border-bottom:none}
-.user-table tr:hover td{background:var(--surface2)}
+.user-table tr:hover td{background:var(–surface2)}
 .role-chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
-.role-super{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-br)}
-.role-sub{background:var(--cyan-bg);color:var(--cyan);border:1px solid var(--cyan-br)}
-.tbl-btn{border:none;background:none;cursor:pointer;padding:3px 6px;border-radius:4px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:600;transition:background .2s}
-.tbl-btn-red{color:var(--red)}.tbl-btn-red:hover{background:var(--red-bg)}
-.tbl-btn-blue{color:var(--accent)}.tbl-btn-blue:hover{background:#eff6ff}
+.role-super{background:var(–purple-bg);color:var(–purple);border:1px solid var(–purple-br)}
+.role-sub{background:var(–cyan-bg);color:var(–cyan);border:1px solid var(–cyan-br)}
+.tbl-btn{border:none;background:none;cursor:pointer;padding:3px 6px;border-radius:4px;font-size:12px;font-family:‘Sarabun’,sans-serif;font-weight:600;transition:background .2s}
+.tbl-btn-red{color:var(–red)}.tbl-btn-red:hover{background:var(–red-bg)}
+.tbl-btn-blue{color:var(–accent)}.tbl-btn-blue:hover{background:#eff6ff}
 
 /* SETTINGS */
-.logo-preview{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;overflow:hidden}
+.logo-preview{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(–accent),var(–cyan));display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;overflow:hidden}
 .logo-preview img{width:100%;height:100%;object-fit:cover;border-radius:12px}
-.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:10px}
-.upload-zone:hover{border-color:var(--accent);background:#eff6ff}
-.upload-zone-txt{font-size:13px;color:var(--text2)}
-.upload-zone-hint{font-size:11px;color:var(--text3);margin-top:3px}
+.upload-zone{border:2px dashed var(–border2);border-radius:var(–r);padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:10px}
+.upload-zone:hover{border-color:var(–accent);background:#eff6ff}
+.upload-zone-txt{font-size:13px;color:var(–text2)}
+.upload-zone-hint{font-size:11px;color:var(–text3);margin-top:3px}
 
 /* MAIN */
 .main{padding:20px 24px 48px;max-width:1400px;margin:0 auto}
 .welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:14px;padding:40px}
 .welcome-icon{font-size:60px}
-.welcome-title{font-size:20px;font-weight:700;color:var(--text2)}
-.welcome-sub{font-size:14px;color:var(--text3);line-height:1.9;max-width:380px}
+.welcome-title{font-size:20px;font-weight:700;color:var(–text2)}
+.welcome-sub{font-size:14px;color:var(–text3);line-height:1.9;max-width:380px}
 
 /* TOOLBAR */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;position:relative;z-index:1}
 .sw{flex:2;min-width:200px;position:relative}
-.sw svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
-.si{width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:10px 12px 10px 38px;border-radius:var(--r);font-size:14px;font-family:'Sarabun',sans-serif;transition:border-color .2s;box-shadow:var(--shadow)}
-.si:focus{outline:none;border-color:var(--accent)}
-.si::placeholder{color:var(--text3)}
-.fs{background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:10px 12px;border-radius:var(--r);font-size:14px;font-family:'Sarabun',sans-serif;cursor:pointer;min-width:140px;box-shadow:var(--shadow)}
-.fs:focus{outline:none;border-color:var(--accent)}
-.rc{font-size:12px;color:var(--text2);font-family:'IBM Plex Mono',monospace;padding:10px 13px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);white-space:nowrap;box-shadow:var(--shadow)}
+.sw svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(–text3);pointer-events:none}
+.si{width:100%;background:var(–surface);border:1.5px solid var(–border);color:var(–text);padding:10px 12px 10px 38px;border-radius:var(–r);font-size:14px;font-family:‘Sarabun’,sans-serif;transition:border-color .2s;box-shadow:var(–shadow)}
+.si:focus{outline:none;border-color:var(–accent)}
+.si::placeholder{color:var(–text3)}
+.fs{background:var(–surface);border:1.5px solid var(–border);color:var(–text);padding:10px 12px;border-radius:var(–r);font-size:14px;font-family:‘Sarabun’,sans-serif;cursor:pointer;min-width:140px;box-shadow:var(–shadow)}
+.fs:focus{outline:none;border-color:var(–accent)}
+.rc{font-size:12px;color:var(–text2);font-family:‘IBM Plex Mono’,monospace;padding:10px 13px;background:var(–surface);border:1.5px solid var(–border);border-radius:var(–r);white-space:nowrap;box-shadow:var(–shadow)}
 
 /* SUMMARY */
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:18px}
-.stat-card{background:#fff;border:1.5px solid #c8d3e0;border-radius:var(--rlg);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.stat-header{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.stat-card{background:#fff;border:1.5px solid #c8d3e0;border-radius:var(–rlg);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.stat-header{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(–border)}
 .stat-hotel-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
 .hotel-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.stat-total{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2);background:var(--surface2);padding:2px 8px;border-radius:20px}
+.stat-total{font-family:‘IBM Plex Mono’,monospace;font-size:11px;color:var(–text2);background:var(–surface2);padding:2px 8px;border-radius:20px}
 .stat-body{padding:10px 14px;display:flex;flex-direction:column;gap:6px}
 .stat-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
-.stat-label{color:var(--text2);display:flex;align-items:center;gap:6px}
-.dot-s{width:6px;height:6px;border-radius:50%;background:var(--green)}
-.dot-t{width:6px;height:6px;border-radius:50%;background:var(--cyan)}
-.dot-sp{width:6px;height:6px;border-radius:50%;background:var(--yellow)}
-.dot-c{width:6px;height:6px;border-radius:50%;background:var(--red)}
-.stat-val{font-weight:700;font-family:'IBM Plex Mono',monospace}
+.stat-label{color:var(–text2);display:flex;align-items:center;gap:6px}
+.dot-s{width:6px;height:6px;border-radius:50%;background:var(–green)}
+.dot-t{width:6px;height:6px;border-radius:50%;background:var(–cyan)}
+.dot-sp{width:6px;height:6px;border-radius:50%;background:var(–yellow)}
+.dot-c{width:6px;height:6px;border-radius:50%;background:var(–red)}
+.stat-val{font-weight:700;font-family:‘IBM Plex Mono’,monospace}
 
 /* CARDS */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;position:relative;z-index:1}
 .guest-card{background:#fff;border:1.5px solid #c8d3e0;border-radius:14px;overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .2s;box-shadow:0 2px 10px rgba(0,0,0,.09),0 0 0 1px rgba(0,0,0,.03);position:relative;z-index:1}
-.guest-card:hover{border-color:var(--accent);box-shadow:0 6px 24px rgba(26,86,219,.13);transform:translateY(-2px)}
-.guest-card.cancelled{opacity:.6;border-color:var(--red-br)}
+.guest-card:hover{border-color:var(–accent);box-shadow:0 6px 24px rgba(26,86,219,.13);transform:translateY(-2px)}
+.guest-card.cancelled{opacity:.6;border-color:var(–red-br)}
 .card-top{padding:13px 14px 10px;border-bottom:2px solid #e8edf4;background:#fafcff}
 .card-top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.seq-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);background:var(--surface2);padding:2px 7px;border-radius:4px;border:1px solid var(--border)}
+.seq-badge{font-family:‘IBM Plex Mono’,monospace;font-size:10px;color:var(–text3);background:var(–surface2);padding:2px 7px;border-radius:4px;border:1px solid var(–border)}
 .type-badge{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px}
-.type-single{background:var(--green-bg);color:var(--green);border:1px solid var(--green-br)}
-.type-twin{background:var(--cyan-bg);color:var(--cyan);border:1px solid var(--cyan-br)}
-.type-spay{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-br)}
-.type-cancel{background:var(--red-bg);color:var(--red);border:1px solid var(--red-br)}
+.type-single{background:var(–green-bg);color:var(–green);border:1px solid var(–green-br)}
+.type-twin{background:var(–cyan-bg);color:var(–cyan);border:1px solid var(–cyan-br)}
+.type-spay{background:var(–yellow-bg);color:var(–yellow);border:1px solid var(–yellow-br)}
+.type-cancel{background:var(–red-bg);color:var(–red);border:1px solid var(–red-br)}
 .guest-name{font-size:16px;font-weight:700;margin-bottom:3px;line-height:1.3}
-.guest-card.cancelled .guest-name{text-decoration:line-through;color:var(--text3)}
-.guest-org{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.prov-chip{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:10px;padding:1px 6px;border-radius:4px}
-.rm-box{background:#f0f9ff;border:1px dashed #7dd3fc;border-radius:var(--r);padding:9px 12px;margin:8px 14px}
-.rm-lbl{font-size:10px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.guest-card.cancelled .guest-name{text-decoration:line-through;color:var(–text3)}
+.guest-org{font-size:12px;color:var(–text2);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.prov-chip{background:var(–surface2);border:1px solid var(–border2);color:var(–text2);font-size:10px;padding:1px 6px;border-radius:4px}
+.rm-box{background:#f0f9ff;border:1px dashed #7dd3fc;border-radius:var(–r);padding:9px 12px;margin:8px 14px}
+.rm-lbl{font-size:10px;color:var(–cyan);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
 .rm-name{font-size:13px;font-weight:600}
-.rm-org{font-size:11px;color:var(--text2);margin-top:1px}
+.rm-org{font-size:11px;color:var(–text2);margin-top:1px}
 .card-info{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#fdfefe}
 .ci{display:flex;flex-direction:column;gap:2px}
 .ci.full{grid-column:1/-1}
-.ci-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
-.ci-val{font-size:13px;font-weight:600;color:var(--text)}
-.ci-val.waiting{color:var(--yellow);font-style:italic}
-.ci-val.time-val{color:var(--red);font-weight:700}
-.car-tag{display:inline-block;background:var(--surface2);border:1px solid var(--border2);font-size:11px;padding:2px 7px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
-.card-footer{background:var(--yellow-bg);border-top:1px solid var(--yellow-br);padding:9px 14px}
+.ci-lbl{font-size:10px;color:var(–text3);text-transform:uppercase;letter-spacing:.5px}
+.ci-val{font-size:13px;font-weight:600;color:var(–text)}
+.ci-val.waiting{color:var(–yellow);font-style:italic}
+.ci-val.time-val{color:var(–red);font-weight:700}
+.car-tag{display:inline-block;background:var(–surface2);border:1px solid var(–border2);font-size:11px;padding:2px 7px;border-radius:4px;font-family:‘IBM Plex Mono’,monospace}
+.card-footer{background:var(–yellow-bg);border-top:1px solid var(–yellow-br);padding:9px 14px}
 .cf-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:4px;gap:6px}
 .cf-row:last-child{margin-bottom:0}
-.cf-lbl{color:var(--text2);flex-shrink:0}
-.cf-val{color:var(--yellow);font-weight:600;font-size:12px;text-align:right}
-.phone-btn{background:var(--green-bg);border:1.5px solid var(--green-br);color:var(--green);font-size:12px;padding:3px 10px;border-radius:6px;font-family:'Sarabun',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:700;transition:background .2s;white-space:nowrap}
+.cf-lbl{color:var(–text2);flex-shrink:0}
+.cf-val{color:var(–yellow);font-weight:600;font-size:12px;text-align:right}
+.phone-btn{background:var(–green-bg);border:1.5px solid var(–green-br);color:var(–green);font-size:12px;padding:3px 10px;border-radius:6px;font-family:‘Sarabun’,sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:700;transition:background .2s;white-space:nowrap}
 .phone-btn:hover{background:#dcfce7}
-.empty{text-align:center;padding:60px 24px;color:var(--text3)}
+.empty{text-align:center;padding:60px 24px;color:var(–text3)}
 .empty-icon{font-size:44px;margin-bottom:12px}
 .empty-txt{font-size:16px}
 
 /* LOADING */
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
 .loading-overlay.show{display:flex}
-.loading-box{background:#fff;border-radius:14px;padding:24px 32px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:var(--shadow-md)}
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.loading-box{background:#fff;border-radius:14px;padding:24px 32px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:var(–shadow-md)}
+.spinner{width:32px;height:32px;border:3px solid var(–border);border-top-color:var(–accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-txt{font-size:14px;color:var(--text2)}
+.loading-txt{font-size:14px;color:var(–text2)}
 
 /* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--surface);color:var(--text);padding:11px 16px;border-radius:10px;font-size:14px;z-index:400;display:none;max-width:300px;box-shadow:0 8px 32px rgba(0,0,0,.12);border:1.5px solid var(--border)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(–surface);color:var(–text);padding:11px 16px;border-radius:10px;font-size:14px;z-index:400;display:none;max-width:300px;box-shadow:0 8px 32px rgba(0,0,0,.12);border:1.5px solid var(–border)}
 .toast.show{display:block;animation:tin .3s ease}
-.toast.err{border-color:var(--red-br);background:var(--red-bg)}
-.toast.ok{border-color:var(--green-br);background:var(--green-bg)}
+.toast.err{border-color:var(–red-br);background:var(–red-bg)}
+.toast.ok{border-color:var(–green-br);background:var(–green-bg)}
 @keyframes tin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .toast-t{font-weight:700;margin-bottom:2px}
-.toast.err .toast-t{color:var(--red)}.toast.ok .toast-t{color:var(--green)}
-
+.toast.err .toast-t{color:var(–red)}.toast.ok .toast-t{color:var(–green)}
 
 /* THEME COLORS */
 body{transition:background .3s}
 .theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:4px}
 .theme-swatch{width:100%;aspect-ratio:1;border-radius:10px;cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative}
-.theme-swatch.active{border-color:var(--accent);box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent)}
+.theme-swatch.active{border-color:var(–accent);box-shadow:0 0 0 2px #fff,0 0 0 4px var(–accent)}
 .theme-swatch:hover{transform:scale(1.08)}
 
 @media(max-width:640px){
-  .header,.main,.admin-bar{padding-left:14px;padding-right:14px}
-  .cards-grid{grid-template-columns:1fr}
-  .card-info{grid-template-columns:1fr}
-  .form-row{grid-template-columns:1fr}
-  #updatedChip{display:none!important}
-  .icon-btn{padding:5px 9px;font-size:11px}
+.header,.main,.admin-bar{padding-left:14px;padding-right:14px}
+.cards-grid{grid-template-columns:1fr}
+.card-info{grid-template-columns:1fr}
+.form-row{grid-template-columns:1fr}
+#updatedChip{display:none!important}
+.icon-btn{padding:5px 9px;font-size:11px}
 }
 </style>
+
 </head>
 <body>
 
 <!-- LOADING -->
+
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-box"><div class="spinner"></div><div class="loading-txt" id="loadingTxt">กำลังโหลด...</div></div>
 </div>
 
 <!-- TOAST -->
+
 <div class="toast" id="toast"><div class="toast-t" id="toastT"></div><div id="toastM"></div></div>
 
 <!-- ══ MODAL: EVENT LANDING (no event in URL) ══ -->
+
 <div class="modal-overlay" id="landingModal" style="background:var(--bg);backdrop-filter:none;z-index:50">
   <div style="width:100%;max-width:480px;padding:0 16px">
     <div class="event-landing">
-      <div class="event-landing-icon">🏨</div>
-      <div class="event-landing-title">Guest Event App</div>
-      <div class="event-landing-sub">ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก<br>หรือเข้าสู่ระบบเพื่อจัดการงานของคุณ</div>
+      <div class="event-landing-icon" id="landingIcon">🏨</div>
+      <div class="event-landing-title" id="landingTitle">Guest Event App</div>
+      <div class="event-landing-sub" id="landingSubtitle">ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก<br>หรือเข้าสู่ระบบเพื่อจัดการงานของคุณ</div>
       <div class="event-code-box">
         <input class="event-code-input" id="eventCodeInput" placeholder="รหัสงาน เช่น dmsc2025" autocomplete="off">
         <button class="event-code-btn" style="background:#1a56db" onclick="goToEvent()">เข้าดู</button>
       </div>
       <div class="event-err" id="eventErr" style="display:none">ไม่พบงานนี้ กรุณาตรวจสอบรหัสงาน</div>
 
-      <!-- ค้นหาจากชื่องาน -->
-      <div style="width:100%;max-width:480px;position:relative">
-        <input class="event-code-input" id="eventNameSearch" placeholder="🔍 หรือค้นหาจากชื่องาน เช่น ประชุมกรม"
-          autocomplete="off" style="width:100%;padding-right:14px"
-          oninput="searchEventByName(this.value)">
-        <div id="eventSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid #c8d3e0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;max-height:280px;overflow-y:auto"></div>
-      </div>
-      <div class="event-err" id="eventNameErr" style="display:none">ไม่พบงานที่ตรงกัน</div>
+```
+  <!-- ค้นหาจากชื่องาน -->
+  <div style="width:100%;max-width:480px;position:relative">
+    <input class="event-code-input" id="eventNameSearch" placeholder="🔍 หรือค้นหาจากชื่องาน เช่น ประชุมกรม"
+      autocomplete="off" style="width:100%;padding-right:14px"
+      oninput="searchEventByName(this.value)">
+    <div id="eventSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid #c8d3e0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;max-height:280px;overflow-y:auto"></div>
+  </div>
+  <div class="event-err" id="eventNameErr" style="display:none">ไม่พบงานที่ตรงกัน</div>
 
-      <div class="event-divider">หรือ</div>
-      <button class="primary-btn teal" style="max-width:360px;width:100%;background:#1a56db" onclick="openAuthModal('login')">🔐 Admin — เข้าสู่ระบบ / สมัคร</button>
-      <button onclick="openModal('landingHelpModal')" style="max-width:360px;width:100%;background:none;border:1.5px solid #c8d3e0;color:#475569;padding:11px;border-radius:8px;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px" onmouseover="this.style.borderColor='#1a56db';this.style.color='#1a56db'" onmouseout="this.style.borderColor='#c8d3e0';this.style.color='#475569'">📖 วิธีใช้งานและวิธีสมัคร Admin</button>
-    </div>
+  <div class="event-divider">หรือ</div>
+  <button class="primary-btn teal" style="max-width:360px;width:100%;background:#1a56db" onclick="openAuthModal('login')">🔐 Admin — เข้าสู่ระบบ / สมัคร</button>
+  <button onclick="openModal('landingHelpModal')" style="max-width:360px;width:100%;background:none;border:1.5px solid #c8d3e0;color:#475569;padding:11px;border-radius:8px;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px" onmouseover="this.style.borderColor='#1a56db';this.style.color='#1a56db'" onmouseout="this.style.borderColor='#c8d3e0';this.style.color='#475569'">📖 วิธีใช้งานและวิธีสมัคร Admin</button>
+</div>
+```
+
   </div>
 </div>
 
 <!-- ══ MODAL: HELP / HOW TO USE ══ -->
+
 <div class="modal-overlay" id="helpModal">
   <div class="modal" style="max-width:520px">
     <button class="modal-close" onclick="closeModal('helpModal')">✕</button>
@@ -301,121 +309,128 @@ body{transition:background .3s}
     <div class="modal-title">วิธีใช้งาน</div>
     <div class="modal-sub">คู่มือสำหรับ Admin</div>
 
-    <div style="display:flex;flex-direction:column;gap:12px">
+```
+<div style="display:flex;flex-direction:column;gap:12px">
 
-      <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:8px">🔐 ขั้นตอนที่ 1 — เข้าสู่ระบบ</div>
-        <div style="font-size:13px;color:#1e293b;line-height:1.8">กดปุ่ม <b>Admin</b> มุมขวาบน → ใส่ Username + Password → กด <b>เข้าสู่ระบบ</b><br>หรือ <b>สมัครใช้งาน</b> ถ้ายังไม่มีบัญชี</div>
-      </div>
+  <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
+    <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:8px">🔐 ขั้นตอนที่ 1 — เข้าสู่ระบบ</div>
+    <div style="font-size:13px;color:#1e293b;line-height:1.8">กดปุ่ม <b>Admin</b> มุมขวาบน → ใส่ Username + Password → กด <b>เข้าสู่ระบบ</b><br>หรือ <b>สมัครใช้งาน</b> ถ้ายังไม่มีบัญชี</div>
+  </div>
 
-      <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:8px">📋 ขั้นตอนที่ 2 — เลือกหรือสร้างงาน</div>
-        <div style="font-size:13px;color:#1e293b;line-height:1.8">หลัง login จะเห็นรายการงาน → เลือกงานที่มีอยู่ หรือกด <b>✨ สร้างงานใหม่</b><br>ตั้งรหัสงาน เช่น <code style="background:#e2e8f0;padding:1px 5px;border-radius:3px">dmsc2025</code></div>
-      </div>
+  <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:14px 16px">
+    <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:8px">📋 ขั้นตอนที่ 2 — เลือกหรือสร้างงาน</div>
+    <div style="font-size:13px;color:#1e293b;line-height:1.8">หลัง login จะเห็นรายการงาน → เลือกงานที่มีอยู่ หรือกด <b>✨ สร้างงานใหม่</b><br>ตั้งรหัสงาน เช่น <code style="background:#e2e8f0;padding:1px 5px;border-radius:3px">dmsc2025</code></div>
+  </div>
 
-      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:8px">📂 ขั้นตอนที่ 3 — เตรียมและอัปโหลด Excel</div>
-        <div style="font-size:13px;color:#1e293b;line-height:1.8;margin-bottom:10px">ดาวน์โหลดไฟล์ตัวอย่าง กรอกข้อมูลผู้เข้าพัก แล้วกดปุ่ม <b>📂 โหลด Excel</b></div>
-        <button onclick="downloadTemplate()" style="background:#b45309;color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s" onmouseover="this.style.background='#92400e'" onmouseout="this.style.background='#b45309'">
-          📥 ดาวน์โหลด Template Excel
-        </button>
-      </div>
+  <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:14px 16px">
+    <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:8px">📂 ขั้นตอนที่ 3 — เตรียมและอัปโหลด Excel</div>
+    <div style="font-size:13px;color:#1e293b;line-height:1.8;margin-bottom:10px">ดาวน์โหลดไฟล์ตัวอย่าง กรอกข้อมูลผู้เข้าพัก แล้วกดปุ่ม <b>📂 โหลด Excel</b></div>
+    <button onclick="downloadTemplate()" style="background:#b45309;color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s" onmouseover="this.style.background='#92400e'" onmouseout="this.style.background='#b45309'">
+      📥 ดาวน์โหลด Template Excel
+    </button>
+  </div>
 
-      <div style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:10px;padding:14px 16px">
-        <div style="font-size:13px;font-weight:700;color:#6d28d9;margin-bottom:8px">☁️ ขั้นตอนที่ 4 — บันทึกและแชร์</div>
-        <div style="font-size:13px;color:#1e293b;line-height:1.8">ตรวจสอบข้อมูลแล้วกด <b>☁️ บันทึกขึ้น Cloud</b><br>จากนั้นกดปุ่ม <b>📤 แชร์</b> เพื่อส่งลิงก์ให้ผู้เข้าพัก</div>
-      </div>
+  <div style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:10px;padding:14px 16px">
+    <div style="font-size:13px;font-weight:700;color:#6d28d9;margin-bottom:8px">☁️ ขั้นตอนที่ 4 — บันทึกและแชร์</div>
+    <div style="font-size:13px;color:#1e293b;line-height:1.8">ตรวจสอบข้อมูลแล้วกด <b>☁️ บันทึกขึ้น Cloud</b><br>จากนั้นกดปุ่ม <b>📤 แชร์</b> เพื่อส่งลิงก์ให้ผู้เข้าพัก</div>
+  </div>
 
-      <div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:12px 16px">
-        <div style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:4px">💡 เคล็ดลับ</div>
-        <div style="font-size:12px;color:#1e293b;line-height:1.8">
-          • ถ้ายกเลิกห้อง: ใส่ <b>(ยกเลิกห้อง)</b> ต่อท้ายชื่อในคอลัมน์ ชื่อ-สกุล<br>
-          • พักคู่: กรอกข้อมูลรูมเมทในคอลัมน์ <b>__1</b><br>
-          • อัปเดตข้อมูล: โหลด Excel ใหม่แล้วบันทึกทับได้เลย
-        </div>
-      </div>
-
+  <div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:12px 16px">
+    <div style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:4px">💡 เคล็ดลับ</div>
+    <div style="font-size:12px;color:#1e293b;line-height:1.8">
+      • ถ้ายกเลิกห้อง: ใส่ <b>(ยกเลิกห้อง)</b> ต่อท้ายชื่อในคอลัมน์ ชื่อ-สกุล<br>
+      • พักคู่: กรอกข้อมูลรูมเมทในคอลัมน์ <b>__1</b><br>
+      • อัปเดตข้อมูล: โหลด Excel ใหม่แล้วบันทึกทับได้เลย
     </div>
+  </div>
+
+</div>
+```
+
   </div>
 </div>
 
 <!-- ══ MODAL: LANDING HELP ══ -->
+
 <div class="modal-overlay" id="landingHelpModal">
   <div class="modal" style="max-width:500px">
     <button class="modal-close" onclick="closeModal('landingHelpModal')">✕</button>
     <div class="modal-icon">📖</div>
     <div class="modal-title">วิธีใช้งานระบบ</div>
 
-    <!-- TABS -->
-    <div class="auth-tabs" style="margin-bottom:18px">
-      <button class="auth-tab active" id="helpTabGuest" onclick="switchHelpTab('guest')">👤 ผู้เข้าพัก</button>
-      <button class="auth-tab" id="helpTabAdmin" onclick="switchHelpTab('admin')">⚙️ Admin</button>
-    </div>
+```
+<!-- TABS -->
+<div class="auth-tabs" style="margin-bottom:18px">
+  <button class="auth-tab active" id="helpTabGuest" onclick="switchHelpTab('guest')">👤 ผู้เข้าพัก</button>
+  <button class="auth-tab" id="helpTabAdmin" onclick="switchHelpTab('admin')">⚙️ Admin</button>
+</div>
 
-    <!-- GUEST TAB -->
-    <div id="helpGuest">
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
-          <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:6px">🔍 วิธีที่ 1 — รู้รหัสงาน (Event Code)</div>
-          <div style="font-size:13px;color:#1e293b;line-height:1.8">พิมพ์รหัสงานที่ได้รับจาก Admin เช่น <code style="background:#e2e8f0;padding:1px 6px;border-radius:3px">dmsc2025</code> ในช่องแรก แล้วกด <b>เข้าดู</b></div>
-        </div>
-        <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:14px 16px">
-          <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:6px">🔎 วิธีที่ 2 — ค้นหาจากชื่องาน</div>
-          <div style="font-size:13px;color:#1e293b;line-height:1.8">พิมพ์ชื่องานในช่องที่สอง เช่น <b>ประชุมกรม</b> หรือ <b>ประชุมกอง</b> แล้วเลือกงานจากรายการที่แสดงขึ้นมา</div>
-        </div>
-        <div style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:10px;padding:14px 16px">
-          <div style="font-size:13px;font-weight:700;color:#6d28d9;margin-bottom:6px">📱 วิธีที่ 3 — สแกน QR Code</div>
-          <div style="font-size:13px;color:#1e293b;line-height:1.8">ขอ QR Code จาก Admin แล้วสแกนด้วยกล้องมือถือ จะเข้าสู่หน้างานโดยตรงเลย</div>
-        </div>
-        <div style="background:#fef9c3;border:1.5px solid #fde68a;border-radius:10px;padding:12px 14px">
-          <div style="font-size:12px;color:#854d0e;line-height:1.8">💡 เมื่อเข้าถึงหน้างานแล้ว สามารถค้นหาชื่อตัวเองได้ที่ช่องค้นหา และกดปุ่มโทรหาผู้ประสานงานได้โดยตรง</div>
-        </div>
+<!-- GUEST TAB -->
+<div id="helpGuest">
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:6px">🔍 วิธีที่ 1 — รู้รหัสงาน (Event Code)</div>
+      <div style="font-size:13px;color:#1e293b;line-height:1.8">พิมพ์รหัสงานที่ได้รับจาก Admin เช่น <code style="background:#e2e8f0;padding:1px 6px;border-radius:3px">dmsc2025</code> ในช่องแรก แล้วกด <b>เข้าดู</b></div>
+    </div>
+    <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:6px">🔎 วิธีที่ 2 — ค้นหาจากชื่องาน</div>
+      <div style="font-size:13px;color:#1e293b;line-height:1.8">พิมพ์ชื่องานในช่องที่สอง เช่น <b>ประชุมกรม</b> หรือ <b>ประชุมกอง</b> แล้วเลือกงานจากรายการที่แสดงขึ้นมา</div>
+    </div>
+    <div style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:10px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:700;color:#6d28d9;margin-bottom:6px">📱 วิธีที่ 3 — สแกน QR Code</div>
+      <div style="font-size:13px;color:#1e293b;line-height:1.8">ขอ QR Code จาก Admin แล้วสแกนด้วยกล้องมือถือ จะเข้าสู่หน้างานโดยตรงเลย</div>
+    </div>
+    <div style="background:#fef9c3;border:1.5px solid #fde68a;border-radius:10px;padding:12px 14px">
+      <div style="font-size:12px;color:#854d0e;line-height:1.8">💡 เมื่อเข้าถึงหน้างานแล้ว สามารถค้นหาชื่อตัวเองได้ที่ช่องค้นหา และกดปุ่มโทรหาผู้ประสานงานได้โดยตรง</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN TAB -->
+<div id="helpAdmin" style="display:none">
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:6px">📝 วิธีสมัคร Admin</div>
+      <div style="font-size:13px;color:#1e293b;line-height:1.8">
+        1. กดปุ่ม <b>🔐 Admin — เข้าสู่ระบบ / สมัคร</b><br>
+        2. เลือกแท็บ <b>สมัครใช้งาน</b><br>
+        3. ตั้ง Username และ Password<br>
+        4. กด <b>สมัครใช้งาน</b> แล้วรอ Super Admin อนุมัติ
       </div>
     </div>
-
-    <!-- ADMIN TAB -->
-    <div id="helpAdmin" style="display:none">
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
-          <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:6px">📝 วิธีสมัคร Admin</div>
-          <div style="font-size:13px;color:#1e293b;line-height:1.8">
-            1. กดปุ่ม <b>🔐 Admin — เข้าสู่ระบบ / สมัคร</b><br>
-            2. เลือกแท็บ <b>สมัครใช้งาน</b><br>
-            3. ตั้ง Username และ Password<br>
-            4. กด <b>สมัครใช้งาน</b> แล้วรอ Super Admin อนุมัติ
-          </div>
-        </div>
-        <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:14px 16px">
-          <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:6px">✨ วิธีสร้างงาน</div>
-          <div style="font-size:13px;color:#1e293b;line-height:1.8">
-            1. Login แล้วกด <b>✨ สร้างงานใหม่</b><br>
-            2. ตั้ง <b>รหัสงาน</b> เช่น <code style="background:#e2e8f0;padding:1px 5px;border-radius:3px">dmsc2025</code><br>
-            3. ใส่ชื่องานและคำบรรยาย → กด <b>สร้างงาน</b>
-          </div>
-        </div>
-        <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:14px 16px">
-          <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px">📂 วิธีอัปโหลดข้อมูล</div>
-          <div style="font-size:13px;color:#1e293b;line-height:1.8">
-            1. กด <b>📥 Template</b> เพื่อดาวน์โหลดตัวอย่าง Excel<br>
-            2. กรอกข้อมูลผู้เข้าพักในไฟล์<br>
-            3. กด <b>📂 โหลด Excel</b> แล้วเลือกไฟล์<br>
-            4. กด <b>☁️ บันทึกขึ้น Cloud</b> — ผู้เข้าพักจะเห็นทันที
-          </div>
-        </div>
-        <div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:12px 14px">
-          <div style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:4px">🔐 สิทธิ์ Admin</div>
-          <div style="font-size:12px;color:#1e293b;line-height:1.8">
-            <b>Super Admin</b> — จัดการ Admin ทั้งหมด อนุมัติ/ลบ/เปลี่ยนรหัส ลบงานได้ทุกงาน<br>
-            <b>Admin รอง</b> — อัปโหลดข้อมูล ตั้งค่างาน ลบงานที่ตัวเองสร้างเท่านั้น
-          </div>
-        </div>
+    <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:6px">✨ วิธีสร้างงาน</div>
+      <div style="font-size:13px;color:#1e293b;line-height:1.8">
+        1. Login แล้วกด <b>✨ สร้างงานใหม่</b><br>
+        2. ตั้ง <b>รหัสงาน</b> เช่น <code style="background:#e2e8f0;padding:1px 5px;border-radius:3px">dmsc2025</code><br>
+        3. ใส่ชื่องานและคำบรรยาย → กด <b>สร้างงาน</b>
       </div>
     </div>
+    <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px">📂 วิธีอัปโหลดข้อมูล</div>
+      <div style="font-size:13px;color:#1e293b;line-height:1.8">
+        1. กด <b>📥 Template</b> เพื่อดาวน์โหลดตัวอย่าง Excel<br>
+        2. กรอกข้อมูลผู้เข้าพักในไฟล์<br>
+        3. กด <b>📂 โหลด Excel</b> แล้วเลือกไฟล์<br>
+        4. กด <b>☁️ บันทึกขึ้น Cloud</b> — ผู้เข้าพักจะเห็นทันที
+      </div>
+    </div>
+    <div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:12px 14px">
+      <div style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:4px">🔐 สิทธิ์ Admin</div>
+      <div style="font-size:12px;color:#1e293b;line-height:1.8">
+        <b>Super Admin</b> — จัดการ Admin ทั้งหมด อนุมัติ/ลบ/เปลี่ยนรหัส ลบงานได้ทุกงาน<br>
+        <b>Admin รอง</b> — อัปโหลดข้อมูล ตั้งค่างาน ลบงานที่ตัวเองสร้างเท่านั้น
+      </div>
+    </div>
+  </div>
+</div>
+```
 
   </div>
 </div>
 
 <!-- ══ MODAL: AUTH ══ -->
+
 <div class="modal-overlay" id="authModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('authModal')">✕</button>
@@ -443,6 +458,7 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: EVENT SELECTOR (admin picks event) ══ -->
+
 <div class="modal-overlay" id="eventSelectModal">
   <div class="modal" style="max-width:520px">
     <button class="modal-close" onclick="closeModal('eventSelectModal')">✕</button>
@@ -454,6 +470,7 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: CREATE EVENT ══ -->
+
 <div class="modal-overlay" id="createEventModal">
   <div class="modal" style="max-width:400px">
     <button class="modal-close" onclick="closeModal('createEventModal')">✕</button>
@@ -479,6 +496,7 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: SHARE ══ -->
+
 <div class="modal-overlay" id="shareModal">
   <div class="modal" style="max-width:400px">
     <button class="modal-close" onclick="closeModal('shareModal')">✕</button>
@@ -504,6 +522,7 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: USER MANAGEMENT ══ -->
+
 <div class="modal-overlay" id="userModal">
   <div class="modal" style="max-width:540px">
     <button class="modal-close" onclick="closeModal('userModal')">✕</button>
@@ -523,6 +542,7 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: CHANGE PW ══ -->
+
 <div class="modal-overlay" id="changePwModal">
   <div class="modal" style="max-width:340px">
     <button class="modal-close" onclick="closeModal('changePwModal')">✕</button>
@@ -536,6 +556,7 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: APP SETTINGS ══ -->
+
 <div class="modal-overlay" id="settingsModal">
   <div class="modal" style="max-width:380px">
     <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
@@ -555,11 +576,13 @@ body{transition:background .3s}
     <div class="form-group"><label class="form-label">โลโก้ Emoji</label><input class="form-input" id="settingsLogo" type="text" placeholder="🏨" maxlength="4"></div>
     <div class="form-group"><label class="form-label">ชื่องาน</label><input class="form-input" id="settingsTitle" type="text"></div>
     <div class="form-group"><label class="form-label">คำบรรยาย</label><input class="form-input" id="settingsSubtitle" type="text"></div>
+    </div>
     <button class="primary-btn" onclick="saveSettings()">💾 บันทึก</button>
   </div>
 </div>
 
 <!-- STICKY HEADER + ADMIN BAR -->
+
 <div class="sticky-top" id="stickyTop" style="display:none">
   <header class="header">
     <div class="logo-wrap" id="headerLogo"><span id="headerLogoEmoji">🏨</span></div>
@@ -596,6 +619,7 @@ body{transition:background .3s}
 </div>
 
 <!-- MAIN -->
+
 <main class="main" id="mainContent" style="display:none">
   <div class="welcome" id="welcomeView">
     <div class="welcome-icon" id="welcomeIcon">🏨</div>
@@ -1105,12 +1129,22 @@ async function confirmChangePw(){
 // ════ SETTINGS ════
 async function openSettingsModal(){
   initThemeGrid();
+  // ซ่อน/แสดง landing settings section ตาม role
+  const landingSec = document.getElementById('landingSettingsSec');
+  if(landingSec) landingSec.style.display = (currentUser&&currentUser.role==='super')?'block':'none';
   try {
     const rows=await sb(`/rest/v1/events?id=eq.${encodeURIComponent(currentEventId)}&select=*`);
     const ev=(rows&&rows.length)?rows[0]:{};
     document.getElementById('settingsLogo').value    =ev.logo||'🏨';
     document.getElementById('settingsTitle').value   =ev.name||'';
     document.getElementById('settingsSubtitle').value=ev.subtitle||'';
+    // load global app settings
+    try {
+      const gs=await sb('/rest/v1/app_settings?select=data&limit=1');
+      const gd=(gs&&gs.length)?gs[0].data:{};
+      document.getElementById('settingsAppName').value=gd.appName||'Guest Event App';
+      document.getElementById('settingsAppSub').value=gd.appSub||'ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก';
+    } catch(e){}
     const prev=document.getElementById('settingsLogoPreview');
     delete prev.dataset.img;
     if (ev.logo_img){prev.innerHTML=`<img src="${ev.logo_img}" style="width:56px;height:56px;object-fit:cover;border-radius:12px">`;prev.dataset.img=ev.logo_img;}
@@ -1135,7 +1169,20 @@ async function saveSettings(){
   try {
     const payload={logo,name,subtitle};if(logoImg)payload.logo_img=logoImg;
     await sb(`/rest/v1/events?id=eq.${encodeURIComponent(currentEventId)}`,{method:'PATCH',body:JSON.stringify(payload)});
-    applyEventSettings({...payload,id:currentEventId});showLoading(false);closeModal('settingsModal');
+    applyEventSettings({...payload,id:currentEventId});
+    // บันทึก global app settings (landing page)
+    const appName=document.getElementById('settingsAppName').value.trim()||'Guest Event App';
+    const appSub=document.getElementById('settingsAppSub').value.trim()||'ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก';
+    try {
+      const gs=await sb('/rest/v1/app_settings?select=id&limit=1');
+      if(gs&&gs.length){
+        const curData=await sb('/rest/v1/app_settings?select=data&limit=1');
+        const cd=(curData&&curData.length)?curData[0].data:{};
+        await sb(`/rest/v1/app_settings?id=eq.${gs[0].id}`,{method:'PATCH',body:JSON.stringify({data:{...cd,appName,appSub}})});
+      }
+    } catch(e){}
+    applyLandingSettings(appName,appSub);
+    showLoading(false);closeModal('settingsModal');
     showToast('บันทึกสำเร็จ ✅','','ok');
   } catch(e){showLoading(false);showToast('บันทึกไม่สำเร็จ',e.message,'err');}
 }
@@ -1328,6 +1375,19 @@ function initThemeGrid(){
     </div>`).join('');
 }
 
+
+
+function applyLandingSettings(appName, appSub){
+  const ti = document.getElementById('landingTitle');
+  const su = document.getElementById('landingSubtitle');
+  const ic = document.getElementById('landingIcon');
+  if(ti && appName) ti.textContent = appName;
+  if(su && appSub)  su.innerHTML  = appSub.replace(/\n/g,'<br>');
+  // sync title tag
+  if(appName && !document.getElementById('headerTitle').textContent.trim()){
+    document.title = appName;
+  }
+}
 
 function applyCurrentTheme(){
   const saved = localStorage.getItem(THEME_KEY());
@@ -1550,5 +1610,6 @@ function showToast(title,msg,type=''){
   clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),4500);
 }
 </script>
+
 </body>
 </html>
