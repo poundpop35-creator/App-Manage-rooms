@@ -43,19 +43,19 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .icon-btn.share:hover{background:#dcfce7}
 
 /* ADMIN BAR */
-.admin-bar{background:var(–yellow-bg);border-bottom:2px solid var(–yellow-br);padding:10px 24px;display:none;align-items:center;gap:8px;flex-wrap:wrap}
+.admin-bar{background:#fef3c7;border-bottom:2px solid #f59e0b;padding:10px 24px;display:none;align-items:center;gap:8px;flex-wrap:wrap}
 .admin-bar.show{display:flex}
-.admin-lbl{font-size:12px;font-weight:800;color:#92400e;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.admin-lbl{font-size:12px;font-weight:800;color:#78350f;white-space:nowrap;display:flex;align-items:center;gap:5px;background:#fde68a;padding:4px 10px;border-radius:6px}
 .vsep{width:1px;height:24px;background:var(–border2);flex-shrink:0}
-.abtn{border:none;padding:7px 13px;border-radius:7px;font-size:12px;font-family:‘Sarabun’,sans-serif;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.abtn{border:none;padding:7px 13px;border-radius:7px;font-size:12px;font-family:‘Sarabun’,sans-serif;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
 .abtn:hover{transform:translateY(-1px)}.abtn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-.abtn-blue{background:var(–accent);color:#fff}.abtn-blue:hover{background:var(–accent2)}
-.abtn-green{background:var(–green);color:#fff}.abtn-green:hover{background:#15803d}
-.abtn-red{background:var(–red);color:#fff}.abtn-red:hover{background:#b91c1c}
-.abtn-purple{background:var(–purple);color:#fff}.abtn-purple:hover{background:#6d28d9}
+.abtn-blue{background:#1a56db;color:#fff;border:1.5px solid #1e40af}.abtn-blue:hover{background:#1e40af}
+.abtn-green{background:#16a34a;color:#fff;border:1.5px solid #15803d}.abtn-green:hover{background:#15803d}
+.abtn-red{background:#dc2626;color:#fff;border:1.5px solid #b91c1c}.abtn-red:hover{background:#b91c1c}
+.abtn-purple{background:#7c3aed;color:#fff;border:1.5px solid #6d28d9}.abtn-purple:hover{background:#6d28d9}
 .abtn-teal{background:#1a56db;color:#fff}.abtn-teal:hover{background:#1e40af}
 .abtn-gray{background:var(–surface);border:1.5px solid var(–border2);color:#1e293b;font-weight:700}.abtn-gray:hover{border-color:var(–accent);color:var(–accent)}
-.admin-status{font-size:11px;color:#1e293b;font-weight:600;font-family:‘IBM Plex Mono’,monospace;flex:1;min-width:140px}
+.admin-status{font-size:11px;color:#1e293b;font-weight:700;font-family:‘IBM Plex Mono’,monospace;flex:1;min-width:140px}
 #fileInput,#logoFileInput{display:none}
 
 /* MODAL */
@@ -577,6 +577,14 @@ body{transition:background .3s}
     <div class="form-group"><label class="form-label">ชื่องาน</label><input class="form-input" id="settingsTitle" type="text"></div>
     <div class="form-group"><label class="form-label">คำบรรยาย</label><input class="form-input" id="settingsSubtitle" type="text"></div>
     </div>
+    <!-- LANDING SECTION — super admin only -->
+    <div id="landingSettingsSec" style="display:none">
+      <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">🏠 หน้าหลัก (Landing Page)</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:12px">ชื่อและคำบรรยายที่ผู้เข้าพักเห็นตอนเปิดแอพครั้งแรก</div>
+      <div class="form-group"><label class="form-label">ชื่อแอพ</label><input class="form-input" id="settingsAppName" type="text" placeholder="Guest Event App"></div>
+      <div class="form-group"><label class="form-label">คำบรรยาย</label><input class="form-input" id="settingsAppSub" type="text" placeholder="ใส่รหัสงาน เพื่อดูรายชื่อผู้เข้าพัก"></div>
+    </div>
     <button class="primary-btn" onclick="saveSettings()">💾 บันทึก</button>
   </div>
 </div>
@@ -610,7 +618,7 @@ body{transition:background .3s}
     <div class="vsep"></div>
     <button class="abtn abtn-green" id="saveBtn" onclick="saveData()" disabled>☁️ บันทึกขึ้น Cloud</button>
     <button class="abtn abtn-red" onclick="clearData()">🗑 ล้างข้อมูล</button>
-    <button class="abtn" id="deleteEventBtn" onclick="deleteCurrentEvent()" style="background:#7f1d1d;color:#fca5a5;display:none" title="ลบงานนี้ออกจากระบบถาวร">🗑️ ลบงานนี้</button>
+    <button class="abtn" id="deleteEventBtn" onclick="deleteCurrentEvent()" style="background:#991b1b;color:#fff;border:1.5px solid #7f1d1d;display:none" title="ลบงานนี้ออกจากระบบถาวร">🗑️ ลบงานนี้</button>
     <div class="vsep" id="superSep" style="display:none"></div>
     <button class="abtn abtn-purple" id="manageUsersBtn" style="display:none" onclick="openUserModal()">👥 Admin</button>
     <button class="abtn abtn-gray"   id="settingsBtn" onclick="openSettingsModal()">🎨 ตั้งค่า</button>
