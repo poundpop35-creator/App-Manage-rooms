@@ -429,6 +429,55 @@ body{transition:background .3s}
   </div>
 </div>
 
+<!-- ══ MODAL: SUPER ADMIN DASHBOARD ══ -->
+
+<div class="modal-overlay" id="dashboardModal" style="align-items:flex-start;padding:0;background:var(--bg)">
+  <div style="width:100%;min-height:100vh;background:var(--bg);overflow-y:auto">
+
+```
+<!-- Dashboard Header -->
+<div style="background:#fff;border-bottom:1.5px solid #d1d9e6;padding:16px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+  <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#1a56db);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⚙️</div>
+  <div>
+    <div style="font-size:16px;font-weight:800;color:#0f172a">Super Admin Dashboard</div>
+    <div style="font-size:12px;color:#64748b" id="dashboardSubtitle">ภาพรวมทุกงาน</div>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+    <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">✨ สร้างงานใหม่</button>
+    <button onclick="openUserModal()" style="background:#7c3aed;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">👥 จัดการ Admin</button>
+    <button onclick="closeDashboard()" style="background:#fff;border:1.5px solid #94a3b8;color:#475569;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer">✕ ปิด</button>
+  </div>
+</div>
+
+<!-- Dashboard Content -->
+<div style="padding:24px;max-width:1200px;margin:0 auto">
+
+  <!-- Stats Row -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px" id="dashStatsRow"></div>
+
+  <!-- Pending Admins Alert -->
+  <div id="dashPendingAlert" style="display:none;background:#fffbeb;border:1.5px solid #f59e0b;border-radius:10px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="openUserModal()">
+    <div style="font-size:20px">⏳</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#92400e" id="dashPendingText">มี Admin รอการอนุมัติ</div>
+      <div style="font-size:12px;color:#b45309">กดเพื่อไปอนุมัติ</div>
+    </div>
+    <div style="margin-left:auto;color:#f59e0b;font-size:18px">›</div>
+  </div>
+
+  <!-- Events Grid -->
+  <div style="font-size:14px;font-weight:700;color:#475569;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+    📋 งานทั้งหมด
+    <span id="dashEventCount" style="background:#e2e8f0;color:#475569;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600"></span>
+  </div>
+  <div id="dashEventGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px"></div>
+
+</div>
+```
+
+  </div>
+</div>
+
 <!-- ══ MODAL: AUTH ══ -->
 
 <div class="modal-overlay" id="authModal">
@@ -642,7 +691,7 @@ body{transition:background .3s}
   <div class="admin-bar" id="adminBar">
     <span class="admin-lbl" id="adminRoleLbl">⚙️ Admin</span>
     <div class="vsep"></div>
-    <button class="abtn abtn-teal" onclick="openEventSelect()">📋 เปลี่ยนงาน</button>
+    <button class="abtn abtn-teal" id="changeEventBtn" onclick="currentUser&&currentUser.role==='super'?openDashboard():openEventSelect()">📋 เปลี่ยนงาน</button>
     <button class="abtn abtn-gray" onclick="downloadTemplate()" title="ดาวน์โหลดไฟล์ตัวอย่าง">📥 Template</button>
     <button class="abtn abtn-blue" onclick="document.getElementById('fileInput').click()">📂 โหลด Excel</button>
     <button class="abtn abtn-gray" id="downloadExcelBtn" onclick="downloadCurrentExcel()" style="display:none" title="ดาวน์โหลดข้อมูลปัจจุบันเป็น Excel">⬇️ ดาวน์โหลด Excel</button>
@@ -1036,8 +1085,14 @@ async function doLogin(){
     currentUser={id:rows[0].id,username:rows[0].username,role:rows[0].role};
     sessionStorage.setItem(SESSION_KEY,JSON.stringify(currentUser));
     closeModal('authModal');
-    if (currentEventId){ showAdminUI(); showToast(`ยินดีต้อนรับ ${currentUser.username} ✅`,'','ok'); }
-    else openEventSelect();
+    if (currentEventId){
+      showAdminUI();
+      showToast(`ยินดีต้อนรับ ${currentUser.username} ✅`,'','ok');
+    } else if (currentUser.role==='super'){
+      openDashboard();
+    } else {
+      openEventSelect();
+    }
   } catch(e){showLoading(false);showToast('เกิดข้อผิดพลาด',e.message,'err');}
 }
 
@@ -1657,6 +1712,146 @@ function closeAdminMenu(){
   document.getElementById('adminDropdownMenu').classList.remove('open');
 }
 document.addEventListener('click', ()=>closeAdminMenu());
+
+
+// ════ SUPER ADMIN DASHBOARD ════
+async function openDashboard(){
+  document.getElementById('dashboardModal').classList.add('show');
+  await loadDashboard();
+}
+
+function closeDashboard(){
+  document.getElementById('dashboardModal').classList.remove('show');
+}
+
+function openCreateEventFromDash(){
+  closeDashboard();
+  openCreateEvent();
+}
+
+async function loadDashboard(){
+  const subtitle = document.getElementById('dashboardSubtitle');
+  subtitle.textContent = 'กำลังโหลด...';
+
+  try {
+    // โหลด events + admins พร้อมกัน
+    const [events, admins, guestRows] = await Promise.all([
+      sb('/rest/v1/events?select=*&order=created_at.desc'),
+      sb('/rest/v1/admins?select=*&order=created_at.asc'),
+      sb('/rest/v1/guests?select=event_id,data')
+    ]);
+
+    // pending admins alert
+    const pending = admins.filter(a=>a.status==='pending');
+    const alert = document.getElementById('dashPendingAlert');
+    if (pending.length){
+      alert.style.display='flex';
+      document.getElementById('dashPendingText').textContent = `มี ${pending.length} บัญชีรอการอนุมัติ`;
+    } else {
+      alert.style.display='none';
+    }
+
+    // map guest data by event_id
+    const guestMap = {};
+    guestRows.forEach(r=>{
+      if(r.data&&r.data.guests) guestMap[r.event_id]=r.data;
+    });
+
+    // stats
+    let totalRooms=0, totalPeople=0;
+    events.forEach(ev=>{
+      const gd = guestMap[ev.id];
+      if(gd&&gd.guests){
+        const active = gd.guests.filter(g=>!g.name1.includes('ยกเลิก'));
+        totalRooms += active.length;
+        active.forEach(g=>{ totalPeople += g.type==='พักคู่'?2:1; });
+      }
+    });
+
+    document.getElementById('dashStatsRow').innerHTML = `
+      <div style="background:#fff;border:1.5px solid #c8d3e0;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+        <div style="font-size:28px;font-weight:800;color:#1a56db">${events.length}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">งานทั้งหมด</div>
+      </div>
+      <div style="background:#fff;border:1.5px solid #c8d3e0;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+        <div style="font-size:28px;font-weight:800;color:#16a34a">${totalPeople}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">ผู้เข้าพักรวม</div>
+      </div>
+      <div style="background:#fff;border:1.5px solid #c8d3e0;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+        <div style="font-size:28px;font-weight:800;color:#0891b2">${totalRooms}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">ห้องพักรวม</div>
+      </div>
+      <div style="background:#fff;border:1.5px solid #c8d3e0;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+        <div style="font-size:28px;font-weight:800;color:#7c3aed">${admins.filter(a=>a.status==='active').length}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">Admin ทั้งหมด</div>
+      </div>
+      ${pending.length?`<div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer" onclick="openUserModal()">
+        <div style="font-size:28px;font-weight:800;color:#b45309">${pending.length}</div>
+        <div style="font-size:12px;color:#92400e;margin-top:2px">รออนุมัติ ⏳</div>
+      </div>`:''}
+    `;
+
+    // event cards
+    document.getElementById('dashEventCount').textContent = events.length + ' งาน';
+    subtitle.textContent = `ยินดีต้อนรับ ${currentUser.username} — ${events.length} งาน`;
+
+    document.getElementById('dashEventGrid').innerHTML = events.map(ev=>{
+      const gd = guestMap[ev.id];
+      const guests = gd&&gd.guests ? gd.guests : [];
+      const active = guests.filter(g=>!g.name1.includes('ยกเลิก'));
+      const people = active.reduce((s,g)=>s+(g.type==='พักคู่'?2:1),0);
+      const cancelled = guests.filter(g=>g.name1.includes('ยกเลิก')).length;
+      const updatedAt = gd&&gd.updatedAt ? gd.updatedAt : null;
+      const logoHtml = ev.logo_img
+        ? `<img src="${ev.logo_img}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">`
+        : `<div style="width:40px;height:40px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ev.logo||'🏨'}</div>`;
+      return `<div style="background:#fff;border:1.5px solid #c8d3e0;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
+        <!-- Card Header -->
+        <div style="padding:14px 16px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px">
+          ${logoHtml}
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
+            <div style="font-size:11px;color:#64748b">${ev.subtitle||''}</div>
+            <div style="font-size:10px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">?event=${ev.id}</div>
+          </div>
+        </div>
+        <!-- Card Stats -->
+        <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;background:#fafcff">
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#16a34a">${people}</div>
+            <div style="font-size:10px;color:#64748b">คน</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:800;color:#1a56db">${active.length}</div>
+            <div style="font-size:10px;color:#64748b">ห้อง</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:20px;font-weight:800;color:${cancelled?'#dc2626':'#94a3b8'}">${cancelled}</div>
+            <div style="font-size:10px;color:#64748b">ยกเลิก</div>
+          </div>
+        </div>
+        <!-- Card Footer -->
+        <div style="padding:10px 16px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:11px;color:#94a3b8">${updatedAt?'🕐 '+updatedAt:'ยังไม่มีข้อมูล'}</div>
+          <div style="display:flex;gap:6px">
+            <button onclick="closeDashboard();selectEvent('${ev.id}')" style="background:#1a56db;color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer">เข้าจัดการ</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    if (!events.length){
+      document.getElementById('dashEventGrid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">
+        <div style="font-size:40px;margin-bottom:10px">📋</div>
+        <div style="font-size:16px;font-weight:600">ยังไม่มีงาน</div>
+        <div style="font-size:13px;margin-top:6px">กด "สร้างงานใหม่" เพื่อเริ่มต้น</div>
+      </div>`;
+    }
+
+  } catch(e){
+    subtitle.textContent = 'โหลดไม่สำเร็จ: '+e.message;
+  }
+}
 
 // ════ HELPERS ════
 function showLoading(show,txt='กำลังโหลด...'){document.getElementById('loadingTxt').textContent=txt;document.getElementById('loadingOverlay').classList.toggle('show',show);}
