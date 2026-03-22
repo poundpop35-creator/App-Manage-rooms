@@ -711,6 +711,7 @@ body{transition:background .3s}
     <button class="abtn abtn-teal" id="changeEventBtn" onclick="openDashboard()">📋 เปลี่ยนงาน</button>
     <button class="abtn abtn-gray" onclick="downloadTemplate()" title="ดาวน์โหลดไฟล์ตัวอย่าง">📥 Template</button>
     <button class="abtn abtn-blue" onclick="document.getElementById('fileInput').click()">📂 โหลด Excel</button>
+    <button class="abtn" onclick="openGSheetModal()" style="background:#16a34a;color:#fff;border:1.5px solid #15803d;display:flex;align-items:center;gap:5px" title="ซิงค์จาก Google Sheets"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_32dp.png" style="width:14px;height:14px"> Google Sheets</button>
     <button class="abtn abtn-gray" id="downloadExcelBtn" onclick="downloadCurrentExcel()" style="display:none" title="ดาวน์โหลดข้อมูลปัจจุบันเป็น Excel">⬇️ ดาวน์โหลด Excel</button>
     <input type="file" id="fileInput" accept=".xlsx,.xls"/>
     <span class="admin-status" id="adminStatus">ยังไม่ได้โหลดไฟล์</span>
