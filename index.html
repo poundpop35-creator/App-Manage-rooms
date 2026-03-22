@@ -832,6 +832,23 @@ async function sb(path, opts={}) {
   const saved = sessionStorage.getItem(SESSION_KEY);
   if (saved){try{currentUser=JSON.parse(saved);}catch(e){}}
 
+  // โหลด app_settings (ชื่อแอพ + โลโก้) ทุกครั้งที่เปิดแอพ
+  try {
+    const gs = await sb('/rest/v1/app_settings?select=data&limit=1');
+    if(gs&&gs.length){
+      const d = gs[0].data||{};
+      // อัปเดตชื่อและคำบรรยาย
+      applyLandingSettings(d.appName||'Guest Event App', d.appSub||'ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก');
+      // อัปเดตโลโก้
+      const li = document.getElementById('landingIcon');
+      if(li){
+        if(d.logoImg) li.innerHTML=`<img src="${d.logoImg}" style="width:56px;height:56px;border-radius:12px;object-fit:cover">`;
+        else if(d.logo) li.textContent = d.logo;
+      }
+      if(d.appName) document.title = d.appName;
+    }
+  } catch(e){}
+
   if (eventId) {
     // Load specific event
     showLoading(true,'กำลังโหลดข้อมูล...');
