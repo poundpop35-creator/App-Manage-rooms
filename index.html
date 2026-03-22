@@ -477,6 +477,57 @@ body{transition:background .3s}
   </div>
 </div>
 
+<!-- ══ MODAL: GOOGLE SHEETS SYNC ══ -->
+
+<div class="modal-overlay" id="gsheetModal">
+  <div class="modal" style="max-width:460px">
+    <button class="modal-close" onclick="closeModal('gsheetModal')">✕</button>
+    <div class="modal-icon">
+      <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_32dp.png" style="width:36px;height:36px">
+    </div>
+    <div class="modal-title">ซิงค์จาก Google Sheets</div>
+    <div class="modal-sub">วางลิงก์ Google Sheets แล้วกดซิงค์</div>
+
+```
+<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#15803d;line-height:1.8">
+  <b>⚙️ ก่อนใช้งาน:</b> Sheet ต้องตั้งเป็น Public ก่อน<br>
+  กด <b>แชร์</b> → <b>ทุกคนที่มีลิงก์</b> → <b>ผู้ดู</b> → คัดลอก URL มาวาง
+</div>
+
+<div class="form-group">
+  <label class="form-label">ลิงก์ Google Sheets</label>
+  <input class="form-input" id="gsheetUrl" type="url"
+    placeholder="https://docs.google.com/spreadsheets/d/...">
+  <div class="form-hint">วาง URL ของ Google Sheets ได้เลย</div>
+</div>
+
+<!-- Sheet name selector -->
+<div class="form-group" id="gsheetNameGroup" style="display:none">
+  <label class="form-label">เลือก Sheet (แท็บ)</label>
+  <select class="form-input" id="gsheetNameSelect"></select>
+</div>
+
+<div class="form-error" id="gsheetError" style="margin-bottom:8px"></div>
+
+<!-- Preview -->
+<div id="gsheetPreview" style="display:none;background:var(--surface2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--text2)">
+  <div id="gsheetPreviewTxt"></div>
+</div>
+
+<div style="display:flex;gap:8px">
+  <button class="primary-btn" onclick="syncGSheet()" style="flex:1">
+    <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_32dp.png" style="width:16px;height:16px;vertical-align:middle;margin-right:4px">
+    ซิงค์ข้อมูล
+  </button>
+</div>
+<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">
+  ข้อมูลจะถูกดึงมาแสดงตัวอย่าง — กด "บันทึกขึ้น Cloud" เพื่อเผยแพร่
+</div>
+```
+
+  </div>
+</div>
+
 <!-- ══ MODAL: AUTH ══ -->
 
 <div class="modal-overlay" id="authModal">
@@ -1850,6 +1901,143 @@ async function loadDashboard(){
   } catch(e){
     subtitle.textContent = 'โหลดไม่สำเร็จ: '+e.message;
   }
+}
+
+
+// ════ GOOGLE SHEETS SYNC ════
+function openGSheetModal(){
+  openModal('gsheetModal');
+  // โหลด URL ที่บันทึกไว้ (ถ้ามี)
+  const saved = localStorage.getItem('gsheet_url_' + (currentEventId||''));
+  if(saved) document.getElementById('gsheetUrl').value = saved;
+  document.getElementById('gsheetPreview').style.display = 'none';
+  document.getElementById('gsheetError').style.display = 'none';
+  document.getElementById('gsheetNameGroup').style.display = 'none';
+}
+
+function extractSheetId(url){
+  const m = url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+async function syncGSheet(){
+  const url = document.getElementById('gsheetUrl').value.trim();
+  const errEl = document.getElementById('gsheetError');
+  errEl.style.display = 'none';
+
+  if(!url){ errEl.textContent='กรุณาวางลิงก์ Google Sheets'; errEl.style.display='block'; return; }
+
+  const sheetId = extractSheetId(url);
+  if(!sheetId){ errEl.textContent='ลิงก์ไม่ถูกต้อง กรุณาวาง URL ของ Google Sheets'; errEl.style.display='block'; return; }
+
+  showLoading(true, 'กำลังดึงข้อมูลจาก Google Sheets...');
+
+  try {
+    // ดึงข้อมูลผ่าน Google Sheets API (public)
+    const sheetName = document.getElementById('gsheetNameSelect').value || '';
+    const range = sheetName ? `${encodeURIComponent(sheetName)}!A1:Z2000` : 'A1:Z2000';
+    const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY`;
+
+    const res = await fetch(apiUrl);
+    if(!res.ok){
+      // ถ้า API key ไม่ work ลอง CSV export แทน
+      await syncGSheetCSV(sheetId, url);
+      return;
+    }
+    const data = await res.json();
+    if(!data.values||data.values.length<2){
+      showLoading(false);
+      errEl.textContent = 'ไม่พบข้อมูลใน Sheet หรือ Sheet ว่างเปล่า';
+      errEl.style.display='block';
+      return;
+    }
+    processGSheetData(data.values, url);
+  } catch(e){
+    // fallback ใช้ CSV export
+    try {
+      await syncGSheetCSV(sheetId, url);
+    } catch(e2){
+      showLoading(false);
+      errEl.textContent = 'ดึงข้อมูลไม่ได้: ตรวจสอบว่า Sheet เป็น Public แล้วหรือยัง';
+      errEl.style.display='block';
+    }
+  }
+}
+
+async function syncGSheetCSV(sheetId, originalUrl){
+  // ดึงผ่าน CSV export (ไม่ต้องใช้ API key)
+  const gid = (() => {
+    const m = originalUrl.match(/[?&]gid=(\d+)/);
+    return m ? m[1] : '0';
+  })();
+  const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+
+  const res = await fetch(csvUrl);
+  if(!res.ok) throw new Error('ดึง CSV ไม่ได้ กรุณาตั้ง Sheet เป็น Public');
+  const csv = await res.text();
+
+  // แปลง CSV เป็น array
+  const rows = csv.split('\n').map(row => {
+    const result = [];
+    let current = '', inQuote = false;
+    for(let i=0; i<row.length; i++){
+      if(row[i]==='"'){inQuote=!inQuote;}
+      else if(row[i]===','&&!inQuote){result.push(current.trim());current='';}
+      else current+=row[i];
+    }
+    result.push(current.trim());
+    return result;
+  }).filter(r=>r.some(c=>c));
+
+  if(rows.length<2) throw new Error('ไม่พบข้อมูลใน Sheet');
+  processGSheetData(rows, originalUrl);
+}
+
+function processGSheetData(rows, url){
+  const headers = rows[0];
+  const dataRows = rows.slice(1);
+
+  // แปลงเป็น object array เหมือน SheetJS
+  const objRows = dataRows.map(row => {
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = row[i]||''; });
+    return obj;
+  });
+
+  const mapped = objRows.map(mapRow).filter(r=>r.seq&&r.seq!=='-'&&r.name1&&r.name1!=='-');
+  if(!mapped.length){
+    showLoading(false);
+    const errEl = document.getElementById('gsheetError');
+    errEl.textContent = 'ไม่พบข้อมูลผู้เข้าพัก กรุณาตรวจสอบชื่อคอลัมน์ให้ตรงกับ Template';
+    errEl.style.display='block';
+    return;
+  }
+
+  mapped.sort((a,b)=>(parseInt(a.seq)||0)-(parseInt(b.seq)||0));
+  const colors={};
+  [...new Set(mapped.map(g=>g.hotel).filter(h=>h!=='-'))].forEach((h,i)=>colors[h]=PALETTE[i%PALETTE.length]);
+  pendingData={guests:mapped,colors};
+
+  // บันทึก URL ไว้
+  localStorage.setItem('gsheet_url_'+(currentEventId||''), url);
+
+  // preview
+  guestData=mapped; hotelColors=colors;
+  populateFilters(); renderSummary(guestData); renderCards(guestData);
+  document.getElementById('welcomeView').style.display='none';
+  document.getElementById('guestView').style.display='block';
+  const cc=document.getElementById('countChip'); cc.textContent=guestData.length+' รายการ'; cc.style.display='inline';
+  document.getElementById('saveBtn').disabled=false;
+  document.getElementById('adminStatus').textContent=`✅ ซิงค์แล้ว ${mapped.length} รายการ จาก Google Sheets`;
+
+  // แสดง preview ใน modal
+  document.getElementById('gsheetPreview').style.display='block';
+  document.getElementById('gsheetPreviewTxt').innerHTML =
+    `✅ พบข้อมูล <b>${mapped.length}</b> รายการ · <b>${[...new Set(mapped.map(g=>g.hotel).filter(h=>h!=='-'))].length}</b> โรงแรม<br>
+    <span style="color:#64748b">กด ✕ ปิด แล้วกด <b>☁️ บันทึก</b> เพื่อเผยแพร่</span>`;
+
+  showLoading(false);
+  showToast('ซิงค์สำเร็จ! 🎉', `${mapped.length} รายการจาก Google Sheets — กด "บันทึก" เพื่อเผยแพร่`, 'ok');
 }
 
 // ════ HELPERS ════
