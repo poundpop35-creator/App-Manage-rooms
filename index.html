@@ -2196,7 +2196,26 @@ function openPrintPreview(){
   ].filter(Boolean).join(' · ') || 'ทุกคน';
 
   const eventName = document.getElementById('headerTitle').textContent||'งาน';
-  const cards = filtered.map(g => {
+  // ขยาย filtered — พักคู่ออกเป็น 2 ใบ (สลับชื่อหลัก/รูมเมท)
+  const expanded = [];
+  filtered.forEach(g => {
+    expanded.push(g); // ใบที่ 1 — ปกติ
+    if(g.type==='พักคู่' && g.name2 && g.name2!=='-' && !g.name1.includes('ยกเลิก')){
+      // ใบที่ 2 — สลับชื่อรูมเมทเป็นชื่อหลัก
+      expanded.push({
+        ...g,
+        seq: g.seq + 'b',
+        name1: g.name2,
+        dept1: g.dept2,
+        prov1: g.prov2,
+        name2: g.name1,
+        dept2: g.dept1,
+        prov2: g.prov1,
+      });
+    }
+  });
+
+  const cards = expanded.map(g => {
     const cancelled = g.name1.includes('ยกเลิก');
     const isTwin = g.type==='พักคู่';
     const bgColor = cancelled ? '#fee2e2' : isTwin ? '#e0f2fe' : g.type.includes('จ่ายส่วนต่าง') ? '#fef9c3' : '#f0fdf4';
@@ -2264,7 +2283,7 @@ function openPrintPreview(){
 </head><body>
 <div class="page-header">
   <h1>🖨️ สติกเกอร์ผู้เข้าพัก — ${eventName}</h1>
-  <p>รวม ${filtered.length} รายการ (${filterLabel}) · พิมพ์วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</p>
+  <p>รวม ${expanded.length} ใบ (จาก ${filtered.length} รายการ · ${filterLabel}) · พิมพ์วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</p>
 </div>
 <div class="grid">${cards}</div>
 <button class="print-btn no-print" onclick="window.print()">🖨️ พิมพ์ PDF</button>
