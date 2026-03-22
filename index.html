@@ -739,11 +739,12 @@ body{transition:background .3s}
       <div class="hd-title" id="headerTitle">Event App</div>
       <div class="hd-sub"   id="headerSubtitle">รายชื่อผู้เข้าพัก</div>
     </div>
+    <!-- ปุ่มกลาง — หน้าหลัก -->
+    <button onclick="location.href=location.pathname" style="background:#1a56db;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(26,86,219,.35);transition:all .2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='#1e40af';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#1a56db';this.style.transform=''">🏠 หน้าหลัก</button>
     <div class="hd-right">
       <span class="chip chip-green" id="updatedChip" style="display:none"></span>
       <span class="chip chip-blue"  id="countChip"   style="display:none"></span>
       <button class="icon-btn share" id="shareBtn" onclick="openShareModal()" style="display:none">📤 แชร์</button>
-      <button class="icon-btn" onclick="location.href=location.pathname" style="color:#475569" title="กลับหน้าหลัก">← หน้าหลัก</button>
       <button class="icon-btn"      id="loginBtn"  onclick="openAuthModal('login')">🔐 Admin</button>
       <button class="icon-btn warn" id="logoutBtn" style="display:none" onclick="doLogout()">🔓 ออก</button>
     </div>
