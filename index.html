@@ -88,7 +88,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
 /* EVENT SELECTOR */
 .event-landing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;text-align:center;gap:20px}
-.event-landing-icon{font-size:56px}
+.event-landing-icon{font-size:88px}
 .event-landing-title{font-size:22px;font-weight:700}
 .event-landing-sub{font-size:14px;color:var(--text2);max-width:360px;line-height:1.8}
 .event-code-box{display:flex;gap:8px;width:100%;max-width:360px}
@@ -842,7 +842,7 @@ async function sb(path, opts={}) {
       // อัปเดตโลโก้
       const li = document.getElementById('landingIcon');
       if(li){
-        if(d.logoImg) li.innerHTML=`<img src="${d.logoImg}" style="width:56px;height:56px;border-radius:12px;object-fit:cover">`;
+        if(d.logoImg) li.innerHTML=`<img src="${d.logoImg}" style="width:96px;height:96px;border-radius:20px;object-fit:cover;box-shadow:0 4px 16px rgba(0,0,0,.15)">`;
         else if(d.logo) li.textContent = d.logo;
       }
       if(d.appName) document.title = d.appName;
@@ -2152,7 +2152,7 @@ async function saveAppSettings(){
       // อัปเดต landing icon ด้วย
       const li = document.getElementById('landingIcon');
       if(li){
-        if(logoImg) li.innerHTML=`<img src="${logoImg}" style="width:56px;height:56px;border-radius:12px;object-fit:cover">`;
+        if(logoImg) li.innerHTML=`<img src="${logoImg}" style="width:96px;height:96px;border-radius:20px;object-fit:cover;box-shadow:0 4px 16px rgba(0,0,0,.15)">`;
         else li.textContent=logo;
       }
     }
