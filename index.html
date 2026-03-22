@@ -429,6 +429,7 @@ body{transition:background .3s}
       <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
         <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">✨ สร้างงานใหม่</button>
         <button onclick="openUserModal()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">👥 จัดการ Admin</button>
+        <button onclick="openAppSettingsModal()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🎨 ตั้งค่าแอพ</button>
       </div>
     </div>
 
@@ -503,6 +504,40 @@ body{transition:background .3s}
     <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">
       ข้อมูลจะถูกดึงมาแสดงตัวอย่าง — กด "บันทึกขึ้น Cloud" เพื่อเผยแพร่
     </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: APP SETTINGS (from dashboard) ══ -->
+<div class="modal-overlay" id="appSettingsModal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('appSettingsModal')">✕</button>
+    <div class="modal-icon">🎨</div>
+    <div class="modal-title">ตั้งค่าแอพ</div>
+    <div class="modal-sub">โลโก้และชื่อที่แสดงหน้าหลัก</div>
+
+    <!-- โลโก้ preview -->
+    <div style="text-align:center;margin-bottom:16px">
+      <div id="appSettingsLogoPreview" style="width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,#1a56db,#0891b2);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 10px;overflow:hidden;box-shadow:0 4px 12px rgba(26,86,219,.25)">🏨</div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button onclick="document.getElementById('appLogoFileInput').click()" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:6px 14px;border-radius:7px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer">📷 อัปโหลดรูป</button>
+        <button onclick="clearAppLogo()" style="background:#fff;border:1.5px solid #fecaca;color:#dc2626;padding:6px 14px;border-radius:7px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer">✕ ล้างรูป</button>
+      </div>
+      <input type="file" id="appLogoFileInput" accept="image/*" style="display:none">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">โลโก้ Emoji (ถ้าไม่ใช้รูป)</label>
+      <input class="form-input" id="appSettingsEmoji" type="text" placeholder="🏨" maxlength="4" style="font-size:20px;text-align:center">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ชื่อแอพ</label>
+      <input class="form-input" id="appSettingsName" type="text" placeholder="Guest Event App">
+    </div>
+    <div class="form-group">
+      <label class="form-label">คำบรรยาย</label>
+      <input class="form-input" id="appSettingsSub" type="text" placeholder="ใส่รหัสงาน เพื่อดูรายชื่อผู้เข้าพัก">
+    </div>
+    <button class="primary-btn" onclick="saveAppSettings()">💾 บันทึก</button>
   </div>
 </div>
 
@@ -2039,6 +2074,77 @@ async function copyQR(){
     downloadQR();
     showToast('คัดลอกไม่ได้ — ดาวน์โหลดแทนให้แล้ว','','ok');
   }
+}
+
+
+// ════ APP SETTINGS (from dashboard) ════
+async function openAppSettingsModal(){
+  try {
+    const gs = await sb('/rest/v1/app_settings?select=data&limit=1');
+    const d = (gs&&gs.length) ? gs[0].data : {};
+    document.getElementById('appSettingsEmoji').value = d.logo||'🏨';
+    document.getElementById('appSettingsName').value  = d.appName||'Guest Event App';
+    document.getElementById('appSettingsSub').value   = d.appSub||'ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก';
+    const prev = document.getElementById('appSettingsLogoPreview');
+    delete prev.dataset.img;
+    if(d.logoImg){ prev.innerHTML=`<img src="${d.logoImg}" style="width:72px;height:72px;object-fit:cover;border-radius:16px">`; prev.dataset.img=d.logoImg; }
+    else prev.textContent = d.logo||'🏨';
+  } catch(e){}
+  openModal('appSettingsModal');
+}
+
+function clearAppLogo(){
+  const prev = document.getElementById('appSettingsLogoPreview');
+  delete prev.dataset.img;
+  prev.textContent = document.getElementById('appSettingsEmoji').value||'🏨';
+  document.getElementById('appLogoFileInput').value='';
+}
+
+document.getElementById('appLogoFileInput').addEventListener('change', function(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const b64 = ev.target.result;
+    const prev = document.getElementById('appSettingsLogoPreview');
+    prev.innerHTML = `<img src="${b64}" style="width:72px;height:72px;object-fit:cover;border-radius:16px">`;
+    prev.dataset.img = b64;
+    document.getElementById('appSettingsEmoji').value = '';
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('appSettingsEmoji').addEventListener('input', function(){
+  const prev = document.getElementById('appSettingsLogoPreview');
+  if(!prev.dataset.img) prev.textContent = this.value||'🏨';
+});
+
+async function saveAppSettings(){
+  const prev    = document.getElementById('appSettingsLogoPreview');
+  const logoImg = prev.dataset.img||null;
+  const logo    = document.getElementById('appSettingsEmoji').value.trim()||'🏨';
+  const appName = document.getElementById('appSettingsName').value.trim()||'Guest Event App';
+  const appSub  = document.getElementById('appSettingsSub').value.trim()||'ใส่รหัสงาน เพื่อดูรายชื่อผู้เข้าพัก';
+  showLoading(true,'กำลังบันทึก...');
+  try {
+    const gs = await sb('/rest/v1/app_settings?select=id,data&limit=1');
+    if(gs&&gs.length){
+      const cd = gs[0].data||{};
+      const payload = {...cd, logo, appName, appSub};
+      if(logoImg) payload.logoImg = logoImg; else delete payload.logoImg;
+      await sb(`/rest/v1/app_settings?id=eq.${gs[0].id}`,{method:'PATCH',body:JSON.stringify({data:payload})});
+      applyLandingSettings(appName, appSub);
+      // อัปเดต landing icon ด้วย
+      const li = document.getElementById('landingIcon');
+      if(li){
+        if(logoImg) li.innerHTML=`<img src="${logoImg}" style="width:56px;height:56px;border-radius:12px;object-fit:cover">`;
+        else li.textContent=logo;
+      }
+    }
+    showLoading(false);
+    closeModal('appSettingsModal');
+    showToast('บันทึกสำเร็จ ✅','ชื่อแอพและโลโก้อัปเดตแล้ว','ok');
+    await loadDashboard(); // refresh dashboard
+  } catch(e){ showLoading(false); showToast('บันทึกไม่สำเร็จ',e.message,'err'); }
 }
 
 // ════ HELPERS ════
