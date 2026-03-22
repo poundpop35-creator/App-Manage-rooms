@@ -1041,6 +1041,7 @@ function showApp(updatedAt){
   // แสดงปุ่มลบงานถ้า login อยู่
   const dlItem=document.getElementById('downloadExcelItem');
   if(dlItem) dlItem.style.display=guestData.length?'':'none';
+  const pb=document.getElementById('printBtn');if(pb)pb.style.display=guestData.length?'':'none';
   const dei2=document.getElementById('deleteEventItem');
   if(dei2&&currentUser&&currentEventId) dei2.style.display='';
   document.getElementById('landingModal').classList.remove('show');
@@ -1381,6 +1382,7 @@ function loadExcel(file){
       guestData=mapped;hotelColors=colors;
       populateFilters();renderSummary(guestData);renderCards(guestData);
       const dlItem2=document.getElementById('downloadExcelItem');if(dlItem2)dlItem2.style.display='';
+      const pb2=document.getElementById('printBtn');if(pb2)pb2.style.display='';
       document.getElementById('welcomeView').style.display='none';document.getElementById('guestView').style.display='block';
       const cc=document.getElementById('countChip');cc.textContent=guestData.length+' รายการ';cc.style.display='inline';
       showToast('โหลดสำเร็จ',`${mapped.length} รายการ — กด "บันทึกขึ้น Cloud"`,'ok');
@@ -2164,6 +2166,106 @@ async function saveAppSettings(){
     showToast('บันทึกสำเร็จ ✅','ชื่อแอพและโลโก้อัปเดตแล้ว','ok');
     await loadDashboard(); // refresh dashboard
   } catch(e){ showLoading(false); showToast('บันทึกไม่สำเร็จ',e.message,'err'); }
+}
+
+
+// ════ PRINT STICKER ════
+function openPrintPreview(){
+  if(!guestData||!guestData.length){showToast('ไม่มีข้อมูล','','err');return;}
+
+  // ใช้ข้อมูลที่ filter อยู่ตอนนี้ (ถ้ามี filter) — ไม่ใช้ทั้งหมด
+  const s = document.getElementById('searchInput').value.toLowerCase().trim();
+  const p = document.getElementById('provinceFilter').value;
+  const h = document.getElementById('hotelFilter').value;
+  const filtered = guestData.filter(g => {
+    if(p&&g.prov1!==p) return false;
+    if(h&&g.hotel!==h) return false;
+    if(s){const b=[g.seq,g.name1,g.dept1,g.prov1,g.name2,g.dept2,g.hotel,g.room,g.car,g.type].join(' ').toLowerCase();if(!b.includes(s))return false;}
+    return true;
+  });
+  if(!filtered.length){showToast('ไม่มีข้อมูลที่จะพิมพ์','กรุณาตรวจสอบ filter','err');return;}
+
+  const filterLabel = [
+    p?`จังหวัด: ${p}`:'',
+    h?`โรงแรม: ${h}`:'',
+    s?`ค้นหา: "${s}"`:'',
+  ].filter(Boolean).join(' · ') || 'ทุกคน';
+
+  const eventName = document.getElementById('headerTitle').textContent||'งาน';
+  const cards = filtered.map(g => {
+    const cancelled = g.name1.includes('ยกเลิก');
+    const isTwin = g.type==='พักคู่';
+    const bgColor = cancelled ? '#fee2e2' : isTwin ? '#e0f2fe' : g.type.includes('จ่ายส่วนต่าง') ? '#fef9c3' : '#f0fdf4';
+    const typeLabel = cancelled ? 'ยกเลิก' : g.type;
+    const roommate = isTwin && g.name2 && g.name2!=='-' ? `
+      <div style="background:#fff;border:1px dashed #7dd3fc;border-radius:6px;padding:6px 8px;margin-top:6px;font-size:10px">
+        <div style="color:#0891b2;font-weight:700;font-size:9px;margin-bottom:2px">👥 รูมเมท</div>
+        <div style="font-weight:700;font-size:11px">${g.name2}</div>
+        <div style="color:#64748b">${g.dept2}</div>
+      </div>` : '';
+    return `
+    <div style="border:2px solid #94a3b8;border-radius:10px;padding:10px 12px;background:${bgColor};page-break-inside:avoid;position:relative;font-family:'Sarabun',sans-serif">
+      <!-- badge -->
+      <div style="position:absolute;top:8px;right:8px;background:#1e293b;color:#fff;font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700">#${g.seq} ${typeLabel}</div>
+      <!-- ชื่อ -->
+      <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:2px;padding-right:60px;line-height:1.3">${g.name1}</div>
+      <div style="font-size:10px;color:#475569;margin-bottom:6px">${g.dept1} · ${g.prov1}</div>
+      ${roommate}
+      <!-- ข้อมูลหลัก -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px">
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 7px">
+          <div style="font-size:8px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.3px">🏨 โรงแรม</div>
+          <div style="font-size:11px;font-weight:700;color:#1a56db">${g.hotel}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 7px">
+          <div style="font-size:8px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.3px">🔑 ห้อง</div>
+          <div style="font-size:11px;font-weight:700;color:${g.room==='รอเช็คอิน'?'#b45309':'#0f172a'}">${g.room}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 7px">
+          <div style="font-size:8px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.3px">🚌 รถ</div>
+          <div style="font-size:11px;font-weight:600">${g.car}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 7px">
+          <div style="font-size:8px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.3px">⏰ เวลา</div>
+          <div style="font-size:11px;font-weight:700;color:#dc2626">${g.time}</div>
+        </div>
+      </div>
+      ${g.coord2&&g.coord2!=='-'?`<div style="margin-top:5px;font-size:9px;color:#475569">🚗 คนขับ: <b>${g.coord2}</b>${g.driverPhone&&g.driverPhone!=='-'?' · '+g.driverPhone:''}</div>`:''}
+      <!-- ชื่องาน -->
+      <div style="margin-top:6px;padding-top:5px;border-top:1px solid rgba(0,0,0,.1);font-size:8px;color:#94a3b8;text-align:right">${eventName}</div>
+    </div>`;
+  }).join('');
+
+  const printWin = window.open('','_blank','width=900,height=700');
+  printWin.document.write(`<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>สติกเกอร์ — ${eventName}</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Sarabun',sans-serif;background:#fff;padding:0}
+  .page-header{text-align:center;padding:12px;border-bottom:2px solid #e2e8f0;margin-bottom:16px}
+  .page-header h1{font-size:18px;font-weight:800;color:#0f172a}
+  .page-header p{font-size:12px;color:#64748b;margin-top:2px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+  @media print{
+    body{padding:0}
+    .no-print{display:none!important}
+    .grid{gap:8px;padding:8px}
+    @page{size:A4;margin:10mm}
+  }
+  .print-btn{position:fixed;bottom:20px;right:20px;background:#1a56db;color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:15px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(26,86,219,.4);z-index:99}
+</style>
+</head><body>
+<div class="page-header">
+  <h1>🖨️ สติกเกอร์ผู้เข้าพัก — ${eventName}</h1>
+  <p>รวม ${filtered.length} รายการ (${filterLabel}) · พิมพ์วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</p>
+</div>
+<div class="grid">${cards}</div>
+<button class="print-btn no-print" onclick="window.print()">🖨️ พิมพ์ PDF</button>
+</body></html>`);
+  printWin.document.close();
 }
 
 // ════ HELPERS ════
