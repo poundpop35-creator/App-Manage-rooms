@@ -1092,10 +1092,14 @@ function showAdminUI(){
   document.getElementById('adminBar').classList.add('show');
   document.getElementById('loginBtn').style.display='none';document.getElementById('logoutBtn').style.display='';
   document.getElementById('adminRoleLbl').textContent=isSuper?`⚙️ Super Admin`:`⚙️ ${currentUser.username}`;
-  const mu=document.getElementById('manageUsersItem');
-  if(mu) mu.style.display=isSuper?'':'none';
-  const dei=document.getElementById('deleteEventItem');
-  if(dei&&currentEventId) dei.style.display='';
+  // Super Admin only buttons
+  ['superSep','manageUsersBtn'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=isSuper?'':'none';
+  });
+  // ปุ่มลบงาน
+  const deleteBtn=document.getElementById('deleteEventBtn');
+  if(deleteBtn&&currentEventId) deleteBtn.style.display='';
 }
 
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
