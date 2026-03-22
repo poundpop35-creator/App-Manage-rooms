@@ -584,11 +584,16 @@ body{transition:background .3s}
       </div>
     </div>
     <canvas id="shareQR" class="share-qr" width="160" height="160"></canvas>
-    <div class="share-methods">
+    <!-- ปุ่มใต้ QR -->
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+      <button onclick="downloadQR()" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:7px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s" onmouseover="this.style.borderColor='#1a56db';this.style.color='#1a56db'" onmouseout="this.style.borderColor='#94a3b8';this.style.color='#1e293b'">⬇️ ดาวน์โหลด QR</button>
+      <button onclick="copyQR()" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:7px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s" onmouseover="this.style.borderColor='#1a56db';this.style.color='#1a56db'" onmouseout="this.style.borderColor='#94a3b8';this.style.color='#1e293b'">📋 คัดลอก QR</button>
+    </div>
+    <div class="share-methods" style="margin-top:10px">
       <button class="share-method-btn" onclick="shareViaLine()">💬 แชร์ผ่าน LINE</button>
       <button class="share-method-btn" onclick="shareNative()">📱 แชร์อื่นๆ</button>
     </div>
-    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px">
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">
       QR Code: ให้ผู้เข้าพักสแกนเพื่อเปิดลิงก์
     </div>
   </div>
@@ -2005,6 +2010,33 @@ function processGSheetData(rows, url){
 
   showLoading(false);
   showToast('ซิงค์สำเร็จ! 🎉', `${mapped.length} รายการจาก Google Sheets — กด "บันทึก" เพื่อเผยแพร่`, 'ok');
+}
+
+
+function downloadQR(){
+  const canvas = document.getElementById('shareQR');
+  const eventName = document.getElementById('headerTitle').textContent || currentEventId || 'event';
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `QRCode_${eventName}.png`;
+  a.click();
+  showToast('ดาวน์โหลด QR Code แล้ว ✅','','ok');
+}
+
+async function copyQR(){
+  const canvas = document.getElementById('shareQR');
+  try {
+    canvas.toBlob(async blob => {
+      await navigator.clipboard.write([
+        new ClipboardItem({'image/png': blob})
+      ]);
+      showToast('คัดลอก QR Code แล้ว ✅','','ok');
+    });
+  } catch(e){
+    // fallback — ดาวน์โหลดแทน
+    downloadQR();
+    showToast('คัดลอกไม่ได้ — ดาวน์โหลดแทนให้แล้ว','','ok');
+  }
 }
 
 // ════ HELPERS ════
