@@ -2221,40 +2221,40 @@ function openPrintPreview(){
     const bgColor = cancelled ? '#fee2e2' : isTwin ? '#e0f2fe' : g.type.includes('จ่ายส่วนต่าง') ? '#fef9c3' : '#f0fdf4';
     const typeLabel = cancelled ? 'ยกเลิก' : g.type;
     const roommate = isTwin && g.name2 && g.name2!=='-' ? `
-      <div style="background:#fff;border:1px dashed #7dd3fc;border-radius:4px;padding:3px 5px;margin-top:3px;font-size:8px">
-        <div style="color:#0891b2;font-weight:700;font-size:7px;margin-bottom:1px">👥 รูมเมท</div>
-        <div style="font-weight:700;font-size:9px">${g.name2}</div>
-        <div style="color:#64748b;font-size:7px">${g.dept2}</div>
+      <div style="background:#fff;border:1px dashed #7dd3fc;border-radius:6px;padding:6px 8px;margin-top:5px">
+        <div style="color:#0891b2;font-weight:700;font-size:9px;margin-bottom:2px">👥 รูมเมท</div>
+        <div style="font-weight:700;font-size:12px">${g.name2}</div>
+        <div style="color:#64748b;font-size:10px">${g.dept2}</div>
       </div>` : '';
     return `
-    <div style="border:1.5px solid #94a3b8;border-radius:8px;padding:7px 8px;background:${bgColor};page-break-inside:avoid;position:relative;font-family:'Sarabun',sans-serif;font-size:11px">
+    <div style="border:1.5px solid #94a3b8;border-radius:10px;padding:10px 12px;background:${bgColor};page-break-inside:avoid;position:relative;font-family:'Sarabun',sans-serif">
       <!-- badge -->
-      <div style="position:absolute;top:5px;right:5px;background:#1e293b;color:#fff;font-size:7px;padding:1px 5px;border-radius:20px;font-weight:700">#${g.seq} ${typeLabel}</div>
+      <div style="position:absolute;top:7px;right:7px;background:#1e293b;color:#fff;font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700">#${g.seq} ${typeLabel}</div>
       <!-- ชื่อ -->
-      <div style="font-size:12px;font-weight:800;color:#0f172a;margin-bottom:1px;padding-right:50px;line-height:1.3">${g.name1}</div>
-      <div style="font-size:8px;color:#475569;margin-bottom:4px;line-height:1.3">${g.dept1} · ${g.prov1}</div>
+      <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:2px;padding-right:60px;line-height:1.3">${g.name1}</div>
+      <div style="font-size:11px;color:#475569;margin-bottom:6px">${g.dept1} · ${g.prov1}</div>
       ${roommate}
       <!-- ข้อมูลหลัก -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:4px">
-        <div style="background:rgba(255,255,255,.7);border-radius:4px;padding:3px 5px">
-          <div style="font-size:7px;color:#64748b;font-weight:600">🏨 โรงแรม</div>
-          <div style="font-size:9px;font-weight:700;color:#1a56db;line-height:1.3">${g.hotel}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px">
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
+          <div style="font-size:8px;color:#64748b;font-weight:600">🏨 โรงแรม</div>
+          <div style="font-size:11px;font-weight:700;color:#1a56db;line-height:1.3">${g.hotel}</div>
         </div>
-        <div style="background:rgba(255,255,255,.7);border-radius:4px;padding:3px 5px">
-          <div style="font-size:7px;color:#64748b;font-weight:600">🔑 ห้อง</div>
-          <div style="font-size:9px;font-weight:700;color:${g.room==='รอเช็คอิน'?'#b45309':'#0f172a'}">${g.room}</div>
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
+          <div style="font-size:8px;color:#64748b;font-weight:600">🔑 ห้อง</div>
+          <div style="font-size:11px;font-weight:700;color:${g.room==='รอเช็คอิน'?'#b45309':'#0f172a'}">${g.room}</div>
         </div>
-        <div style="background:rgba(255,255,255,.7);border-radius:4px;padding:3px 5px">
-          <div style="font-size:7px;color:#64748b;font-weight:600">🚌 รถ</div>
-          <div style="font-size:9px;font-weight:600">${g.car}</div>
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
+          <div style="font-size:8px;color:#64748b;font-weight:600">🚌 รถ</div>
+          <div style="font-size:11px;font-weight:600">${g.car}</div>
         </div>
-        <div style="background:rgba(255,255,255,.7);border-radius:4px;padding:3px 5px">
-          <div style="font-size:7px;color:#64748b;font-weight:600">⏰ เวลา</div>
-          <div style="font-size:9px;font-weight:700;color:#dc2626">${g.time}</div>
+        <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
+          <div style="font-size:8px;color:#64748b;font-weight:600">⏰ เวลา</div>
+          <div style="font-size:11px;font-weight:700;color:#dc2626">${g.time}</div>
         </div>
       </div>
-      ${g.coord2&&g.coord2!=='-'?`<div style="margin-top:3px;font-size:7px;color:#475569">🚗 ${g.coord2}${g.driverPhone&&g.driverPhone!=='-'?' · '+g.driverPhone:''}</div>`:''}
-      <div style="margin-top:4px;padding-top:3px;border-top:1px solid rgba(0,0,0,.1);font-size:7px;color:#94a3b8;text-align:right">${eventName}</div>
+      ${g.coord2&&g.coord2!=='-'?`<div style="margin-top:5px;font-size:10px;color:#475569">🚗 ${g.coord2}${g.driverPhone&&g.driverPhone!=='-'?' · '+g.driverPhone:''}</div>`:''}
+      <div style="margin-top:6px;padding-top:5px;border-top:1px solid rgba(0,0,0,.1);font-size:9px;color:#94a3b8;text-align:right">${eventName}</div>
     </div>`;
   }).join('');
 
@@ -2270,12 +2270,12 @@ function openPrintPreview(){
   .page-header{text-align:center;padding:12px;border-bottom:2px solid #e2e8f0;margin-bottom:16px}
   .page-header h1{font-size:18px;font-weight:800;color:#0f172a}
   .page-header p{font-size:12px;color:#64748b;margin-top:2px}
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}
   @media print{
     body{padding:0}
     .no-print{display:none!important}
-    .grid{gap:6px;padding:6px}
-    @page{size:A4;margin:8mm}
+    .grid{gap:8px;padding:8px}
+    @page{size:A4;margin:10mm}
   }
   .print-btn{position:fixed;bottom:20px;right:20px;background:#1a56db;color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:15px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(26,86,219,.4);z-index:99}
 </style>
