@@ -88,7 +88,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
 /* EVENT SELECTOR */
 .event-landing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;text-align:center;gap:20px}
-.event-landing-icon{font-size:88px}
+.event-landing-icon{font-size:88px;transition:all .2s}
 .event-landing-title{font-size:22px;font-weight:700}
 .event-landing-sub{font-size:14px;color:var(--text2);max-width:360px;line-height:1.8}
 .event-code-box{display:flex;gap:8px;width:100%;max-width:360px}
@@ -244,6 +244,7 @@ body{transition:background .3s}
 .theme-swatch.active{border-color:#1a56db;box-shadow:0 0 0 2px #fff,0 0 0 3px #1a56db}
 .theme-swatch:hover{transform:scale(1.08)}
 
+@media(min-width:1024px){.event-landing-icon{font-size:120px}.event-landing-icon img{width:140px!important;height:140px!important;border-radius:28px!important}}
 @media(max-width:640px){
   .header,.main,.admin-bar{padding-left:14px;padding-right:14px}
   .cards-grid{grid-template-columns:1fr}
@@ -842,7 +843,7 @@ async function sb(path, opts={}) {
       // อัปเดตโลโก้
       const li = document.getElementById('landingIcon');
       if(li){
-        if(d.logoImg) li.innerHTML=`<img src="${d.logoImg}" style="width:96px;height:96px;border-radius:20px;object-fit:cover;box-shadow:0 4px 16px rgba(0,0,0,.15)">`;
+        if(d.logoImg) li.innerHTML=`<img src="${d.logoImg}" style="width:clamp(96px,10vw,140px);height:clamp(96px,10vw,140px);border-radius:clamp(20px,2vw,28px);object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.18)">`;
         else if(d.logo) li.textContent = d.logo;
       }
       if(d.appName) document.title = d.appName;
@@ -2152,7 +2153,7 @@ async function saveAppSettings(){
       // อัปเดต landing icon ด้วย
       const li = document.getElementById('landingIcon');
       if(li){
-        if(logoImg) li.innerHTML=`<img src="${logoImg}" style="width:96px;height:96px;border-radius:20px;object-fit:cover;box-shadow:0 4px 16px rgba(0,0,0,.15)">`;
+        if(logoImg) li.innerHTML=`<img src="${logoImg}" style="width:clamp(96px,10vw,140px);height:clamp(96px,10vw,140px);border-radius:clamp(20px,2vw,28px);object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.18)">`;
         else li.textContent=logo;
       }
     }
