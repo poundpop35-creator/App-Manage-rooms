@@ -197,9 +197,9 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .guest-org{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .prov-chip{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:10px;padding:1px 6px;border-radius:4px}
 .rm-box{background:#f0f9ff;border:1px dashed #7dd3fc;border-radius:var(--r);padding:9px 12px;margin:8px 14px}
-.rm-lbl{font-size:10px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
-.rm-name{font-size:13px;font-weight:600}
-.rm-org{font-size:11px;color:var(--text2);margin-top:1px}
+.rm-lbl{font-size:10px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.rm-name{font-size:16px;font-weight:700;color:#0f172a}
+.rm-org{font-size:12px;color:var(--text2);margin-top:2px}
 .card-info{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#fdfefe}
 .ci{display:flex;flex-direction:column;gap:2px}
 .ci.full{grid-column:1/-1}
@@ -1427,7 +1427,7 @@ function buildCard(g){
   const badge=ic?'<span class="type-badge type-cancel">ยกเลิกห้อง</span>':g.type==='พักเดี่ยว'?'<span class="type-badge type-single">พักเดี่ยว</span>':it?'<span class="type-badge type-twin">พักคู่</span>':g.type.includes('จ่ายส่วนต่าง')?'<span class="type-badge type-spay">เดี่ยว+ส่วนต่าง</span>':`<span class="type-badge">${g.type}</span>`;
   const rc=(g.room==='รอเช็คอิน'||g.room==='รอ'||g.room==='-')?'waiting':'';
   const rd=g.room==='รอ'?'รอเช็คอิน':g.room;const hc=hotelColors[g.hotel]||'#64748b';
-  const rm=(it&&g.name2&&g.name2!=='-')?`<div class="rm-box"><div class="rm-lbl">👥 ผู้เข้าพักร่วม</div><div class="rm-name">${g.name2}</div><div class="rm-org">${g.dept2} · ${g.prov2}</div></div>`:'';
+  const rm=(it&&g.name2&&g.name2!=='-')?`<div class="rm-box"><div class="rm-lbl">👥 ผู้เข้าพักร่วม (รูมเมท)</div><div class="rm-name" style="font-size:16px;font-weight:700;color:#0f172a">${g.name2}</div><div class="rm-org">${g.dept2} · ${g.prov2}</div></div>`:'';
   const phoneRaw=g.phone!=='-'?g.phone.replace(/[^0-9]/g,''):'';
   const phoneLink=phoneRaw?`<a class="phone-btn" href="tel:${phoneRaw}">📞 ${g.phone}</a>`:'';
   const footer=(g.coord1!=='-'||g.coord2!=='-'||phoneLink)?`<div class="card-footer">${g.coord1!=='-'?`<div class="cf-row"><span class="cf-lbl">🏨 ประสานงานโรงแรม</span><span class="cf-val">${g.coord1}</span></div>`:''} ${g.coord2!=='-'?`<div class="cf-row"><span class="cf-lbl">🏢 ประสานงานกรม</span><span class="cf-val">${g.coord2}</span></div>`:''} ${phoneLink?`<div class="cf-row"><span class="cf-lbl">เบอร์ติดต่อ</span>${phoneLink}</div>`:''}</div>`:'';
