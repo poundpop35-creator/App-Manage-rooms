@@ -246,6 +246,8 @@ body{transition:background .3s}
 
 @media(min-width:1024px){.event-landing-icon{font-size:120px}.event-landing-icon img{width:140px!important;height:140px!important;border-radius:28px!important}}
 @media(max-width:640px){
+#dashBtnsDesktop{display:none!important}
+
   .header,.main,.admin-bar{padding-left:14px;padding-right:14px}
   .cards-grid{grid-template-columns:1fr}
   .card-info{grid-template-columns:1fr}
@@ -501,8 +503,8 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: SUPER ADMIN DASHBOARD ══ -->
-<div class="modal-overlay" id="dashboardModal" style="align-items:flex-start;padding:0;background:var(--bg);z-index:150">
-  <div style="width:100%;min-height:100vh;background:var(--bg);overflow-y:auto">
+<div class="modal-overlay" id="dashboardModal" style="align-items:flex-start;padding:0;background:var(--bg);z-index:150;overflow-y:auto">
+  <div style="width:100%;min-height:100vh;background:var(--bg)">
 
     <!-- Dashboard Header -->
     <div style="background:#fff;border-bottom:1.5px solid #d1d9e6;padding:16px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;box-shadow:0 1px 4px rgba(0,0,0,.08)">
@@ -511,12 +513,26 @@ body{transition:background .3s}
         <div style="font-size:16px;font-weight:800;color:#0f172a" id="dashboardTitle">Dashboard</div>
         <div style="font-size:12px;color:#64748b" id="dashboardSubtitle">ภาพรวมทุกงาน</div>
       </div>
-      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-        <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">✨ สร้างงานใหม่</button>
-        <button onclick="openModal('helpModal')" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">📖 คู่มือการใช้งาน</button>
-        <button onclick="openUserModalFromDash()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">👥 จัดการ Admin</button>
-        <button onclick="openAppSettingsFromDash()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;display:none">🎨 ตั้งค่าแอพ</button>
-        <button onclick="doLogout()" style="background:#fff;border:1.5px solid #fecaca;color:#dc2626;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🔓 ออกจากระบบ</button>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <!-- Desktop -->
+        <div id="dashBtnsDesktop" style="display:flex;gap:8px">
+          <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">✨ สร้างงานใหม่</button>
+          <button onclick="openModal('helpModal')" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">📖 คู่มือ</button>
+          <button onclick="openUserModalFromDash()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">👥 Admin</button>
+          <button onclick="openAppSettingsFromDash()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;display:none">🎨 ตั้งค่าแอพ</button>
+          <button onclick="doLogout()" style="background:#fff;border:1.5px solid #fecaca;color:#dc2626;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">🔓 ออก</button>
+        </div>
+        <!-- Mobile ⋮ -->
+        <div style="position:relative" id="dashMobileWrap">
+          <button onclick="toggleDashMenu(event)" style="background:#f1f5f9;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 13px;border-radius:8px;font-size:20px;cursor:pointer;line-height:1">⋮</button>
+          <div id="dashMobileMenu" style="display:none;position:fixed;right:12px;top:70px;background:#fff;border:1.5px solid #d1d9e6;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:300;min-width:200px;overflow:hidden">
+            <button onclick="closeDashMenu();openCreateEventFromDash()" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#1e293b">✨ สร้างงานใหม่</button>
+            <button onclick="closeDashMenu();openModal('helpModal')" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#1e293b">📖 คู่มือการใช้งาน</button>
+            <button onclick="closeDashMenu();openUserModalFromDash()" id="dashManageAdminBtnM" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#7c3aed">👥 จัดการ Admin</button>
+            <button onclick="closeDashMenu();openAppSettingsFromDash()" id="dashAppSettingsBtnM" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#1e293b;display:none">🎨 ตั้งค่าแอพ</button>
+            <button onclick="closeDashMenu();doLogout()" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;color:#dc2626">🔓 ออกจากระบบ</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1921,10 +1937,8 @@ async function loadDashboard(){
     // ปรับ title และซ่อน/แสดงปุ่มตาม role
     const dashTitle = document.getElementById('dashboardTitle');
     if(dashTitle) dashTitle.textContent = isSuper ? 'Super Admin Dashboard' : 'งานของฉัน';
-    const manageBtn = document.getElementById('dashManageAdminBtn');
-    if(manageBtn) manageBtn.style.display = isSuper ? '' : 'none';
-    const appSettingsBtn = document.getElementById('dashAppSettingsBtn');
-    if(appSettingsBtn) appSettingsBtn.style.display = isSuper ? '' : 'none';
+    ['dashManageAdminBtn','dashManageAdminBtnM'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isSuper?'':'none';});
+    ['dashAppSettingsBtn','dashAppSettingsBtnM'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isSuper?'':'none';});
 
     // โหลด events + admins พร้อมกัน
     const eventsUrl = isSuper
@@ -2416,6 +2430,11 @@ function openCreateEventFromDash(){
   document.getElementById('createEventErr').style.display='none';
   openModal('createEventModal');
 }
+
+
+function toggleDashMenu(e){e.stopPropagation();const m=document.getElementById('dashMobileMenu');m.style.display=m.style.display==='none'?'block':'none';}
+function closeDashMenu(){const m=document.getElementById('dashMobileMenu');if(m)m.style.display='none';}
+document.addEventListener('click',e=>{const w=document.getElementById('dashMobileWrap');if(w&&!w.contains(e.target))closeDashMenu();});
 
 // ════ HELPERS ════
 function showLoading(show,txt='กำลังโหลด...'){document.getElementById('loadingTxt').textContent=txt;document.getElementById('loadingOverlay').classList.toggle('show',show);}
