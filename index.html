@@ -702,6 +702,11 @@ body{transition:background .3s}
       <label class="form-label">คำบรรยาย</label>
       <input class="form-input" id="newEventSub" type="text" placeholder="เช่น รายชื่อผู้เข้าพักและรถรับส่ง">
     </div>
+    <div class="form-group">
+      <label class="form-label">📅 วันที่จัดงาน</label>
+      <input class="form-input" id="newEventDate" type="date">
+      <div class="form-hint">ใช้แยกหมวดหมู่ตามเดือนใน Dashboard (ไม่บังคับ)</div>
+    </div>
     <div id="createEventErr" style="display:none;color:#dc2626;font-size:13px;margin-bottom:8px;font-family:Sarabun,sans-serif"></div>
     <button class="primary-btn teal" onclick="doCreateEvent()">✨ สร้างงาน</button>
   </div>
@@ -802,6 +807,10 @@ body{transition:background .3s}
       <div class="form-group" style="margin-bottom:0">
         <label class="form-label">คำบรรยาย</label>
         <input class="form-input" id="settingsSubtitle" type="text" placeholder="เช่น รายชื่อผู้เข้าพักและรถรับส่ง">
+      </div>
+      <div class="form-group" style="margin-bottom:0;margin-top:10px">
+        <label class="form-label">📅 วันที่จัดงาน</label>
+        <input class="form-input" id="settingsEventDate" type="date">
       </div>
     </div>
 
@@ -1109,7 +1118,8 @@ async function doCreateEvent(){
     if (exist&&exist.length){showLoading(false);err.textContent='รหัสงานนี้ถูกใช้แล้ว กรุณาใช้รหัสอื่น';err.classList.add('show');return;}
 
     // Create event
-    await sb('/rest/v1/events',{method:'POST',body:JSON.stringify({id,name,subtitle:sub||'รายชื่อผู้เข้าพัก',logo:'🏨',created_by:currentUser.username})});
+    const evDate=document.getElementById('newEventDate')?.value||null;
+    await sb('/rest/v1/events',{method:'POST',body:JSON.stringify({id,name,subtitle:sub||'รายชื่อผู้เข้าพัก',logo:'🏨',created_by:currentUser.username,event_date:evDate})});
 
     // Create guest row for this event
     await sb('/rest/v1/guests',{method:'POST',body:JSON.stringify({event_id:id,data:{guests:[],colors:{},updatedAt:null}})});
@@ -1426,6 +1436,7 @@ async function openSettingsModal(){
     document.getElementById('settingsLogo').value    =ev.logo||'🏨';
     document.getElementById('settingsTitle').value   =ev.name||'';
     document.getElementById('settingsSubtitle').value=ev.subtitle||'';
+    if(document.getElementById('settingsEventDate'))document.getElementById('settingsEventDate').value=ev.event_date||'';
     // load global app settings
     try {
       const gs=await sb('/rest/v1/app_settings?select=data&limit=1');
@@ -1455,7 +1466,8 @@ async function saveSettings(){
   const subtitle=document.getElementById('settingsSubtitle').value.trim();
   showLoading(true,'กำลังบันทึก...');
   try {
-    const payload={logo,name,subtitle};if(logoImg)payload.logo_img=logoImg;
+    const evDateEdit=document.getElementById('settingsEventDate')?.value||null;
+    const payload={logo,name,subtitle,event_date:evDateEdit};if(logoImg)payload.logo_img=logoImg;
     await sb(`/rest/v1/events?id=eq.${encodeURIComponent(currentEventId)}`,{method:'PATCH',body:JSON.stringify(payload)});
     applyEventSettings({...payload,id:currentEventId});
     // บันทึก global app settings (landing page)
@@ -2014,6 +2026,7 @@ async function loadDashboard(){
             <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
             <div style="font-size:11px;color:#64748b">${ev.subtitle||''}</div>
             <div style="font-size:10px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">?event=${ev.id}</div>
+            ${ev.event_date?`<div style="font-size:11px;color:#1a56db;font-weight:600;margin-top:2px">📅 ${new Date(ev.event_date+'T00:00:00').toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>`:''}
           </div>
         </div>
         <!-- Card Stats -->
@@ -2040,6 +2053,47 @@ async function loadDashboard(){
         </div>
       </div>`;
     }).join('');
+
+    // แทรก section header ตามเดือน
+    (function(){
+      try {
+        const grid = document.getElementById('dashEventGrid');
+        if(!grid||!events.length) return;
+        // จัดกลุ่ม
+        const groups={}, noDate=[];
+        events.forEach(ev=>{
+          if(ev.event_date){
+            const d=new Date(ev.event_date+'T00:00:00');
+            const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+            if(!groups[k]) groups[k]={label:d.toLocaleDateString('th-TH',{year:'numeric',month:'long'}),ids:[]};
+            groups[k].ids.push(ev.id);
+          } else { noDate.push(ev.id); }
+        });
+        const keys=Object.keys(groups).sort().reverse();
+        if(keys.length===0 && noDate.length===events.length) return; // ไม่มีวันที่เลย ไม่ต้องแบ่ง
+        // map card elements ด้วย event id จากปุ่ม
+        const cards={};
+        Array.from(grid.children).forEach(c=>{
+          const b=c.querySelector && c.querySelector('button[onclick*="selectEvent"]');
+          if(b){const m=b.getAttribute('onclick').match(/'([^']+)'/);if(m)cards[m[1]]=c;}
+        });
+        grid.innerHTML='';
+        const mkHeader=(label,count)=>{
+          const h=document.createElement('div');
+          h.style.cssText='grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:8px;margin-bottom:4px';
+          h.innerHTML=`<div style="font-size:13px;font-weight:700;color:#475569">${label}</div><div style="height:1px;flex:1;background:#e2e8f0"></div><span style="font-size:11px;color:#94a3b8">${count} งาน</span>`;
+          return h;
+        };
+        keys.forEach(k=>{
+          grid.appendChild(mkHeader('📅 '+groups[k].label, groups[k].ids.length));
+          groups[k].ids.forEach(id=>{if(cards[id])grid.appendChild(cards[id]);});
+        });
+        if(noDate.length){
+          grid.appendChild(mkHeader('📋 ไม่ระบุวันที่', noDate.length));
+          noDate.forEach(id=>{if(cards[id])grid.appendChild(cards[id]);});
+        }
+      } catch(e){ console.warn('month group error:',e); }
+    })();
 
     if (!events.length){
       document.getElementById('dashEventGrid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">
@@ -2426,6 +2480,7 @@ function openCreateEventFromDash(){
   document.getElementById('newEventId').value='';
   document.getElementById('newEventName').value='';
   document.getElementById('newEventSub').value='';
+  if(document.getElementById('newEventDate'))document.getElementById('newEventDate').value='';
   document.getElementById('createEventErr').textContent='';
   document.getElementById('createEventErr').style.display='none';
   openModal('createEventModal');
