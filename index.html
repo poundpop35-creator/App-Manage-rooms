@@ -1035,9 +1035,14 @@ async function doCreateEvent(){
 
     showLoading(false);
     closeModal('createEventModal');
-    showToast('สร้างงานสำเร็จ! 🎉',`Event: ${id}`,'ok');
-    // Navigate to new event
-    setTimeout(()=>{ location.href = location.pathname + '?event=' + encodeURIComponent(id); }, 800);
+    showToast('สร้างงานสำเร็จ! 🎉',`"${name}" — กด "เข้าจัดการ" เพื่อเริ่มอัปโหลดข้อมูล`,'ok');
+    // ถ้าเปิดจาก dashboard → refresh dashboard แทนการ redirect
+    const dash = document.getElementById('dashboardModal');
+    if(dash && dash.classList.contains('show')){
+      await loadDashboard();
+    } else {
+      setTimeout(()=>{ location.href = location.pathname + '?event=' + encodeURIComponent(id); }, 800);
+    }
   } catch(e){showLoading(false);err.textContent='สร้างไม่สำเร็จ: '+e.message;err.classList.add('show');}
 }
 
@@ -2332,10 +2337,15 @@ function openAppSettingsFromDash(){
   openAppSettingsModal();
 }
 function openCreateEventFromDash(){
+  // เปิด modal สร้างงานทับ Dashboard เลย ไม่ต้องปิด Dashboard
   const dash = document.getElementById('dashboardModal');
-  if(dash) dash._fromDash = false;
-  closeDashboard();
-  openCreateEvent();
+  if(dash) dash._fromDash = true;
+  document.getElementById('newEventId').value='';
+  document.getElementById('newEventName').value='';
+  document.getElementById('newEventSub').value='';
+  document.getElementById('createEventErr').textContent='';
+  document.getElementById('createEventErr').style.display='none';
+  openModal('createEventModal');
 }
 
 // ════ HELPERS ════
