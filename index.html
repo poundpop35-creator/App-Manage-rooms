@@ -1321,9 +1321,11 @@ function showAdminUI(){
   // ปุ่มลบงาน
   const deleteBtn=document.getElementById('deleteEventBtn');
   if(deleteBtn&&currentEventId) deleteBtn.style.display='';
-  // ปุ่มพิมพ์สติกเกอร์ — แสดงทันทีที่ login (ถ้ามีข้อมูล)
+  // ปุ่มพิมพ์สติกเกอร์ และดาวน์โหลด Excel — แสดงทันทีที่ login (ถ้ามีข้อมูล)
   const pb=document.getElementById('printBtn');
   if(pb) pb.style.display=guestData&&guestData.length?'':'none';
+  const dlb=document.getElementById('downloadExcelBtn');
+  if(dlb) dlb.style.display=guestData&&guestData.length?'':'none';
 }
 
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
