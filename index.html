@@ -450,8 +450,8 @@ body{transition:background .3s}
       <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
         <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">✨ สร้างงานใหม่</button>
         <button onclick="openModal('helpModal')" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">📖 คู่มือการใช้งาน</button>
-        <button onclick="openUserModal()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">👥 จัดการ Admin</button>
-        <button onclick="openAppSettingsModal()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🎨 ตั้งค่าแอพ</button>
+        <button onclick="openUserModalFromDash()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">👥 จัดการ Admin</button>
+        <button onclick="openAppSettingsFromDash()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🎨 ตั้งค่าแอพ</button>
         <button onclick="doLogout()" style="background:#fff;border:1.5px solid #fecaca;color:#dc2626;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🔓 ออกจากระบบ</button>
       </div>
     </div>
@@ -1544,7 +1544,15 @@ document.getElementById('hotelFilter').addEventListener('change',applyFilters);
 
 // ════ MODAL UTILS ════
 function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
+function closeModal(id){
+  document.getElementById(id).classList.remove('show');
+  // ถ้า modal ถูกเปิดจาก dashboard → refresh dashboard
+  const dash = document.getElementById('dashboardModal');
+  if(id!=='dashboardModal' && dash && dash._fromDash){
+    dash._fromDash = false;
+    loadDashboard(); // refresh stats
+  }
+}
 document.querySelectorAll('.modal-overlay').forEach(el=>{
   el.addEventListener('click',e=>{if(e.target===el&&el.id!=='landingModal')el.classList.remove('show');});
 });
@@ -2309,6 +2317,25 @@ function openPrintPreview(){
 <button class="print-btn no-print" onclick="window.print()">🖨️ พิมพ์ PDF</button>
 </body></html>`);
   printWin.document.close();
+}
+
+
+// เปิด modal จาก Dashboard — กด ✕ แล้วกลับ Dashboard
+function openUserModalFromDash(){
+  const dash = document.getElementById('dashboardModal');
+  if(dash) dash._fromDash = true;
+  openUserModal();
+}
+function openAppSettingsFromDash(){
+  const dash = document.getElementById('dashboardModal');
+  if(dash) dash._fromDash = true;
+  openAppSettingsModal();
+}
+function openCreateEventFromDash(){
+  const dash = document.getElementById('dashboardModal');
+  if(dash) dash._fromDash = false;
+  closeDashboard();
+  openCreateEvent();
 }
 
 // ════ HELPERS ════
