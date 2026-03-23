@@ -702,6 +702,11 @@ body{transition:background .3s}
       <label class="form-label">คำบรรยาย</label>
       <input class="form-input" id="newEventSub" type="text" placeholder="เช่น รายชื่อผู้เข้าพักและรถรับส่ง">
     </div>
+    <div class="form-group">
+      <label class="form-label">📅 วันที่จัดงาน</label>
+      <input class="form-input" id="newEventDate" type="date">
+      <div class="form-hint">ใช้สำหรับแยกหมวดหมู่ตามเดือนใน Dashboard</div>
+    </div>
     <div id="createEventErr" style="display:none;color:#dc2626;font-size:13px;margin-bottom:8px;font-family:Sarabun,sans-serif"></div>
     <button class="primary-btn teal" onclick="doCreateEvent()">✨ สร้างงาน</button>
   </div>
@@ -1085,6 +1090,7 @@ function openCreateEvent(){
   document.getElementById('newEventId').value='';
   document.getElementById('newEventName').value='';
   document.getElementById('newEventSub').value='';
+  document.getElementById('newEventDate').value='';
   openModal('createEventModal');
 }
 
@@ -1109,7 +1115,8 @@ async function doCreateEvent(){
     if (exist&&exist.length){showLoading(false);err.textContent='รหัสงานนี้ถูกใช้แล้ว กรุณาใช้รหัสอื่น';err.classList.add('show');return;}
 
     // Create event
-    await sb('/rest/v1/events',{method:'POST',body:JSON.stringify({id,name,subtitle:sub||'รายชื่อผู้เข้าพัก',logo:'🏨',created_by:currentUser.username})});
+    const evDate = document.getElementById('newEventDate').value||null;
+    await sb('/rest/v1/events',{method:'POST',body:JSON.stringify({id,name,subtitle:sub||'รายชื่อผู้เข้าพัก',logo:'🏨',created_by:currentUser.username,event_date:evDate})});
 
     // Create guest row for this event
     await sb('/rest/v1/guests',{method:'POST',body:JSON.stringify({event_id:id,data:{guests:[],colors:{},updatedAt:null}})});
@@ -1912,6 +1919,39 @@ function closeAdminMenu(){
 document.addEventListener('click', ()=>closeAdminMenu());
 
 
+
+function renderDashEventCard(ev, guestMap){
+  const gd = guestMap[ev.id];
+  const guests = gd&&gd.guests ? gd.guests : [];
+  const active = guests.filter(g=>!g.name1.includes('ยกเลิก'));
+  const people = active.reduce((s,g)=>s+(g.type==='พักคู่'?2:1),0);
+  const cancelled = guests.filter(g=>g.name1.includes('ยกเลิก')).length;
+  const updatedAt = gd&&gd.updatedAt ? gd.updatedAt : null;
+  const logoHtml = ev.logo_img
+    ? `<img src="${ev.logo_img}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">`
+    : `<div style="width:40px;height:40px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ev.logo||'🏨'}</div>`;
+  return `<div style="background:#fff;border:1.5px solid #c8d3e0;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
+    <div style="padding:14px 16px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px">
+      ${logoHtml}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
+        <div style="font-size:11px;color:#64748b">${ev.subtitle||''}</div>
+        <div style="font-size:10px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">?event=${ev.id}</div>
+        ${ev.event_date?`<div style="font-size:11px;color:#1a56db;font-weight:600;margin-top:2px">📅 ${new Date(ev.event_date).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>`:''}
+      </div>
+    </div>
+    <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;background:#fafcff">
+      <div style="text-align:center"><div style="font-size:20px;font-weight:800;color:#16a34a">${people}</div><div style="font-size:10px;color:#64748b">คน</div></div>
+      <div style="text-align:center"><div style="font-size:20px;font-weight:800;color:#1a56db">${active.length}</div><div style="font-size:10px;color:#64748b">ห้อง</div></div>
+      <div style="text-align:center"><div style="font-size:20px;font-weight:800;color:${cancelled?'#dc2626':'#94a3b8'}">${cancelled}</div><div style="font-size:10px;color:#64748b">ยกเลิก</div></div>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:11px;color:#94a3b8">${updatedAt?'🕐 '+updatedAt:'ยังไม่มีข้อมูล'}</div>
+      <button onclick="closeDashboard();selectEvent('${ev.id}')" style="background:#1a56db;color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer">เข้าจัดการ</button>
+    </div>
+  </div>`;
+}
+
 // ════ SUPER ADMIN DASHBOARD ════
 async function openDashboard(){
   document.getElementById('dashboardModal').classList.add('show');
@@ -1996,11 +2036,59 @@ async function loadDashboard(){
         <div style="font-size:12px;color:#92400e;margin-top:2px">รออนุมัติ ⏳</div>
       </div>` : '');
 
-    // event cards
+    // แยกตามเดือน
     document.getElementById('dashEventCount').textContent = events.length + ' งาน';
     subtitle.textContent = isSuper ? `ยินดีต้อนรับ ${currentUser.username} — ${events.length} งาน` : `${currentUser.username} — ${events.length} งานของคุณ`;
 
-    document.getElementById('dashEventGrid').innerHTML = events.map(ev=>{
+    // จัดกลุ่มตามเดือน
+    const monthGroups = {};
+    const noDate = [];
+    events.forEach(ev => {
+      if(ev.event_date){
+        const d = new Date(ev.event_date);
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        const label = d.toLocaleDateString('th-TH',{year:'numeric',month:'long'});
+        if(!monthGroups[key]) monthGroups[key]={label,events:[]};
+        monthGroups[key].events.push(ev);
+      } else {
+        noDate.push(ev);
+      }
+    });
+
+    // เรียงจากเดือนล่าสุดก่อน
+    const sortedKeys = Object.keys(monthGroups).sort().reverse();
+
+    let gridHTML = '';
+
+    // แสดงตามเดือน
+    sortedKeys.forEach(key => {
+      const grp = monthGroups[key];
+      gridHTML += `<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:8px;margin-bottom:4px">
+        <div style="font-size:13px;font-weight:700;color:#475569">📅 ${grp.label}</div>
+        <div style="height:1px;flex:1;background:#e2e8f0"></div>
+        <span style="font-size:11px;color:#94a3b8">${grp.events.length} งาน</span>
+      </div>`;
+      gridHTML += grp.events.map(ev => renderDashEventCard(ev, guestMap)).join('');
+    });
+
+    // งานที่ไม่มีวันที่
+    if(noDate.length){
+      gridHTML += `<div style="grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:8px;margin-bottom:4px">
+        <div style="font-size:13px;font-weight:700;color:#94a3b8">📋 ไม่ระบุวันที่</div>
+        <div style="height:1px;flex:1;background:#e2e8f0"></div>
+        <span style="font-size:11px;color:#94a3b8">${noDate.length} งาน</span>
+      </div>`;
+      gridHTML += noDate.map(ev => renderDashEventCard(ev, guestMap)).join('');
+    }
+
+    document.getElementById('dashEventGrid').innerHTML = gridHTML || `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">
+      <div style="font-size:40px;margin-bottom:10px">📋</div>
+      <div style="font-size:16px;font-weight:600">ยังไม่มีงาน</div>
+      <div style="font-size:13px;margin-top:6px">กด "สร้างงานใหม่" เพื่อเริ่มต้น</div>
+    </div>`;
+
+    // dummy loop ที่ถูกแทนด้วยฟังก์ชัน
+
       const gd = guestMap[ev.id];
       const guests = gd&&gd.guests ? gd.guests : [];
       const active = guests.filter(g=>!g.name1.includes('ยกเลิก'));
@@ -2018,6 +2106,7 @@ async function loadDashboard(){
             <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
             <div style="font-size:11px;color:#64748b">${ev.subtitle||''}</div>
             <div style="font-size:10px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">?event=${ev.id}</div>
+            ${ev.event_date?`<div style="font-size:11px;color:#1a56db;font-weight:600;margin-top:2px">📅 ${new Date(ev.event_date).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>`:''}
           </div>
         </div>
         <!-- Card Stats -->
@@ -2045,13 +2134,7 @@ async function loadDashboard(){
       </div>`;
     }).join('');
 
-    if (!events.length){
-      document.getElementById('dashEventGrid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">
-        <div style="font-size:40px;margin-bottom:10px">📋</div>
-        <div style="font-size:16px;font-weight:600">ยังไม่มีงาน</div>
-        <div style="font-size:13px;margin-top:6px">กด "สร้างงานใหม่" เพื่อเริ่มต้น</div>
-      </div>`;
-    }
+
 
   } catch(e){
     subtitle.textContent = 'โหลดไม่สำเร็จ: '+e.message;
@@ -2430,6 +2513,7 @@ function openCreateEventFromDash(){
   document.getElementById('newEventId').value='';
   document.getElementById('newEventName').value='';
   document.getElementById('newEventSub').value='';
+  document.getElementById('newEventDate').value='';
   document.getElementById('createEventErr').textContent='';
   document.getElementById('createEventErr').style.display='none';
   openModal('createEventModal');
