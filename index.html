@@ -336,6 +336,17 @@ body{transition:background .3s}
         </div>
       </div>
 
+      <div style="background:#fff1f2;border:2px solid #f43f5e;border-radius:10px;padding:14px 16px">
+        <div style="font-size:13px;font-weight:800;color:#be123c;margin-bottom:8px">🚫 ข้อห้ามที่ต้องปฏิบัติอย่างเคร่งครัด</div>
+        <div style="font-size:12px;color:#1e293b;line-height:2">
+          • <b>ห้ามอัปโหลดหมายเลขบัตรประชาชน</b> (เลข 13 หลัก) โดยเด็ดขาด<br>
+          • <b>ห้ามอัปโหลดข้อมูลทางการแพทย์</b> เช่น ผลตรวจ ประวัติโรค ยา<br>
+          • <b>ห้ามอัปโหลดข้อมูลทางการเงิน</b> เช่น เลขบัญชี บัตรเครดิต<br>
+          • <b>ห้ามอัปโหลดรหัสผ่านหรือข้อมูลความลับ</b>ขององค์กร<br>
+          • ระบบนี้ออกแบบมาสำหรับ <b>ข้อมูลการเข้าพักและรถรับส่งเท่านั้น</b>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -410,6 +421,15 @@ body{transition:background .3s}
             <b>Admin รอง</b> — อัปโหลดข้อมูล ตั้งค่างาน ลบงานที่ตัวเองสร้างเท่านั้น
           </div>
         </div>
+        <div style="background:#fff1f2;border:2px solid #f43f5e;border-radius:10px;padding:12px 14px">
+          <div style="font-size:12px;font-weight:800;color:#be123c;margin-bottom:6px">🚫 ข้อห้ามสำคัญ</div>
+          <div style="font-size:11px;color:#1e293b;line-height:1.9">
+            • <b>ห้ามอัปโหลดหมายเลขบัตรประชาชน</b> โดยเด็ดขาด<br>
+            • <b>ห้ามอัปโหลดข้อมูลทางการแพทย์</b> เช่น ผลตรวจ ประวัติโรค<br>
+            • <b>ห้ามอัปโหลดข้อมูลทางการเงิน</b> เช่น เลขบัญชี<br>
+            • ระบบนี้ใช้สำหรับ <b>ข้อมูลการเข้าพักและรถรับส่งเท่านั้น</b>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -429,6 +449,7 @@ body{transition:background .3s}
       </div>
       <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
         <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">✨ สร้างงานใหม่</button>
+        <button onclick="openModal('helpModal')" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">📖 คู่มือการใช้งาน</button>
         <button onclick="openUserModal()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">👥 จัดการ Admin</button>
         <button onclick="openAppSettingsModal()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🎨 ตั้งค่าแอพ</button>
         <button onclick="doLogout()" style="background:#fff;border:1.5px solid #fecaca;color:#dc2626;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🔓 ออกจากระบบ</button>
