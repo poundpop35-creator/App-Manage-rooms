@@ -304,6 +304,42 @@ body{transition:background .3s}
 
     <div style="display:flex;flex-direction:column;gap:12px">
 
+      <div style="background:linear-gradient(135deg,#1e293b,#1e40af);border-radius:12px;padding:16px">
+        <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:12px">✨ GuestTrack ทำอะไรได้บ้าง?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
+            <div style="font-size:16px;margin-bottom:4px">📤</div>
+            <div style="font-size:12px;font-weight:700;color:#fff">แชร์ลิงก์ / QR Code</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.5">ส่งให้ผู้เข้าพักค้นหาชื่อตัวเอง กดโทรผู้ประสานงานได้เลย</div>
+          </div>
+          <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
+            <div style="font-size:16px;margin-bottom:4px">🖨️</div>
+            <div style="font-size:12px;font-weight:700;color:#fff">พิมพ์สติกเกอร์</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.5">8 ใบต่อหน้า A4 พิมพ์เฉพาะโรงแรมที่ filter ได้</div>
+          </div>
+          <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
+            <div style="font-size:16px;margin-bottom:4px">☁️</div>
+            <div style="font-size:12px;font-weight:700;color:#fff">Real-time Cloud</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.5">อัปเดตแล้วทุกคนเห็นพร้อมกันทันที</div>
+          </div>
+          <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
+            <div style="font-size:16px;margin-bottom:4px">📊</div>
+            <div style="font-size:12px;font-weight:700;color:#fff">สรุปยอดอัตโนมัติ</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.5">นับห้อง คน แยกโรงแรมให้อัตโนมัติ</div>
+          </div>
+          <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
+            <div style="font-size:16px;margin-bottom:4px">📥</div>
+            <div style="font-size:12px;font-weight:700;color:#fff">ดาวน์โหลด Excel</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.5">ดึงข้อมูลล่าสุดกลับมาแก้ไขได้ทุกเมื่อ</div>
+          </div>
+          <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
+            <div style="font-size:16px;margin-bottom:4px">🔗</div>
+            <div style="font-size:12px;font-weight:700;color:#fff">ซิงค์ Google Sheets</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:2px;line-height:1.5">วางลิงก์ Sheet กดซิงค์ อัปเดตข้อมูลได้ทันที</div>
+          </div>
+        </div>
+      </div>
+
       <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
         <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:8px">🔐 ขั้นตอนที่ 1 — เข้าสู่ระบบ</div>
         <div style="font-size:13px;color:#1e293b;line-height:1.8">กดปุ่ม <b>Admin</b> มุมขวาบน → ใส่ Username + Password → กด <b>เข้าสู่ระบบ</b><br>หรือ <b>สมัครใช้งาน</b> ถ้ายังไม่มีบัญชี</div>
@@ -320,6 +356,15 @@ body{transition:background .3s}
         <button onclick="downloadTemplate()" style="background:#b45309;color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s" onmouseover="this.style.background='#92400e'" onmouseout="this.style.background='#b45309'">
           📥 ดาวน์โหลด Template Excel
         </button>
+        <div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 12px;margin-top:10px">
+          <div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:4px">⚠️ ข้อควรระวังสำคัญ</div>
+          <div style="font-size:12px;color:#1e293b;line-height:1.9">
+            • <b>ห้ามเปลี่ยนชื่อหัวคอลัมน์</b> เช่น ห้ามเปลี่ยน <code style="background:#fff;padding:1px 5px;border-radius:3px">ชื่อ - สกุล</code> เป็นอย่างอื่น<br>
+            • <b>ห้ามลบหรือสลับตำแหน่งคอลัมน์</b> เด็ดขาด<br>
+            • ไฟล์ต้องเป็นนามสกุล <code style="background:#fff;padding:1px 5px;border-radius:3px">.xlsx</code> เท่านั้น<br>
+            • ชื่อไฟล์เปลี่ยนได้ตามต้องการ ไม่มีผล
+          </div>
+        </div>
       </div>
 
       <div style="background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:10px;padding:14px 16px">
@@ -389,6 +434,17 @@ body{transition:background .3s}
     <div id="helpAdmin" style="display:none">
       <div style="display:flex;flex-direction:column;gap:10px">
         <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:14px 16px">
+          <div style="background:linear-gradient(135deg,#1e293b,#1e40af);border-radius:10px;padding:12px;margin-bottom:10px">
+            <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:6px">✨ GuestTrack ทำอะไรได้บ้าง?</div>
+            <div style="font-size:11px;color:#cbd5e1;line-height:2">
+              📤 <b style="color:#fff">แชร์ลิงก์ / QR Code</b> — ผู้เข้าพักค้นหาชื่อ กดโทรได้เลย<br>
+              🖨️ <b style="color:#fff">พิมพ์สติกเกอร์</b> — 8 ใบต่อหน้า A4 แยก filter ได้<br>
+              ☁️ <b style="color:#fff">Real-time Cloud</b> — อัปเดตแล้วทุกคนเห็นทันที<br>
+              📊 <b style="color:#fff">สรุปยอด</b> — นับห้อง คน แยกโรงแรมอัตโนมัติ<br>
+              📥 <b style="color:#fff">ดาวน์โหลด Excel</b> — ดึงข้อมูลล่าสุดกลับมาแก้ไขได้<br>
+              🔗 <b style="color:#fff">ซิงค์ Google Sheets</b> — วางลิงก์แล้วซิงค์ได้เลย
+            </div>
+          </div>
           <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:6px">📝 วิธีสมัคร Admin</div>
           <div style="font-size:13px;color:#1e293b;line-height:1.8">
             1. กดปุ่ม <b>🔐 Admin — เข้าสู่ระบบ / สมัคร</b><br>
@@ -410,8 +466,16 @@ body{transition:background .3s}
           <div style="font-size:13px;color:#1e293b;line-height:1.8">
             1. กด <b>📥 Template</b> เพื่อดาวน์โหลดตัวอย่าง Excel<br>
             2. กรอกข้อมูลผู้เข้าพักในไฟล์<br>
-            3. กด <b>📂 โหลด Excel</b> แล้วเลือกไฟล์<br>
+            3. กด <b>📂 อัปโหลด Excel</b> แล้วเลือกไฟล์<br>
             4. กด <b>☁️ บันทึกขึ้น Cloud</b> — ผู้เข้าพักจะเห็นทันที
+          </div>
+          <div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:7px;padding:8px 10px;margin-top:8px">
+            <div style="font-size:11px;font-weight:800;color:#92400e;margin-bottom:3px">⚠️ ข้อควรระวัง</div>
+            <div style="font-size:11px;color:#1e293b;line-height:1.8">
+              • <b>ห้ามเปลี่ยนชื่อหัวคอลัมน์</b>โดยเด็ดขาด<br>
+              • <b>ห้ามลบหรือสลับคอลัมน์</b><br>
+              • ไฟล์ต้องเป็น <b>.xlsx</b> เท่านั้น
+            </div>
           </div>
         </div>
         <div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:12px 14px">
