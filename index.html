@@ -246,8 +246,6 @@ body{transition:background .3s}
 
 @media(min-width:1024px){.event-landing-icon{font-size:120px}.event-landing-icon img{width:140px!important;height:140px!important;border-radius:28px!important}}
 @media(max-width:640px){
-#dashBtnsDesktop{display:none!important}
-
   .header,.main,.admin-bar{padding-left:14px;padding-right:14px}
   .cards-grid{grid-template-columns:1fr}
   .card-info{grid-template-columns:1fr}
@@ -503,8 +501,8 @@ body{transition:background .3s}
 </div>
 
 <!-- ══ MODAL: SUPER ADMIN DASHBOARD ══ -->
-<div class="modal-overlay" id="dashboardModal" style="align-items:flex-start;padding:0;background:var(--bg);z-index:150;overflow-y:auto">
-  <div style="width:100%;min-height:100vh;background:var(--bg)">
+<div class="modal-overlay" id="dashboardModal" style="align-items:flex-start;padding:0;background:var(--bg);z-index:150">
+  <div style="width:100%;min-height:100vh;background:var(--bg);overflow-y:auto">
 
     <!-- Dashboard Header -->
     <div style="background:#fff;border-bottom:1.5px solid #d1d9e6;padding:16px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;box-shadow:0 1px 4px rgba(0,0,0,.08)">
@@ -513,26 +511,12 @@ body{transition:background .3s}
         <div style="font-size:16px;font-weight:800;color:#0f172a" id="dashboardTitle">Dashboard</div>
         <div style="font-size:12px;color:#64748b" id="dashboardSubtitle">ภาพรวมทุกงาน</div>
       </div>
-      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-        <!-- Desktop -->
-        <div id="dashBtnsDesktop" style="display:flex;gap:8px">
-          <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">✨ สร้างงานใหม่</button>
-          <button onclick="openModal('helpModal')" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">📖 คู่มือ</button>
-          <button onclick="openUserModalFromDash()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">👥 Admin</button>
-          <button onclick="openAppSettingsFromDash()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;display:none">🎨 ตั้งค่าแอพ</button>
-          <button onclick="doLogout()" style="background:#fff;border:1.5px solid #fecaca;color:#dc2626;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap">🔓 ออก</button>
-        </div>
-        <!-- Mobile ⋮ -->
-        <div style="position:relative" id="dashMobileWrap">
-          <button onclick="toggleDashMenu(event)" style="background:#f1f5f9;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 13px;border-radius:8px;font-size:20px;cursor:pointer;line-height:1">⋮</button>
-          <div id="dashMobileMenu" style="display:none;position:fixed;right:12px;top:70px;background:#fff;border:1.5px solid #d1d9e6;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:300;min-width:200px;overflow:hidden">
-            <button onclick="closeDashMenu();openCreateEventFromDash()" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#1e293b">✨ สร้างงานใหม่</button>
-            <button onclick="closeDashMenu();openModal('helpModal')" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#1e293b">📖 คู่มือการใช้งาน</button>
-            <button onclick="closeDashMenu();openUserModalFromDash()" id="dashManageAdminBtnM" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#7c3aed">👥 จัดการ Admin</button>
-            <button onclick="closeDashMenu();openAppSettingsFromDash()" id="dashAppSettingsBtnM" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;border-bottom:1px solid #f1f5f9;color:#1e293b;display:none">🎨 ตั้งค่าแอพ</button>
-            <button onclick="closeDashMenu();doLogout()" style="width:100%;text-align:left;padding:13px 16px;border:none;background:none;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:600;cursor:pointer;color:#dc2626">🔓 ออกจากระบบ</button>
-          </div>
-        </div>
+      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+        <button onclick="openCreateEventFromDash()" style="background:#1a56db;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">✨ สร้างงานใหม่</button>
+        <button onclick="openModal('helpModal')" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">📖 คู่มือการใช้งาน</button>
+        <button onclick="openUserModalFromDash()" id="dashManageAdminBtn" style="background:#7c3aed;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">👥 จัดการ Admin</button>
+        <button onclick="openAppSettingsFromDash()" id="dashAppSettingsBtn" style="background:#fff;border:1.5px solid #94a3b8;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;display:none">🎨 ตั้งค่าแอพ</button>
+        <button onclick="doLogout()" style="background:#fff;border:1.5px solid #fecaca;color:#dc2626;padding:8px 16px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px">🔓 ออกจากระบบ</button>
       </div>
     </div>
 
@@ -702,11 +686,6 @@ body{transition:background .3s}
       <label class="form-label">คำบรรยาย</label>
       <input class="form-input" id="newEventSub" type="text" placeholder="เช่น รายชื่อผู้เข้าพักและรถรับส่ง">
     </div>
-    <div class="form-group">
-      <label class="form-label">📅 วันที่จัดงาน</label>
-      <input class="form-input" id="newEventDate" type="date">
-      <div class="form-hint">ใช้แยกหมวดหมู่ตามเดือนใน Dashboard (ไม่บังคับ)</div>
-    </div>
     <div id="createEventErr" style="display:none;color:#dc2626;font-size:13px;margin-bottom:8px;font-family:Sarabun,sans-serif"></div>
     <button class="primary-btn teal" onclick="doCreateEvent()">✨ สร้างงาน</button>
   </div>
@@ -808,10 +787,6 @@ body{transition:background .3s}
         <label class="form-label">คำบรรยาย</label>
         <input class="form-input" id="settingsSubtitle" type="text" placeholder="เช่น รายชื่อผู้เข้าพักและรถรับส่ง">
       </div>
-      <div class="form-group" style="margin-bottom:0;margin-top:10px">
-        <label class="form-label">📅 วันที่จัดงาน</label>
-        <input class="form-input" id="settingsEventDate" type="date">
-      </div>
     </div>
 
     <!-- ── ส่วนที่ 3: ธีมสี ── -->
@@ -866,7 +841,7 @@ body{transition:background .3s}
     <button class="abtn abtn-gray" onclick="downloadTemplate()" title="ดาวน์โหลดไฟล์ตัวอย่าง">📥 Template</button>
     <button class="abtn abtn-blue" onclick="document.getElementById('fileInput').value='';document.getElementById('fileInput').click()">📂 อัปโหลด Excel</button>
     <button class="abtn" onclick="openGSheetModal()" style="background:#16a34a;color:#fff;border:1.5px solid #15803d;display:flex;align-items:center;gap:5px" title="ซิงค์จาก Google Sheets"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_32dp.png" style="width:14px;height:14px"> Google Sheets</button>
-    <button class="abtn abtn-gray" id="downloadExcelBtn" onclick="downloadCurrentExcel()" style="display:none" title="ดาวน์โหลดข้อมูลปัจจุบันเป็น Excel">⬇️ ดาวน์โหลด Excel</button>
+    <button class="abtn abtn-gray" id="downloadExcelBtn" onclick="downloadCurrentExcel()" title="ดาวน์โหลดข้อมูลปัจจุบันเป็น Excel">⬇️ ดาวน์โหลด Excel</button>
     <input type="file" id="fileInput" accept=".xlsx,.xls"/>
     <span class="admin-status" id="adminStatus">ยังไม่ได้โหลดไฟล์</span>
     <div class="vsep"></div>
@@ -898,8 +873,17 @@ body{transition:background .3s}
       <select class="fs" id="hotelFilter"><option value="">ทุกโรงแรม</option></select>
       <div class="rc" id="resultCount">— รายการ</div>
     </div>
-    <div class="summary-grid" id="summaryGrid"></div>
-    <div class="cards-grid"   id="cardsGrid"></div>
+    <div class="summary-grid" id="summaryGrid" style="display:none"></div>
+    <!-- Search-first state: แสดงก่อนที่จะพิมพ์ค้นหา -->
+    <div id="searchFirstState" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;gap:16px">
+      <div style="font-size:56px">🔍</div>
+      <div style="font-size:18px;font-weight:700;color:#0f172a">ค้นหาชื่อของคุณ</div>
+      <div style="font-size:14px;color:#64748b;max-width:340px;line-height:1.8">พิมพ์ชื่อ-สกุล หรือชื่อหน่วยงานในช่องค้นหาด้านบน<br>เพื่อดูข้อมูลห้องพักและรถรับส่งของคุณ</div>
+      <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;padding:12px 20px;font-size:13px;color:#1e40af;max-width:360px">
+        💡 ถ้าหาไม่เจอ ลองพิมพ์แค่ชื่อหรือนามสกุลอย่างเดียว
+      </div>
+    </div>
+    <div class="cards-grid" id="cardsGrid" style="display:none"></div>
     <div class="empty" id="emptyState" style="display:none"><div class="empty-icon">🔍</div><div class="empty-txt">ไม่พบข้อมูล</div></div>
   </div>
 </main>
@@ -1118,8 +1102,7 @@ async function doCreateEvent(){
     if (exist&&exist.length){showLoading(false);err.textContent='รหัสงานนี้ถูกใช้แล้ว กรุณาใช้รหัสอื่น';err.classList.add('show');return;}
 
     // Create event
-    const evDate=document.getElementById('newEventDate')?.value||null;
-    await sb('/rest/v1/events',{method:'POST',body:JSON.stringify({id,name,subtitle:sub||'รายชื่อผู้เข้าพัก',logo:'🏨',created_by:currentUser.username,event_date:evDate})});
+    await sb('/rest/v1/events',{method:'POST',body:JSON.stringify({id,name,subtitle:sub||'รายชื่อผู้เข้าพัก',logo:'🏨',created_by:currentUser.username})});
 
     // Create guest row for this event
     await sb('/rest/v1/guests',{method:'POST',body:JSON.stringify({event_id:id,data:{guests:[],colors:{},updatedAt:null}})});
@@ -1173,9 +1156,22 @@ function showApp(updatedAt){
   const cc=document.getElementById('countChip');cc.textContent=guestData.length+' รายการ';cc.style.display='inline';
 
   if (guestData.length){
-    populateFilters(); renderSummary(guestData); renderCards(guestData);
+    populateFilters();
+    // ไม่แสดง summary และ cards ทันที — รอให้ค้นหาก่อน
     document.getElementById('welcomeView').style.display='none';
     document.getElementById('guestView').style.display='block';
+    document.getElementById('summaryGrid').style.display='none';
+    document.getElementById('cardsGrid').style.display='none';
+    document.getElementById('searchFirstState').style.display='flex';
+    document.getElementById('emptyState').style.display='none';
+    document.getElementById('resultCount').textContent='— รายการ';
+    // ถ้า Admin login อยู่ → แสดง summary + cards เลย
+    if(currentUser){
+      renderSummary(guestData); renderCards(guestData);
+      document.getElementById('summaryGrid').style.display='';
+      document.getElementById('cardsGrid').style.display='';
+      document.getElementById('searchFirstState').style.display='none';
+    }
   } else {
     document.getElementById('welcomeView').style.display='flex';
     document.getElementById('guestView').style.display='none';
@@ -1352,6 +1348,17 @@ function showAdminUI(){
   if(pb) pb.style.display=guestData&&guestData.length?'':'none';
   const dlb=document.getElementById('downloadExcelBtn');
   if(dlb) dlb.style.display=guestData&&guestData.length?'':'none';
+  // Admin login → แสดง summary + cards ทันที (ไม่ต้องรอค้นหา)
+  if(guestData&&guestData.length){
+    const sfs=document.getElementById('searchFirstState');
+    const cg=document.getElementById('cardsGrid');
+    const sg=document.getElementById('summaryGrid');
+    if(sfs) sfs.style.display='none';
+    if(cg) cg.style.display='';
+    if(sg) sg.style.display='';
+    renderSummary(guestData);
+    renderCards(guestData);
+  }
 }
 
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -1436,7 +1443,6 @@ async function openSettingsModal(){
     document.getElementById('settingsLogo').value    =ev.logo||'🏨';
     document.getElementById('settingsTitle').value   =ev.name||'';
     document.getElementById('settingsSubtitle').value=ev.subtitle||'';
-    if(document.getElementById('settingsEventDate'))document.getElementById('settingsEventDate').value=ev.event_date||'';
     // load global app settings
     try {
       const gs=await sb('/rest/v1/app_settings?select=data&limit=1');
@@ -1466,8 +1472,7 @@ async function saveSettings(){
   const subtitle=document.getElementById('settingsSubtitle').value.trim();
   showLoading(true,'กำลังบันทึก...');
   try {
-    const evDateEdit=document.getElementById('settingsEventDate')?.value||null;
-    const payload={logo,name,subtitle,event_date:evDateEdit};if(logoImg)payload.logo_img=logoImg;
+    const payload={logo,name,subtitle};if(logoImg)payload.logo_img=logoImg;
     await sb(`/rest/v1/events?id=eq.${encodeURIComponent(currentEventId)}`,{method:'PATCH',body:JSON.stringify(payload)});
     applyEventSettings({...payload,id:currentEventId});
     // บันทึก global app settings (landing page)
@@ -1509,6 +1514,9 @@ function loadExcel(file){
       const dlItem2=document.getElementById('downloadExcelItem');if(dlItem2)dlItem2.style.display='';
       const pb2=document.getElementById('printBtn');if(pb2)pb2.style.display='';
       document.getElementById('welcomeView').style.display='none';document.getElementById('guestView').style.display='block';
+      document.getElementById('searchFirstState').style.display='none';
+      document.getElementById('cardsGrid').style.display='';
+      document.getElementById('summaryGrid').style.display='';
       const cc=document.getElementById('countChip');cc.textContent=guestData.length+' รายการ';cc.style.display='inline';
       showToast('โหลดสำเร็จ',`${mapped.length} รายการ — กด "บันทึกขึ้น Cloud"`,'ok');
     } catch(err){showToast('เกิดข้อผิดพลาด',err.message,'err');showLoading(false);}
@@ -1549,6 +1557,9 @@ async function clearData(){
     guestData=[];hotelColors={};pendingData=null;
     document.getElementById('saveBtn').disabled=true;document.getElementById('adminStatus').textContent='ยังไม่ได้โหลดไฟล์';
     document.getElementById('fileInput').value='';document.getElementById('welcomeView').style.display='flex';document.getElementById('guestView').style.display='none';
+    document.getElementById('cardsGrid').style.display='none';
+    document.getElementById('summaryGrid').style.display='none';
+    if(document.getElementById('searchFirstState'))document.getElementById('searchFirstState').style.display='flex';
     document.getElementById('countChip').style.display='none';document.getElementById('updatedChip').style.display='none';
     showLoading(false);showToast('ล้างข้อมูลแล้ว','','ok');
   } catch(e){showLoading(false);showToast('ล้างไม่สำเร็จ',e.message,'err');}
@@ -1632,11 +1643,29 @@ function renderCards(data){
 function applyFilters(){
   const s=document.getElementById('searchInput').value.toLowerCase().trim();
   const p=document.getElementById('provinceFilter').value, h=document.getElementById('hotelFilter').value;
-  renderCards(guestData.filter(g=>{
+  const hasFilter = s.length>0 || p || h;
+
+  // ถ้า Guest (ไม่ใช่ Admin) และยังไม่ได้พิมพ์อะไร → แสดง searchFirstState
+  if(!currentUser && !hasFilter){
+    document.getElementById('searchFirstState').style.display='flex';
+    document.getElementById('cardsGrid').style.display='none';
+    document.getElementById('summaryGrid').style.display='none';
+    document.getElementById('emptyState').style.display='none';
+    document.getElementById('resultCount').textContent='— รายการ';
+    return;
+  }
+
+  // มีการค้นหา → ซ่อน searchFirstState แสดง cards
+  document.getElementById('searchFirstState').style.display='none';
+  document.getElementById('cardsGrid').style.display='';
+  document.getElementById('summaryGrid').style.display='none'; // ซ่อน summary ตอน guest ค้นหา
+
+  const filtered = guestData.filter(g=>{
     if(p&&g.prov1!==p)return false;if(h&&g.hotel!==h)return false;
     if(s){const b=[g.seq,g.name1,g.dept1,g.prov1,g.name2,g.dept2,g.prov2,g.hotel,g.room,g.car,g.coord1,g.coord2,g.phone,g.type].join(' ').toLowerCase();if(!b.includes(s))return false;}
     return true;
-  }));
+  });
+  renderCards(filtered);
 }
 document.getElementById('searchInput').addEventListener('input',applyFilters);
 document.getElementById('provinceFilter').addEventListener('change',applyFilters);
@@ -1949,8 +1978,10 @@ async function loadDashboard(){
     // ปรับ title และซ่อน/แสดงปุ่มตาม role
     const dashTitle = document.getElementById('dashboardTitle');
     if(dashTitle) dashTitle.textContent = isSuper ? 'Super Admin Dashboard' : 'งานของฉัน';
-    ['dashManageAdminBtn','dashManageAdminBtnM'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isSuper?'':'none';});
-    ['dashAppSettingsBtn','dashAppSettingsBtnM'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=isSuper?'':'none';});
+    const manageBtn = document.getElementById('dashManageAdminBtn');
+    if(manageBtn) manageBtn.style.display = isSuper ? '' : 'none';
+    const appSettingsBtn = document.getElementById('dashAppSettingsBtn');
+    if(appSettingsBtn) appSettingsBtn.style.display = isSuper ? '' : 'none';
 
     // โหลด events + admins พร้อมกัน
     const eventsUrl = isSuper
@@ -2026,7 +2057,6 @@ async function loadDashboard(){
             <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
             <div style="font-size:11px;color:#64748b">${ev.subtitle||''}</div>
             <div style="font-size:10px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">?event=${ev.id}</div>
-            ${ev.event_date?`<div style="font-size:11px;color:#1a56db;font-weight:600;margin-top:2px">📅 ${new Date(ev.event_date+'T00:00:00').toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>`:''}
           </div>
         </div>
         <!-- Card Stats -->
@@ -2053,47 +2083,6 @@ async function loadDashboard(){
         </div>
       </div>`;
     }).join('');
-
-    // แทรก section header ตามเดือน
-    (function(){
-      try {
-        const grid = document.getElementById('dashEventGrid');
-        if(!grid||!events.length) return;
-        // จัดกลุ่ม
-        const groups={}, noDate=[];
-        events.forEach(ev=>{
-          if(ev.event_date){
-            const d=new Date(ev.event_date+'T00:00:00');
-            const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-            if(!groups[k]) groups[k]={label:d.toLocaleDateString('th-TH',{year:'numeric',month:'long'}),ids:[]};
-            groups[k].ids.push(ev.id);
-          } else { noDate.push(ev.id); }
-        });
-        const keys=Object.keys(groups).sort().reverse();
-        if(keys.length===0 && noDate.length===events.length) return; // ไม่มีวันที่เลย ไม่ต้องแบ่ง
-        // map card elements ด้วย event id จากปุ่ม
-        const cards={};
-        Array.from(grid.children).forEach(c=>{
-          const b=c.querySelector && c.querySelector('button[onclick*="selectEvent"]');
-          if(b){const m=b.getAttribute('onclick').match(/'([^']+)'/);if(m)cards[m[1]]=c;}
-        });
-        grid.innerHTML='';
-        const mkHeader=(label,count)=>{
-          const h=document.createElement('div');
-          h.style.cssText='grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:8px;margin-bottom:4px';
-          h.innerHTML=`<div style="font-size:13px;font-weight:700;color:#475569">${label}</div><div style="height:1px;flex:1;background:#e2e8f0"></div><span style="font-size:11px;color:#94a3b8">${count} งาน</span>`;
-          return h;
-        };
-        keys.forEach(k=>{
-          grid.appendChild(mkHeader('📅 '+groups[k].label, groups[k].ids.length));
-          groups[k].ids.forEach(id=>{if(cards[id])grid.appendChild(cards[id]);});
-        });
-        if(noDate.length){
-          grid.appendChild(mkHeader('📋 ไม่ระบุวันที่', noDate.length));
-          noDate.forEach(id=>{if(cards[id])grid.appendChild(cards[id]);});
-        }
-      } catch(e){ console.warn('month group error:',e); }
-    })();
 
     if (!events.length){
       document.getElementById('dashEventGrid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8">
@@ -2231,6 +2220,9 @@ function processGSheetData(rows, url){
   populateFilters(); renderSummary(guestData); renderCards(guestData);
   document.getElementById('welcomeView').style.display='none';
   document.getElementById('guestView').style.display='block';
+  document.getElementById('searchFirstState').style.display='none';
+  document.getElementById('cardsGrid').style.display='';
+  document.getElementById('summaryGrid').style.display='';
   const cc=document.getElementById('countChip'); cc.textContent=guestData.length+' รายการ'; cc.style.display='inline';
   document.getElementById('saveBtn').disabled=false;
   document.getElementById('adminStatus').textContent=`✅ ซิงค์แล้ว ${mapped.length} รายการ จาก Google Sheets`;
@@ -2480,16 +2472,10 @@ function openCreateEventFromDash(){
   document.getElementById('newEventId').value='';
   document.getElementById('newEventName').value='';
   document.getElementById('newEventSub').value='';
-  if(document.getElementById('newEventDate'))document.getElementById('newEventDate').value='';
   document.getElementById('createEventErr').textContent='';
   document.getElementById('createEventErr').style.display='none';
   openModal('createEventModal');
 }
-
-
-function toggleDashMenu(e){e.stopPropagation();const m=document.getElementById('dashMobileMenu');m.style.display=m.style.display==='none'?'block':'none';}
-function closeDashMenu(){const m=document.getElementById('dashMobileMenu');if(m)m.style.display='none';}
-document.addEventListener('click',e=>{const w=document.getElementById('dashMobileWrap');if(w&&!w.contains(e.target))closeDashMenu();});
 
 // ════ HELPERS ════
 function showLoading(show,txt='กำลังโหลด...'){document.getElementById('loadingTxt').textContent=txt;document.getElementById('loadingOverlay').classList.toggle('show',show);}
