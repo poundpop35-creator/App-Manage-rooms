@@ -926,6 +926,20 @@ const COL = {
 
 let guestData=[], hotelColors={}, pendingData=null, currentUser=null, currentEventId=null, changePwTargetId=null;
 
+// ════ HTML ESCAPING (ป้องกัน XSS จากข้อมูลผู้ใช้ เช่น ชื่องาน / ข้อมูลผู้เข้าพัก / username) ════
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+// สำหรับค่าที่ฝังอยู่ใน onclick="fn('...')" (attribute แบบ double-quote, string literal แบบ single-quote)
+function escJsAttr(s){
+  return String(s??'')
+    .replace(/\\/g,'\\\\')
+    .replace(/'/g,"\\'")
+    .replace(/\n/g,'\\n')
+    .replace(/</g,'\\x3c')
+    .replace(/"/g,'&quot;');
+}
+
 // ════ SUPABASE ════
 async function sb(path, opts={}) {
   const r = await fetch(SUPA_URL+path, {
@@ -956,7 +970,7 @@ async function sb(path, opts={}) {
       // อัปเดตโลโก้
       const li = document.getElementById('landingIcon');
       if(li){
-        if(d.logoImg) li.innerHTML=`<img src="${d.logoImg}" style="width:clamp(96px,10vw,140px);height:clamp(96px,10vw,140px);border-radius:clamp(20px,2vw,28px);object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.18)">`;
+        if(d.logoImg) li.innerHTML=`<img src="${esc(d.logoImg)}" style="width:clamp(96px,10vw,140px);height:clamp(96px,10vw,140px);border-radius:clamp(20px,2vw,28px);object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.18)">`;
         else if(d.logo) li.textContent = d.logo;
       }
       if(d.appName) document.title = d.appName;
@@ -967,18 +981,18 @@ async function sb(path, opts={}) {
     // Load specific event
     showLoading(true,'กำลังโหลดข้อมูล...');
     try {
-      const events = await sb(`/rest/v1/events?id=eq.${encodeURIComponent(eventId)}&select=*`);
+      const events = await sb(`/rest/v1/events?id=ilike.${encodeURIComponent(eventId)}&select=*`);
       if (!events||!events.length){
         showLoading(false);
         showEventLanding();
         showToast('ไม่พบงานนี้','กรุณาตรวจสอบรหัสงาน','err');
         return;
       }
-      currentEventId = eventId;
       const ev = events[0];
+      currentEventId = ev.id; // ใช้รหัสงานตามที่บันทึกจริง (case-insensitive lookup)
       applyEventSettings(ev);
       // load guests for this event
-      const rows = await sb(`/rest/v1/guests?event_id=eq.${encodeURIComponent(eventId)}&select=data&limit=1`);
+      const rows = await sb(`/rest/v1/guests?event_id=eq.${encodeURIComponent(currentEventId)}&select=data&limit=1`);
       if (rows&&rows.length&&rows[0].data&&rows[0].data.guests&&rows[0].data.guests.length){
         guestData=rows[0].data.guests; hotelColors=rows[0].data.colors||{};
         showApp(rows[0].data.updatedAt);
@@ -1015,18 +1029,19 @@ function showEventLanding(){
 }
 
 async function goToEvent(){
-  const code = document.getElementById('eventCodeInput').value.trim().toLowerCase();
+  const code = document.getElementById('eventCodeInput').value.trim();
   if (!code) return;
   document.getElementById('eventErr').style.display='none';
   showLoading(true,'กำลังค้นหางาน...');
   try {
-    const events = await sb(`/rest/v1/events?id=eq.${encodeURIComponent(code)}&select=id`);
+    // ค้นหาแบบไม่สนตัวพิมพ์เล็ก-ใหญ่ (case-insensitive) เพราะรหัสงานอาจถูกสร้างด้วยตัวพิมพ์ใหญ่
+    const events = await sb(`/rest/v1/events?id=ilike.${encodeURIComponent(code)}&select=id`);
     showLoading(false);
     if (!events||!events.length){
       document.getElementById('eventErr').style.display='block';
       return;
     }
-    location.href = location.pathname + '?event=' + encodeURIComponent(code);
+    location.href = location.pathname + '?event=' + encodeURIComponent(events[0].id);
   } catch(e){showLoading(false);showToast('เกิดข้อผิดพลาด',e.message,'err');}
 }
 document.getElementById('eventCodeInput').addEventListener('keydown',e=>{if(e.key==='Enter')goToEvent();});
@@ -1061,14 +1076,14 @@ async function openEventSelect(){
 
     events.forEach(ev => {
       const logoHtml = ev.logo_img
-        ? `<img src="${ev.logo_img}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">`
-        : `<span style="font-size:20px">${ev.logo||'🏨'}</span>`;
-      list.innerHTML += `<div class="event-card" onclick="selectEvent('${ev.id}')">
+        ? `<img src="${esc(ev.logo_img)}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">`
+        : `<span style="font-size:20px">${esc(ev.logo)||'🏨'}</span>`;
+      list.innerHTML += `<div class="event-card" onclick="selectEvent('${escJsAttr(ev.id)}')">
         <div class="event-card-logo">${logoHtml}</div>
         <div class="event-card-info">
-          <div class="event-card-name">${ev.name}</div>
-          <div class="event-card-sub">${ev.subtitle||''}</div>
-          <div class="event-card-id">?event=${ev.id}</div>
+          <div class="event-card-name">${esc(ev.name)}</div>
+          <div class="event-card-sub">${esc(ev.subtitle)||''}</div>
+          <div class="event-card-id">?event=${esc(ev.id)}</div>
         </div>
         <div class="event-card-arrow">›</div>
       </div>`;
@@ -1112,8 +1127,8 @@ async function doCreateEvent(){
 
   showLoading(true,'กำลังสร้างงาน...');
   try {
-    // Check duplicate
-    const exist = await sb(`/rest/v1/events?id=eq.${encodeURIComponent(id)}&select=id`);
+    // Check duplicate — ไม่สนตัวพิมพ์เล็ก-ใหญ่ ป้องกันรหัสงานชนกัน (เช่น dmsc2025 กับ DMSC2025)
+    const exist = await sb(`/rest/v1/events?id=ilike.${encodeURIComponent(id)}&select=id`);
     if (exist&&exist.length){showLoading(false);err.textContent='รหัสงานนี้ถูกใช้แล้ว กรุณาใช้รหัสอื่น';err.classList.add('show');return;}
 
     // Create event
@@ -1145,7 +1160,7 @@ function applyEventSettings(ev){
   document.getElementById('welcomeIcon').textContent    = ev.logo||'🏨';
   const lw = document.getElementById('headerLogo');
   if (ev.logo_img){
-    lw.innerHTML=`<img src="${ev.logo_img}" style="width:38px;height:38px;object-fit:cover;border-radius:10px">`;
+    lw.innerHTML=`<img src="${esc(ev.logo_img)}" style="width:38px;height:38px;object-fit:cover;border-radius:10px">`;
   } else {
     document.getElementById('headerLogoEmoji').textContent = ev.logo||'🏨';
   }
@@ -1307,6 +1322,7 @@ async function doRegister(){
   ['regUser','regPass','regPass2'].forEach(id=>document.getElementById(id).classList.remove('err'));
   if (!u||!p||!p2){err.textContent='กรุณากรอกข้อมูลให้ครบ';err.classList.add('show');return;}
   if (u.length<3){err.textContent='Username ต้องมีอย่างน้อย 3 ตัวอักษร';err.classList.add('show');document.getElementById('regUser').classList.add('err');return;}
+  if (!/^[a-zA-Z0-9_.\-]+$/.test(u)){err.textContent='Username ใช้ได้เฉพาะ a-z A-Z 0-9 และ . _ - เท่านั้น';err.classList.add('show');document.getElementById('regUser').classList.add('err');return;}
   if (p.length<6){err.textContent='Password ต้องมีอย่างน้อย 6 ตัวอักษร';err.classList.add('show');document.getElementById('regPass').classList.add('err');return;}
   if (p!==p2){err.textContent='รหัสผ่านไม่ตรงกัน';err.classList.add('show');['regPass','regPass2'].forEach(id=>document.getElementById(id).classList.add('err'));return;}
   showLoading(true,'กำลังสมัคร...');
@@ -1396,16 +1412,16 @@ async function refreshUserTable(){
       const statusBadge=isPending
         ?`<span style="background:#fef9c3;color:#854d0e;border:1px solid #fde68a;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700">⏳ รออนุมัติ</span>`
         :`<span style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700">✅ ใช้งานได้</span>`;
-      const pwCell=isSuper?'—':`<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#f1f5f9;padding:2px 8px;border-radius:4px;cursor:pointer;user-select:all" title="คลิกเพื่อคัดลอก" onclick="navigator.clipboard&&navigator.clipboard.writeText('${r.password||''}').then(()=>showToast('คัดลอกรหัสผ่านแล้ว','','ok'))">${r.password||'—'}</span>`;
+      const pwCell=isSuper?'—':`<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:#f1f5f9;padding:2px 8px;border-radius:4px;cursor:pointer;user-select:all" title="คลิกเพื่อคัดลอก" onclick="navigator.clipboard&&navigator.clipboard.writeText('${escJsAttr(r.password||'')}').then(()=>showToast('คัดลอกรหัสผ่านแล้ว','','ok'))">${esc(r.password)||'—'}</span>`;
       return`<tr style="${isPending?'background:#fffbeb':''}">
-        <td style="font-weight:600">${r.username}${isSelf?' <span style="color:var(--text3);font-size:10px">(คุณ)</span>':''}</td>
+        <td style="font-weight:600">${esc(r.username)}${isSelf?' <span style="color:var(--text3);font-size:10px">(คุณ)</span>':''}</td>
         <td>${statusBadge}</td>
         <td style="font-size:12px">${pwCell}</td>
         <td style="color:var(--text2);font-size:12px">${dt}</td>
         <td style="text-align:right;white-space:nowrap;min-width:160px">
-          ${isPending?`<button class="tbl-btn" style="color:#16a34a;font-weight:700" onclick="approveAdmin(${r.id},'${r.username}')">✅ อนุมัติ</button>`:''}
-          ${!isSuper?`<button class="tbl-btn tbl-btn-blue" onclick="openChangePw(${r.id},'${r.username}')">เปลี่ยนรหัส</button>`:''}
-          ${!isSuper&&!isSelf?`<button class="tbl-btn tbl-btn-red" onclick="deleteAdmin(${r.id},'${r.username}')">ลบ</button>`:''}
+          ${isPending?`<button class="tbl-btn" style="color:#16a34a;font-weight:700" onclick="approveAdmin(${r.id},'${escJsAttr(r.username)}')">✅ อนุมัติ</button>`:''}
+          ${!isSuper?`<button class="tbl-btn tbl-btn-blue" onclick="openChangePw(${r.id},'${escJsAttr(r.username)}')">เปลี่ยนรหัส</button>`:''}
+          ${!isSuper&&!isSelf?`<button class="tbl-btn tbl-btn-red" onclick="deleteAdmin(${r.id},'${escJsAttr(r.username)}')">ลบ</button>`:''}
         </td>
       </tr>`;
     }).join('');
@@ -1586,8 +1602,8 @@ function mapRow(row){return{seq:getVal(row,COL.seq),name1:getVal(row,COL.name1),
 function populateFilters(){
   const provs=[...new Set(guestData.map(g=>g.prov1).filter(p=>p&&p!=='-'))].sort((a,b)=>a.localeCompare(b,'th'));
   const hotels=[...new Set(guestData.map(g=>g.hotel).filter(h=>h&&h!=='-'))].sort();
-  const pf=document.getElementById('provinceFilter');pf.innerHTML='<option value="">ทุกจังหวัด</option>';provs.forEach(p=>pf.innerHTML+=`<option value="${p}">${p}</option>`);
-  const hf=document.getElementById('hotelFilter');hf.innerHTML='<option value="">ทุกโรงแรม</option>';hotels.forEach(h=>hf.innerHTML+=`<option value="${h}">${h}</option>`);
+  const pf=document.getElementById('provinceFilter');pf.innerHTML='<option value="">ทุกจังหวัด</option>';provs.forEach(p=>pf.innerHTML+=`<option value="${esc(p)}">${esc(p)}</option>`);
+  const hf=document.getElementById('hotelFilter');hf.innerHTML='<option value="">ทุกโรงแรม</option>';hotels.forEach(h=>hf.innerHTML+=`<option value="${esc(h)}">${esc(h)}</option>`);
 }
 function renderSummary(data){
   const map={};
@@ -1618,7 +1634,7 @@ function renderSummary(data){
     const color=hotelColors[hotel]||'#64748b';
     return`<div class="stat-card">
       <div class="stat-header">
-        <div class="stat-hotel-name"><div class="hotel-dot" style="background:${color}"></div>${hotel}</div>
+        <div class="stat-hotel-name"><div class="hotel-dot" style="background:${color}"></div>${esc(hotel)}</div>
         <div style="display:flex;gap:8px;align-items:center">
           <span style="font-size:11px;color:#64748b;font-family:'IBM Plex Mono',monospace">${s.people} คน</span>
           <div class="stat-total">${s.total} ห้อง</div>
@@ -1636,16 +1652,16 @@ function renderSummary(data){
 }
 function buildCard(g){
   const ic=g.name1.includes('ยกเลิก'),it=g.type==='พักคู่';
-  const badge=ic?'<span class="type-badge type-cancel">ยกเลิกห้อง</span>':g.type==='พักเดี่ยว'?'<span class="type-badge type-single">พักเดี่ยว</span>':it?'<span class="type-badge type-twin">พักคู่</span>':g.type.includes('จ่ายส่วนต่าง')?'<span class="type-badge type-spay">เดี่ยว+ส่วนต่าง</span>':`<span class="type-badge">${g.type}</span>`;
+  const badge=ic?'<span class="type-badge type-cancel">ยกเลิกห้อง</span>':g.type==='พักเดี่ยว'?'<span class="type-badge type-single">พักเดี่ยว</span>':it?'<span class="type-badge type-twin">พักคู่</span>':g.type.includes('จ่ายส่วนต่าง')?'<span class="type-badge type-spay">เดี่ยว+ส่วนต่าง</span>':`<span class="type-badge">${esc(g.type)}</span>`;
   const rc=(g.room==='รอเช็คอิน'||g.room==='รอ'||g.room==='-')?'waiting':'';
-  const rd=g.room==='รอ'?'รอเช็คอิน':g.room;const hc=hotelColors[g.hotel]||'#64748b';
-  const rm=(it&&g.name2&&g.name2!=='-')?`<div class="rm-box"><div class="rm-lbl">👥 ผู้เข้าพักร่วม (รูมเมท)</div><div class="rm-name" style="font-size:16px;font-weight:700;color:#0f172a">${g.name2}</div><div class="rm-org">${g.dept2} · ${g.prov2}</div></div>`:'';
+  const rd=esc(g.room==='รอ'?'รอเช็คอิน':g.room);const hc=hotelColors[g.hotel]||'#64748b';
+  const rm=(it&&g.name2&&g.name2!=='-')?`<div class="rm-box"><div class="rm-lbl">👥 ผู้เข้าพักร่วม (รูมเมท)</div><div class="rm-name" style="font-size:16px;font-weight:700;color:#0f172a">${esc(g.name2)}</div><div class="rm-org">${esc(g.dept2)} · ${esc(g.prov2)}</div></div>`:'';
   const phoneRaw=g.phone!=='-'?g.phone.replace(/[^0-9]/g,''):'';
-  const phoneLink=phoneRaw?`<a class="phone-btn" href="tel:${phoneRaw}">📞 ${g.phone}</a>`:'';
+  const phoneLink=phoneRaw?`<a class="phone-btn" href="tel:${phoneRaw}">📞 ${esc(g.phone)}</a>`:'';
   const driverPhoneRaw=g.driverPhone&&g.driverPhone!=='-'?g.driverPhone.replace(/[^0-9]/g,''):'';
-  const driverPhoneLink=driverPhoneRaw?`<a class="phone-btn" href="tel:${driverPhoneRaw}">📞 ${g.driverPhone}</a>`:'';
-  const footer=(g.coord1!=='-'||g.coord2!=='-'||phoneLink||driverPhoneLink)?`<div class="card-footer">${g.coord1!=='-'?`<div class="cf-row"><span class="cf-lbl">👤 ผู้ประสานงาน (เจ้าหน้าที่กรม)</span><span class="cf-val">${g.coord1}</span></div>`:''} ${phoneLink?`<div class="cf-row"><span class="cf-lbl">📞 เบอร์ประสานงาน</span>${phoneLink}</div>`:''} ${g.coord2!=='-'?`<div class="cf-row"><span class="cf-lbl">🚗 ผู้ขับรถ</span><span class="cf-val">${g.coord2}</span></div>`:''} ${driverPhoneLink?`<div class="cf-row"><span class="cf-lbl">📞 เบอร์คนขับ</span>${driverPhoneLink}</div>`:''}</div>`:'';
-  return`<div class="guest-card ${ic?'cancelled':''}"><div class="card-top" style="border-left:3px solid ${hc};padding-left:12px"><div class="card-top-row"><span class="seq-badge">#${g.seq}</span>${badge}</div><div class="guest-name">${g.name1}</div><div class="guest-org">${g.dept1!=='-'?`<span>${g.dept1}</span>`:''}${g.prov1!=='-'?`<span class="prov-chip">${g.prov1}</span>`:''}</div></div>${rm}<div class="card-info"><div class="ci"><div class="ci-lbl">🏨 โรงแรม</div><div class="ci-val" style="color:${hc};font-weight:700">${g.hotel}</div></div><div class="ci"><div class="ci-lbl">🔑 เลขห้อง</div><div class="ci-val ${rc}">${rd}</div></div><div class="ci"><div class="ci-lbl">🚌 รถรับส่ง</div><div class="ci-val"><span class="car-tag">${g.car}</span></div></div><div class="ci"><div class="ci-lbl">⏰ ขาไป</div><div class="ci-val time-val">${g.time}</div></div>${g.timeReturn&&g.timeReturn!=='-'?`<div class="ci"><div class="ci-lbl">⏰ ขากลับ</div><div class="ci-val time-val">${g.timeReturn}</div></div>`:''}${g.note&&g.note!=='-'?`<div class="ci full"><div class="ci-lbl">📝 หมายเหตุ</div><div class="ci-val" style="color:var(--text2);font-weight:400;font-style:italic">${g.note}</div></div>`:''}</div>${footer}</div>`;
+  const driverPhoneLink=driverPhoneRaw?`<a class="phone-btn" href="tel:${driverPhoneRaw}">📞 ${esc(g.driverPhone)}</a>`:'';
+  const footer=(g.coord1!=='-'||g.coord2!=='-'||phoneLink||driverPhoneLink)?`<div class="card-footer">${g.coord1!=='-'?`<div class="cf-row"><span class="cf-lbl">👤 ผู้ประสานงาน (เจ้าหน้าที่กรม)</span><span class="cf-val">${esc(g.coord1)}</span></div>`:''} ${phoneLink?`<div class="cf-row"><span class="cf-lbl">📞 เบอร์ประสานงาน</span>${phoneLink}</div>`:''} ${g.coord2!=='-'?`<div class="cf-row"><span class="cf-lbl">🚗 ผู้ขับรถ</span><span class="cf-val">${esc(g.coord2)}</span></div>`:''} ${driverPhoneLink?`<div class="cf-row"><span class="cf-lbl">📞 เบอร์คนขับ</span>${driverPhoneLink}</div>`:''}</div>`:'';
+  return`<div class="guest-card ${ic?'cancelled':''}"><div class="card-top" style="border-left:3px solid ${hc};padding-left:12px"><div class="card-top-row"><span class="seq-badge">#${esc(g.seq)}</span>${badge}</div><div class="guest-name">${esc(g.name1)}</div><div class="guest-org">${g.dept1!=='-'?`<span>${esc(g.dept1)}</span>`:''}${g.prov1!=='-'?`<span class="prov-chip">${esc(g.prov1)}</span>`:''}</div></div>${rm}<div class="card-info"><div class="ci"><div class="ci-lbl">🏨 โรงแรม</div><div class="ci-val" style="color:${hc};font-weight:700">${esc(g.hotel)}</div></div><div class="ci"><div class="ci-lbl">🔑 เลขห้อง</div><div class="ci-val ${rc}">${rd}</div></div><div class="ci"><div class="ci-lbl">🚌 รถรับส่ง</div><div class="ci-val"><span class="car-tag">${esc(g.car)}</span></div></div><div class="ci"><div class="ci-lbl">⏰ ขาไป</div><div class="ci-val time-val">${esc(g.time)}</div></div>${g.timeReturn&&g.timeReturn!=='-'?`<div class="ci"><div class="ci-lbl">⏰ ขากลับ</div><div class="ci-val time-val">${esc(g.timeReturn)}</div></div>`:''}${g.note&&g.note!=='-'?`<div class="ci full"><div class="ci-lbl">📝 หมายเหตุ</div><div class="ci-val" style="color:var(--text2);font-weight:400;font-style:italic">${esc(g.note)}</div></div>`:''}</div>${footer}</div>`;
 }
 function renderCards(data){
   document.getElementById('resultCount').textContent=`${data.length} รายการ`;
@@ -1738,7 +1754,7 @@ function applyLandingSettings(appName, appSub){
   const su = document.getElementById('landingSubtitle');
   const ic = document.getElementById('landingIcon');
   if(ti && appName) ti.textContent = appName;
-  if(su && appSub)  su.innerHTML  = appSub.replace(/\n/g,'<br>');
+  if(su && appSub)  su.innerHTML  = esc(appSub).replace(/\n/g,'<br>');
   // sync title tag
   if(appName && !document.getElementById('headerTitle').textContent.trim()){
     document.title = appName;
@@ -1868,13 +1884,13 @@ async function searchEventByName(q){
       }
       box.innerHTML = matched.map(ev=>{
         const logoHtml = ev.logo_img
-          ? `<img src="${ev.logo_img}" style="width:32px;height:32px;object-fit:cover;border-radius:7px">`
-          : `<div style="width:32px;height:32px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px">${ev.logo||'🏨'}</div>`;
-        return `<div onclick="selectEvent('${ev.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f0f4f8;transition:background .15s" onmouseover="this.style.background='#f0f4f8'" onmouseout="this.style.background=''">
+          ? `<img src="${esc(ev.logo_img)}" style="width:32px;height:32px;object-fit:cover;border-radius:7px">`
+          : `<div style="width:32px;height:32px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px">${esc(ev.logo)||'🏨'}</div>`;
+        return `<div onclick="selectEvent('${escJsAttr(ev.id)}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f0f4f8;transition:background .15s" onmouseover="this.style.background='#f0f4f8'" onmouseout="this.style.background=''">
           ${logoHtml}
           <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
-            <div style="font-size:11px;color:#64748b">${ev.subtitle||''} <span style="color:#94a3b8;font-family:'IBM Plex Mono',monospace">· ${ev.id}</span></div>
+            <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(ev.name)}</div>
+            <div style="font-size:11px;color:#64748b">${esc(ev.subtitle)||''} <span style="color:#94a3b8;font-family:'IBM Plex Mono',monospace">· ${esc(ev.id)}</span></div>
           </div>
           <div style="color:#94a3b8;font-size:16px">›</div>
         </div>`;
@@ -2062,16 +2078,16 @@ async function loadDashboard(){
       const cancelled = guests.filter(g=>g.name1.includes('ยกเลิก')).length;
       const updatedAt = gd&&gd.updatedAt ? gd.updatedAt : null;
       const logoHtml = ev.logo_img
-        ? `<img src="${ev.logo_img}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">`
-        : `<div style="width:40px;height:40px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ev.logo||'🏨'}</div>`;
+        ? `<img src="${esc(ev.logo_img)}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">`
+        : `<div style="width:40px;height:40px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${esc(ev.logo)||'🏨'}</div>`;
       return `<div style="background:#fff;border:1.5px solid #c8d3e0;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
         <!-- Card Header -->
         <div style="padding:14px 16px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px">
           ${logoHtml}
           <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.name}</div>
-            <div style="font-size:11px;color:#64748b">${ev.subtitle||''}</div>
-            <div style="font-size:10px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">?event=${ev.id}</div>
+            <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(ev.name)}</div>
+            <div style="font-size:11px;color:#64748b">${esc(ev.subtitle)||''}</div>
+            <div style="font-size:10px;color:#94a3b8;font-family:'IBM Plex Mono',monospace">?event=${esc(ev.id)}</div>
           </div>
         </div>
         <!-- Card Stats -->
@@ -2093,7 +2109,7 @@ async function loadDashboard(){
         <div style="padding:10px 16px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
           <div style="font-size:11px;color:#94a3b8">${updatedAt?'🕐 '+updatedAt:'ยังไม่มีข้อมูล'}</div>
           <div style="display:flex;gap:6px">
-            <button onclick="closeDashboard();selectEvent('${ev.id}')" style="background:#1a56db;color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer">เข้าจัดการ</button>
+            <button onclick="closeDashboard();selectEvent('${escJsAttr(ev.id)}')" style="background:#1a56db;color:#fff;border:none;padding:6px 14px;border-radius:7px;font-size:12px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer">เข้าจัดการ</button>
           </div>
         </div>
       </div>`;
@@ -2339,7 +2355,7 @@ async function saveAppSettings(){
       // อัปเดต landing icon ด้วย
       const li = document.getElementById('landingIcon');
       if(li){
-        if(logoImg) li.innerHTML=`<img src="${logoImg}" style="width:clamp(96px,10vw,140px);height:clamp(96px,10vw,140px);border-radius:clamp(20px,2vw,28px);object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.18)">`;
+        if(logoImg) li.innerHTML=`<img src="${esc(logoImg)}" style="width:clamp(96px,10vw,140px);height:clamp(96px,10vw,140px);border-radius:clamp(20px,2vw,28px);object-fit:cover;box-shadow:0 4px 20px rgba(0,0,0,.18)">`;
         else li.textContent=logo;
       }
     }
@@ -2368,12 +2384,12 @@ function openPrintPreview(){
   if(!filtered.length){showToast('ไม่มีข้อมูลที่จะพิมพ์','กรุณาตรวจสอบ filter','err');return;}
 
   const filterLabel = [
-    p?`จังหวัด: ${p}`:'',
-    h?`โรงแรม: ${h}`:'',
-    s?`ค้นหา: "${s}"`:'',
+    p?`จังหวัด: ${esc(p)}`:'',
+    h?`โรงแรม: ${esc(h)}`:'',
+    s?`ค้นหา: "${esc(s)}"`:'',
   ].filter(Boolean).join(' · ') || 'ทุกคน';
 
-  const eventName = document.getElementById('headerTitle').textContent||'งาน';
+  const eventName = esc(document.getElementById('headerTitle').textContent||'งาน');
   // ขยาย filtered — พักคู่ออกเป็น 2 ใบ (สลับชื่อหลัก/รูมเมท)
   const expanded = [];
   filtered.forEach(g => {
@@ -2401,37 +2417,37 @@ function openPrintPreview(){
     const roommate = isTwin && g.name2 && g.name2!=='-' ? `
       <div style="background:#fff;border:1px dashed #7dd3fc;border-radius:6px;padding:6px 8px;margin-top:5px">
         <div style="color:#0891b2;font-weight:700;font-size:9px;margin-bottom:2px">👥 รูมเมท</div>
-        <div style="font-weight:700;font-size:12px">${g.name2}</div>
-        <div style="color:#64748b;font-size:10px">${g.dept2}</div>
+        <div style="font-weight:700;font-size:12px">${esc(g.name2)}</div>
+        <div style="color:#64748b;font-size:10px">${esc(g.dept2)}</div>
       </div>` : '';
     return `
     <div style="border:1.5px solid #94a3b8;border-radius:10px;padding:10px 12px;background:${bgColor};page-break-inside:avoid;position:relative;font-family:'Sarabun',sans-serif">
       <!-- badge -->
-      <div style="position:absolute;top:7px;right:7px;background:#1e293b;color:#fff;font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700">#${g.seq} ${typeLabel}</div>
+      <div style="position:absolute;top:7px;right:7px;background:#1e293b;color:#fff;font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700">#${esc(g.seq)} ${esc(typeLabel)}</div>
       <!-- ชื่อ -->
-      <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:2px;padding-right:60px;line-height:1.3">${g.name1}</div>
-      <div style="font-size:11px;color:#475569;margin-bottom:6px">${g.dept1} · ${g.prov1}</div>
+      <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:2px;padding-right:60px;line-height:1.3">${esc(g.name1)}</div>
+      <div style="font-size:11px;color:#475569;margin-bottom:6px">${esc(g.dept1)} · ${esc(g.prov1)}</div>
       ${roommate}
       <!-- ข้อมูลหลัก -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px">
         <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
           <div style="font-size:8px;color:#64748b;font-weight:600">🏨 โรงแรม</div>
-          <div style="font-size:11px;font-weight:700;color:#1a56db;line-height:1.3">${g.hotel}</div>
+          <div style="font-size:11px;font-weight:700;color:#1a56db;line-height:1.3">${esc(g.hotel)}</div>
         </div>
         <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
           <div style="font-size:8px;color:#64748b;font-weight:600">🔑 ห้อง</div>
-          <div style="font-size:11px;font-weight:700;color:${g.room==='รอเช็คอิน'?'#b45309':'#0f172a'}">${g.room}</div>
+          <div style="font-size:11px;font-weight:700;color:${g.room==='รอเช็คอิน'?'#b45309':'#0f172a'}">${esc(g.room)}</div>
         </div>
         <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
           <div style="font-size:8px;color:#64748b;font-weight:600">🚌 รถ</div>
-          <div style="font-size:11px;font-weight:600">${g.car}</div>
+          <div style="font-size:11px;font-weight:600">${esc(g.car)}</div>
         </div>
         <div style="background:rgba(255,255,255,.7);border-radius:6px;padding:5px 8px">
           <div style="font-size:8px;color:#64748b;font-weight:600">⏰ ขาไป</div>
-          <div style="font-size:11px;font-weight:700;color:#dc2626">${g.time}${g.timeReturn&&g.timeReturn!=='-'?' / กลับ '+g.timeReturn:''}</div>
+          <div style="font-size:11px;font-weight:700;color:#dc2626">${esc(g.time)}${g.timeReturn&&g.timeReturn!=='-'?' / กลับ '+esc(g.timeReturn):''}</div>
         </div>
       </div>
-      ${g.coord2&&g.coord2!=='-'?`<div style="margin-top:5px;font-size:10px;color:#475569">🚗 ${g.coord2}${g.driverPhone&&g.driverPhone!=='-'?' · '+g.driverPhone:''}</div>`:''}
+      ${g.coord2&&g.coord2!=='-'?`<div style="margin-top:5px;font-size:10px;color:#475569">🚗 ${esc(g.coord2)}${g.driverPhone&&g.driverPhone!=='-'?' · '+esc(g.driverPhone):''}</div>`:''}
       <div style="margin-top:6px;padding-top:5px;border-top:1px solid rgba(0,0,0,.1);font-size:9px;color:#94a3b8;text-align:right">${eventName}</div>
     </div>`;
   }).join('');
