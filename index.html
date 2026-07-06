@@ -26,12 +26,14 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 /* STICKY TOP */
 .sticky-top{position:sticky;top:0;z-index:100;background:var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);flex-wrap:nowrap;min-width:0}
+.hd-main{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
 .logo-wrap{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--cyan));box-shadow:0 2px 8px rgba(26,86,219,.25)}
 .logo-wrap img{width:38px;height:38px;object-fit:cover;border-radius:10px}
 .hd-text{min-width:0;flex:1;overflow:hidden}
 .hd-title{font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hd-sub{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hd-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:nowrap}
+.hd-actions{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.hd-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:nowrap}
 .chip{padding:3px 9px;border-radius:20px;font-size:11px;border:1px solid;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
 .chip-blue{background:#eff6ff;border-color:#bfdbfe;color:var(--accent)}
 .chip-green{background:var(--green-bg);border-color:var(--green-br);color:var(--green)}
@@ -254,6 +256,11 @@ body{transition:background .3s}
   .form-row{grid-template-columns:1fr}
   #updatedChip{display:none!important}
   .icon-btn{padding:5px 9px;font-size:11px}
+
+  /* หัวเว็บ: ขึ้นบรรทัดใหม่แทนที่จะล้นจอ ชื่องาน/สถานะ ผู้เข้าพักและเจ้าหน้าที่จะไม่ถูกบีบจนหายไป */
+  .header{flex-wrap:wrap;row-gap:8px}
+  .hd-actions{flex-basis:100%;flex-wrap:wrap;row-gap:6px;margin-left:0;justify-content:flex-end}
+  .hd-home-btn{padding:6px 12px!important;font-size:12px!important}
 }
 </style>
 </head>
@@ -821,19 +828,23 @@ body{transition:background .3s}
 <!-- STICKY HEADER + ADMIN BAR -->
 <div class="sticky-top" id="stickyTop" style="display:none">
   <header class="header">
-    <div class="logo-wrap" id="headerLogo"><span id="headerLogoEmoji">🏨</span></div>
-    <div class="hd-text">
-      <div class="hd-title" id="headerTitle">Event App</div>
-      <div class="hd-sub"   id="headerSubtitle">รายชื่อผู้เข้าพัก</div>
+    <div class="hd-main">
+      <div class="logo-wrap" id="headerLogo"><span id="headerLogoEmoji">🏨</span></div>
+      <div class="hd-text">
+        <div class="hd-title" id="headerTitle">Event App</div>
+        <div class="hd-sub"   id="headerSubtitle">รายชื่อผู้เข้าพัก</div>
+      </div>
     </div>
-    <!-- ปุ่มกลาง — หน้าหลัก -->
-    <button onclick="location.href=location.pathname" style="background:#1a56db;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(26,86,219,.35);transition:all .2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='#1e40af';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#1a56db';this.style.transform=''">🏠 หน้าหลัก</button>
-    <div class="hd-right">
-      <span class="chip chip-green" id="updatedChip" style="display:none"></span>
-      <span class="chip chip-blue"  id="countChip"   style="display:none"></span>
-      <button class="icon-btn share" id="shareBtn" onclick="openShareModal()" style="display:none">📤 แชร์</button>
-      <button class="icon-btn"      id="loginBtn"  onclick="openAuthModal('login')">🔐 Admin</button>
-      <button class="icon-btn warn" id="logoutBtn" style="display:none" onclick="doLogout()">🔓 ออก</button>
+    <div class="hd-actions">
+      <!-- ปุ่มกลาง — หน้าหลัก -->
+      <button class="hd-home-btn" onclick="location.href=location.pathname" style="background:#1a56db;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(26,86,219,.35);transition:all .2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='#1e40af';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#1a56db';this.style.transform=''">🏠 หน้าหลัก</button>
+      <div class="hd-right">
+        <span class="chip chip-green" id="updatedChip" style="display:none"></span>
+        <span class="chip chip-blue"  id="countChip"   style="display:none"></span>
+        <button class="icon-btn share" id="shareBtn" onclick="openShareModal()" style="display:none">📤 แชร์</button>
+        <button class="icon-btn"      id="loginBtn"  onclick="openAuthModal('login')">🔐 Admin</button>
+        <button class="icon-btn warn" id="logoutBtn" style="display:none" onclick="doLogout()">🔓 ออก</button>
+      </div>
     </div>
   </header>
   <div class="admin-bar" id="adminBar">
