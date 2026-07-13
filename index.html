@@ -139,6 +139,26 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .tbl-btn-red{color:var(--red)}.tbl-btn-red:hover{background:var(--red-bg)}
 .tbl-btn-blue{color:var(--accent)}.tbl-btn-blue:hover{background:#eff6ff}
 
+/* EDIT TABLE (แก้ไขข้อมูลในตาราง) */
+.edit-table-modal{max-width:min(1160px,96vw);width:96vw;padding:22px 18px}
+.edit-table-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.edit-table-wrap{overflow:auto;max-height:62vh;border:1.5px solid var(--border2);border-radius:10px;-webkit-overflow-scrolling:touch}
+.edit-table{border-collapse:separate;border-spacing:0;font-size:13px;min-width:100%}
+.edit-table thead th{position:sticky;top:0;z-index:2;background:var(--surface2);color:var(--text2);font-size:11px;font-weight:700;white-space:nowrap;padding:8px 8px;text-align:left;border-bottom:1.5px solid var(--border2);border-right:1px solid var(--border)}
+.edit-table th.col-act,.edit-table td.col-act{position:sticky;left:0;z-index:3;background:var(--surface2);text-align:center;box-shadow:2px 0 4px rgba(0,0,0,.04)}
+.edit-table tbody td.col-act{background:var(--surface)}
+.edit-table tbody td{padding:3px 4px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.edit-table tbody tr:nth-child(even) td{background:var(--surface2)}
+.edit-table tbody tr:nth-child(even) td.col-act{background:var(--surface2)}
+.edit-cell{width:100%;min-width:110px;border:1px solid transparent;background:transparent;color:var(--text);padding:6px 7px;border-radius:5px;font-size:13px;font-family:'Sarabun',sans-serif}
+.edit-cell:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 2px rgba(26,86,219,.12)}
+.edit-cell.col-seq{min-width:52px}
+.edit-cell.col-narrow{min-width:82px}
+.edit-row-del{background:var(--red-bg);border:1px solid var(--red-br);color:var(--red);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.edit-row-del:hover{background:#fecaca}
+.edit-table-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.edit-table-actions .abtn{padding:10px 18px}
+
 /* SETTINGS */
 .logo-preview{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;overflow:hidden}
 .logo-preview img{width:100%;height:100%;object-fit:cover;border-radius:12px}
@@ -603,6 +623,42 @@ body{transition:background .3s}
   </div>
 </div>
 
+<!-- ══ MODAL: EDIT TABLE (แก้ไขข้อมูลผู้เข้าพักในตาราง) ══ -->
+<div class="modal-overlay" id="editTableModal">
+  <div class="modal edit-table-modal">
+    <button class="modal-close" onclick="closeEditTableModal()">✕</button>
+    <div class="modal-icon">📝</div>
+    <div class="modal-title">แก้ไขข้อมูลผู้เข้าพัก</div>
+    <div class="modal-sub">แก้ไขทีละช่อง เพิ่ม/ลบแถวได้ แล้วกดบันทึกขึ้น Cloud</div>
+
+    <div class="edit-table-toolbar">
+      <button class="abtn abtn-blue" onclick="addEditTableRow()">➕ เพิ่มแถว</button>
+      <span id="editTableCount" class="admin-status" style="min-width:auto"></span>
+    </div>
+
+    <div class="edit-table-wrap">
+      <table class="edit-table" id="editTable">
+        <thead id="editTableHead"></thead>
+        <tbody id="editTableBody"></tbody>
+      </table>
+    </div>
+
+    <datalist id="editTypeOptions">
+      <option value="พักเดี่ยว"></option>
+      <option value="พักคู่"></option>
+      <option value="พักเดี่ยว (จ่ายส่วนต่าง)"></option>
+    </datalist>
+
+    <div class="edit-table-actions">
+      <button class="abtn abtn-gray" onclick="closeEditTableModal()">ยกเลิก</button>
+      <button class="abtn abtn-green" onclick="saveEditTable()">☁️ บันทึกขึ้น Cloud</button>
+    </div>
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">
+      💡 ใส่ <b>(ยกเลิกห้อง)</b> ต่อท้ายชื่อ = ยกเลิก · เว้นว่างช่องที่ไม่มีข้อมูลได้
+    </div>
+  </div>
+</div>
+
 <!-- ══ MODAL: APP SETTINGS (from dashboard) ══ -->
 <div class="modal-overlay" id="appSettingsModal">
   <div class="modal" style="max-width:420px">
@@ -854,6 +910,7 @@ body{transition:background .3s}
     <button class="abtn abtn-gray" onclick="downloadTemplate()" title="ดาวน์โหลดไฟล์ตัวอย่าง">📥 Template</button>
     <button class="abtn abtn-blue" onclick="document.getElementById('fileInput').value='';document.getElementById('fileInput').click()">📂 อัปโหลด Excel</button>
     <button class="abtn" onclick="openGSheetModal()" style="background:#16a34a;color:#fff;border:1.5px solid #15803d;display:flex;align-items:center;gap:5px" title="ซิงค์จาก Google Sheets"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_32dp.png" style="width:14px;height:14px"> Google Sheets</button>
+    <button class="abtn" id="editTableBtn" onclick="openEditTableModal()" style="background:#7c3aed;color:#fff;border:1.5px solid #6d28d9" title="แก้ไขข้อมูลผู้เข้าพักในตาราง">📝 แก้ไขตาราง</button>
     <button class="abtn abtn-gray" id="downloadExcelBtn" onclick="downloadCurrentExcel()" title="ดาวน์โหลดข้อมูลปัจจุบันเป็น Excel">⬇️ ดาวน์โหลด Excel</button>
     <input type="file" id="fileInput" accept=".xlsx,.xls"/>
     <span class="admin-status" id="adminStatus">ยังไม่ได้โหลดไฟล์</span>
@@ -1596,6 +1653,116 @@ async function clearData(){
   } catch(e){showLoading(false);showToast('ล้างไม่สำเร็จ',e.message,'err');}
 }
 
+// ════ EDIT TABLE (แก้ไขข้อมูลผู้เข้าพักในตาราง) ════
+const EDIT_COLS = [
+  {key:'seq',        label:'ลำดับ',        cls:'col-seq'},
+  {key:'name1',      label:'ชื่อ-สกุล',    cls:''},
+  {key:'dept1',      label:'หน่วยงาน',     cls:''},
+  {key:'prov1',      label:'จังหวัด',      cls:'col-narrow'},
+  {key:'type',       label:'ประเภท',       cls:'col-narrow', list:'editTypeOptions'},
+  {key:'name2',      label:'ชื่อ-สกุล (รูมเมท)', cls:''},
+  {key:'dept2',      label:'หน่วยงาน (รูมเมท)',  cls:''},
+  {key:'prov2',      label:'จังหวัด (รูมเมท)',   cls:'col-narrow'},
+  {key:'hotel',      label:'โรงแรม',       cls:''},
+  {key:'room',       label:'เลขห้อง',      cls:'col-narrow'},
+  {key:'car',        label:'ทะเบียนรถ',    cls:'col-narrow'},
+  {key:'time',       label:'เวลาขาไป',     cls:'col-narrow'},
+  {key:'timeReturn', label:'เวลาขากลับ',   cls:'col-narrow'},
+  {key:'coord1',     label:'ผู้ประสานงาน', cls:''},
+  {key:'phone',      label:'เบอร์ประสานงาน', cls:'col-narrow'},
+  {key:'coord2',     label:'ผู้ขับรถ',     cls:''},
+  {key:'driverPhone',label:'เบอร์คนขับ',   cls:'col-narrow'},
+  {key:'note',       label:'หมายเหตุ',     cls:''},
+];
+
+function renderEditTableHead(){
+  document.getElementById('editTableHead').innerHTML =
+    `<tr><th class="col-act">ลบ</th>${EDIT_COLS.map(c=>`<th>${c.label}</th>`).join('')}</tr>`;
+}
+function buildEditRow(g){
+  g = g||{};
+  const cells = EDIT_COLS.map(c=>{
+    let v = g[c.key];
+    if(v==='-'||v==null) v='';        // แสดง '-' (ค่าว่างภายใน) เป็นช่องว่างเพื่อแก้ง่าย
+    const listAttr = c.list?` list="${c.list}"`:'';
+    return `<td><input class="edit-cell ${c.cls||''}" data-field="${c.key}"${listAttr} value="${esc(v)}"></td>`;
+  }).join('');
+  return `<tr><td class="col-act"><button class="edit-row-del" title="ลบแถวนี้" onclick="removeEditTableRow(this)">🗑</button></td>${cells}</tr>`;
+}
+function openEditTableModal(){
+  if(!currentUser||!currentEventId){ showToast('ยังไม่พร้อม','กรุณาเข้าสู่ระบบและเลือกงานก่อน','err'); return; }
+  renderEditTableHead();
+  const body = document.getElementById('editTableBody');
+  const src = (guestData&&guestData.length)?guestData:[];
+  body.innerHTML = src.length ? src.map(buildEditRow).join('') : (buildEditRow({})+buildEditRow({})+buildEditRow({}));
+  updateEditTableCount();
+  openModal('editTableModal');
+}
+function closeEditTableModal(){ closeModal('editTableModal'); }
+function addEditTableRow(){
+  const body = document.getElementById('editTableBody');
+  body.insertAdjacentHTML('beforeend', buildEditRow({}));
+  updateEditTableCount();
+  const last = body.lastElementChild;
+  if(last){ last.scrollIntoView({block:'nearest'}); const inp=last.querySelector('.edit-cell'); if(inp) inp.focus(); }
+}
+function removeEditTableRow(btn){
+  const tr = btn.closest('tr'); if(tr) tr.remove();
+  updateEditTableCount();
+}
+function updateEditTableCount(){
+  const n = document.querySelectorAll('#editTableBody tr').length;
+  const el = document.getElementById('editTableCount');
+  if(el) el.textContent = `${n} แถว`;
+}
+function collectEditTable(){
+  const guests = [];
+  document.querySelectorAll('#editTableBody tr').forEach(tr=>{
+    const g = {};
+    tr.querySelectorAll('.edit-cell').forEach(inp=>{ g[inp.dataset.field] = inp.value.trim(); });
+    if(!g.name1) return;               // ข้ามแถวที่ไม่มีชื่อ (แถวว่าง)
+    EDIT_COLS.forEach(c=>{ if(!g[c.key]) g[c.key]='-'; });  // ช่องว่าง → '-' ให้เข้ากับส่วนแสดงผล
+    guests.push(g);
+  });
+  return guests;
+}
+async function saveEditTable(){
+  if(!currentEventId){ showToast('ยังไม่พร้อม','ไม่พบงานที่กำลังจัดการ','err'); return; }
+  const guests = collectEditTable();
+  if(!guests.length){ showToast('ยังไม่มีข้อมูล','กรุณากรอกอย่างน้อย 1 แถว (ต้องมีชื่อ-สกุล)','err'); return; }
+  const colors = {};
+  [...new Set(guests.map(g=>g.hotel).filter(h=>h&&h!=='-'))].forEach((h,i)=>colors[h]=PALETTE[i%PALETTE.length]);
+  showLoading(true,'กำลังบันทึก...');
+  const now = new Date();
+  const ds = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()+543} ${String(now.getHours()).padStart(2,'0')}.${String(now.getMinutes()).padStart(2,'0')} น.`;
+  try {
+    const rows = await sb(`/rest/v1/guests?event_id=eq.${encodeURIComponent(currentEventId)}&select=id&limit=1`);
+    if(!rows||!rows.length){
+      await sb('/rest/v1/guests',{method:'POST',body:JSON.stringify({event_id:currentEventId,data:{guests,colors,updatedAt:ds}})});
+    } else {
+      await sb(`/rest/v1/guests?id=eq.${rows[0].id}`,{method:'PATCH',body:JSON.stringify({data:{guests,colors,updatedAt:ds},updated_at:new Date().toISOString()})});
+    }
+    guestData = guests; hotelColors = colors; pendingData = null;
+    document.getElementById('saveBtn').disabled = true;
+    document.getElementById('adminStatus').textContent = `☁️ บันทึกแล้ว — ${ds}`;
+    const uc=document.getElementById('updatedChip'); uc.textContent='🕐 '+ds; uc.style.display='inline';
+    const cc=document.getElementById('countChip'); cc.textContent=guestData.length+' รายการ'; cc.style.display='inline';
+    // อัปเดตหน้าจอให้เห็นผลทันที
+    populateFilters();
+    document.getElementById('welcomeView').style.display='none';
+    document.getElementById('guestView').style.display='block';
+    document.getElementById('searchFirstState').style.display='none';
+    document.getElementById('cardsGrid').style.display='';
+    document.getElementById('summaryGrid').style.display='';
+    renderSummary(guestData); renderCards(guestData);
+    const pb=document.getElementById('printBtn'); if(pb) pb.style.display='';
+    const dlb=document.getElementById('downloadExcelBtn'); if(dlb) dlb.style.display='';
+    showLoading(false);
+    closeEditTableModal();
+    showToast('บันทึกสำเร็จ! 🎉',`${guests.length} รายการ — ผู้เข้าพักเห็นข้อมูลล่าสุดแล้ว`,'ok');
+  } catch(e){ showLoading(false); showToast('บันทึกไม่สำเร็จ',e.message,'err'); }
+}
+
 // ════ DATA / RENDER ════
 function getVal(row,keys){for(const k of keys){if(row[k]!==undefined&&row[k]!==null&&row[k]!=='')return String(row[k]).trim();}return '-';}
 function mapRow(row){return{seq:getVal(row,COL.seq),name1:getVal(row,COL.name1),dept1:getVal(row,COL.dept1),prov1:getVal(row,COL.prov1),type:getVal(row,COL.type),name2:getVal(row,COL.name2),dept2:getVal(row,COL.dept2),prov2:getVal(row,COL.prov2),hotel:getVal(row,COL.hotel),room:getVal(row,COL.room),car:getVal(row,COL.car),time:getVal(row,COL.time),timeReturn:getVal(row,COL.timeReturn),coord1:getVal(row,COL.coord1),phone:getVal(row,COL.phone),coord2:getVal(row,COL.coord2),driverPhone:getVal(row,COL.driverPhone),note:getVal(row,COL.note)};}
@@ -1714,7 +1881,7 @@ function closeModal(id){
   }
 }
 document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',e=>{if(e.target===el&&el.id!=='landingModal')el.classList.remove('show');});
+  el.addEventListener('click',e=>{if(e.target===el&&el.id!=='landingModal'&&el.id!=='editTableModal')el.classList.remove('show');});
 });
 
 
@@ -1976,10 +2143,12 @@ function switchHelpTab(tab){
 
 function toggleAdminMenu(e){
   e.stopPropagation();
-  document.getElementById('adminDropdownMenu').classList.toggle('open');
+  const m=document.getElementById('adminDropdownMenu');
+  if(m) m.classList.toggle('open');
 }
 function closeAdminMenu(){
-  document.getElementById('adminDropdownMenu').classList.remove('open');
+  const m=document.getElementById('adminDropdownMenu');
+  if(m) m.classList.remove('open');
 }
 document.addEventListener('click', ()=>closeAdminMenu());
 
