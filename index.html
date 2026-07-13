@@ -143,6 +143,15 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .edit-table-modal{max-width:min(1160px,96vw);width:96vw;padding:22px 18px}
 .edit-table-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 .edit-table-wrap{overflow:auto;max-height:62vh;border:1.5px solid var(--border2);border-radius:10px;-webkit-overflow-scrolling:touch}
+.edit-cell.dup-flag{border-color:#f59e0b;background:#fffbeb;box-shadow:0 0 0 2px rgba(245,158,11,.25)}
+.dup-results{margin-bottom:10px;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;display:none;max-height:30vh;overflow:auto}
+.dup-results.show{display:block}
+.dup-results.warn{background:#fffbeb;border:1.5px solid #fde68a;color:#92400e}
+.dup-results.ok{background:#f0fdf4;border:1.5px solid #bbf7d0;color:#15803d}
+.dup-group{background:#fff;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;margin-top:8px}
+.dup-group-hd{font-weight:800;margin-bottom:4px;color:#b45309}
+.dup-item{color:#1e293b}
+.dup-item .dup-seq{font-family:'IBM Plex Mono',monospace;color:#64748b;font-size:11px}
 .edit-table{border-collapse:separate;border-spacing:0;font-size:13px;min-width:100%}
 .edit-table thead th{position:sticky;top:0;z-index:2;background:var(--surface2);color:var(--text2);font-size:11px;font-weight:700;white-space:nowrap;padding:8px 8px;text-align:left;border-bottom:1.5px solid var(--border2);border-right:1px solid var(--border)}
 .edit-table th.col-act,.edit-table td.col-act{position:sticky;left:0;z-index:3;background:var(--surface2);text-align:center;box-shadow:2px 0 4px rgba(0,0,0,.04)}
@@ -633,8 +642,11 @@ body{transition:background .3s}
 
     <div class="edit-table-toolbar">
       <button class="abtn abtn-blue" onclick="addEditTableRow()">➕ เพิ่มแถว</button>
+      <button class="abtn" onclick="checkDuplicates()" style="background:#b45309;color:#fff;border:1.5px solid #92400e" title="ตรวจหาชื่อ/รูมเมทที่อาจซ้ำกัน (พิมพ์ต่างกันเล็กน้อย)">🔍 ตรวจชื่อซ้ำ</button>
       <span id="editTableCount" class="admin-status" style="min-width:auto"></span>
     </div>
+
+    <div class="dup-results" id="dupResults"></div>
 
     <div class="edit-table-wrap">
       <table class="edit-table" id="editTable">
@@ -1697,6 +1709,7 @@ function openEditTableModal(){
   const src = (guestData&&guestData.length)?guestData:[];
   body.innerHTML = src.length ? src.map(buildEditRow).join('') : (buildEditRow({})+buildEditRow({})+buildEditRow({}));
   updateEditTableCount();
+  const dr=document.getElementById('dupResults'); if(dr){ dr.className='dup-results'; dr.innerHTML=''; }
   openModal('editTableModal');
 }
 function closeEditTableModal(){ closeModal('editTableModal'); }
@@ -1762,6 +1775,96 @@ async function saveEditTable(){
     closeEditTableModal();
     showToast('บันทึกสำเร็จ! 🎉',`${guests.length} รายการ — ผู้เข้าพักเห็นข้อมูลล่าสุดแล้ว`,'ok');
   } catch(e){ showLoading(false); showToast('บันทึกไม่สำเร็จ',e.message,'err'); }
+}
+
+// ════ ตรวจจับชื่อ/รูมเมทที่อาจซ้ำกัน (fuzzy match) ════
+// ตัดคำนำหน้า + ช่องว่าง เพื่อเทียบเฉพาะชื่อจริง
+function normName(s){
+  let t = String(s||'').trim().toLowerCase();
+  t = t.replace(/^(นางสาว|นาง|นาย|น\.ส\.|นส\.|ด\.ช\.|ด\.ญ\.|ว่าที่ ?ร\.?ต\.?|พ\.?ต\.?ท\.?|พ\.?ต\.?อ\.?|ร\.?ต\.?[ทอ]?\.?|ร\.?อ\.?|พล\.?|จ\.?ส\.?อ\.?|ส\.?อ\.?|ดร\.|dr\.?|mr\.?|mrs\.?|ms\.?)\s*/,'');
+  return t.replace(/[\s.\-]/g,'');   // ตัดช่องว่าง จุด ขีด ออก
+}
+// Levenshtein edit distance (นับจำนวนตัวอักษรที่ต่างกัน)
+function editDist(a,b){
+  const m=a.length,n=b.length;
+  if(!m) return n; if(!n) return m;
+  const dp=Array.from({length:m+1},(_,i)=>i);
+  for(let j=1;j<=n;j++){
+    let prev=dp[0]; dp[0]=j;
+    for(let i=1;i<=m;i++){
+      const tmp=dp[i];
+      dp[i]=Math.min(dp[i]+1, dp[i-1]+1, prev+(a[i-1]===b[j-1]?0:1));
+      prev=tmp;
+    }
+  }
+  return dp[m];
+}
+// คืน 'exact' (เหมือนกัน), 'close' (ต่างเล็กน้อย น่าจะคนเดียวกัน) หรือ null
+function nameMatch(a,b){
+  if(!a||!b) return null;
+  if(a===b) return 'exact';
+  const d=editDist(a,b), minL=Math.min(a.length,b.length);
+  if(d===1 && minL>=4) return 'close';
+  if(d===2 && minL>=7) return 'close';
+  return null;
+}
+function clearDupHighlights(){
+  document.querySelectorAll('#editTableBody .edit-cell.dup-flag').forEach(el=>el.classList.remove('dup-flag'));
+}
+function checkDuplicates(){
+  clearDupHighlights();
+  const box=document.getElementById('dupResults');
+  const trs=[...document.querySelectorAll('#editTableBody tr')];
+  const occ=[];
+  trs.forEach((tr,idx)=>{
+    const get=f=>{const el=tr.querySelector('.edit-cell[data-field="'+f+'"]');return el?el.value.trim():'';};
+    const name1=get('name1'); if(!name1) return;
+    if(name1.includes('ยกเลิก')) return;              // ข้ามรายการที่ยกเลิก
+    const seq=get('seq')||('แถว '+(idx+1));
+    occ.push({tr,field:'name1',raw:name1,norm:normName(name1),seq,role:'ผู้เข้าพักหลัก'});
+    const name2=get('name2');
+    if(name2 && name2!=='-'){
+      occ.push({tr,field:'name2',raw:name2,norm:normName(name2),seq,role:'รูมเมท'});
+    }
+  });
+
+  // union-find รวมชื่อที่คล้ายกันเป็นกลุ่มเดียว
+  const parent=occ.map((_,i)=>i);
+  const find=x=>{while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];}return x;};
+  let anyClose=false, anyExact=false;
+  for(let i=0;i<occ.length;i++){
+    for(let j=i+1;j<occ.length;j++){
+      const m=nameMatch(occ[i].norm,occ[j].norm);
+      if(m){ parent[find(i)]=find(j); if(m==='exact')anyExact=true; else anyClose=true; }
+    }
+  }
+  const groups={};
+  occ.forEach((o,i)=>{const r=find(i);(groups[r]=groups[r]||[]).push(o);});
+  const dupGroups=Object.values(groups).filter(g=>g.length>=2);
+
+  if(!dupGroups.length){
+    box.className='dup-results show ok';
+    box.innerHTML='✅ ไม่พบชื่อผู้เข้าพัก/รูมเมทที่ซ้ำหรือคล้ายกัน';
+    return;
+  }
+
+  // ไฮไลต์ช่องที่เกี่ยว + สร้างรายงาน
+  let html=`<div style="font-weight:800;margin-bottom:2px">⚠️ พบ ${dupGroups.length} กลุ่มที่อาจเป็นคนเดียวกัน — โปรดตรวจสอบ</div>
+    <div style="font-size:11px;color:#a16207">อาจเป็นการพิมพ์ชื่อต่างกันเล็กน้อยของคนคนเดียวกัน (เช่น พักคู่กับคนเดียวกันแต่สะกดต่างกัน)</div>`;
+  dupGroups.forEach(g=>{
+    const allSame=g.every(o=>o.norm===g[0].norm);
+    const label=allSame?'ชื่อเหมือนกัน':'ชื่อคล้ายกันมาก';
+    g.forEach(o=>o.tr.querySelector('.edit-cell[data-field="'+o.field+'"]').classList.add('dup-flag'));
+    html+=`<div class="dup-group"><div class="dup-group-hd">🔸 ${esc(label)}</div>`+
+      g.map(o=>`<div class="dup-item">• <b>${esc(o.raw)}</b> <span class="dup-seq">(#${esc(o.seq)} · ${esc(o.role)})</span></div>`).join('')+
+      `</div>`;
+  });
+  box.className='dup-results show warn';
+  box.innerHTML=html;
+  // เลื่อนแถวแรกที่ถูกไฮไลต์ให้เห็น
+  const first=document.querySelector('#editTableBody .edit-cell.dup-flag');
+  if(first) first.scrollIntoView({block:'nearest',inline:'nearest'});
+  showToast('พบชื่อที่อาจซ้ำ ⚠️',`${dupGroups.length} กลุ่ม — ดูรายละเอียดด้านบนตาราง`,'err');
 }
 
 // ════ DATA / RENDER ════
