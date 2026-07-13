@@ -651,10 +651,11 @@ body{transition:background .3s}
 
     <div class="edit-table-actions">
       <button class="abtn abtn-gray" onclick="closeEditTableModal()">ยกเลิก</button>
+      <button class="abtn abtn-gray" onclick="downloadEditTableExcel()" title="ดาวน์โหลดข้อมูลในตารางเป็นไฟล์ Excel">⬇️ ดาวน์โหลด Excel</button>
       <button class="abtn abtn-green" onclick="saveEditTable()">☁️ บันทึกขึ้น Cloud</button>
     </div>
     <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">
-      💡 ใส่ <b>(ยกเลิกห้อง)</b> ต่อท้ายชื่อ = ยกเลิก · เว้นว่างช่องที่ไม่มีข้อมูลได้
+      💡 ใส่ <b>(ยกเลิกห้อง)</b> ต่อท้ายชื่อ = ยกเลิก · เว้นว่างช่องที่ไม่มีข้อมูลได้ · ดาวน์โหลด Excel ได้โดยไม่ต้องบันทึกก่อน
     </div>
   </div>
 </div>
@@ -1984,8 +1985,11 @@ function downloadTemplate(){
 
 
 // ════ DOWNLOAD CURRENT EXCEL ════
-function downloadCurrentExcel(){
-  if(!guestData||!guestData.length){showToast('ไม่มีข้อมูล','ยังไม่มีข้อมูลผู้เข้าพักในระบบ','err');return;}
+// dataArg = อาร์เรย์ผู้เข้าพักที่ต้องการ export (ไม่ใส่ = ใช้ guestData ที่บันทึกไว้)
+function downloadCurrentExcel(dataArg){
+  const data = (Array.isArray(dataArg) && dataArg.length) ? dataArg : guestData;
+  if(!data||!data.length){showToast('ไม่มีข้อมูล','ยังไม่มีข้อมูลผู้เข้าพักในระบบ','err');return;}
+  if(typeof XLSX==='undefined'){showToast('ดาวน์โหลดไม่ได้','โหลดไลบรารี Excel ไม่สำเร็จ กรุณาเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่','err');return;}
 
   // สร้าง CSV-style data แล้วแปลงเป็น Excel format ผ่าน SheetJS
   const headers = [
@@ -1995,11 +1999,12 @@ function downloadCurrentExcel(){
     'ผู้ประสานงาน (เจ้าหน้าที่กรม)','ติดต่อ','ชื่อผู้ขับรถ','เบอร์โทรคนขับ','เวลาออกเดินทาง (ขาไป)','เวลาออกเดินทาง (ขากลับ)','หมายเหตุ'
   ];
 
-  const rows = guestData.map(g => [
-    g.seq, g.name1, g.dept1, g.prov1,
-    g.type, g.name2==='-'?'':g.name2, g.dept2==='-'?'':g.dept2, g.prov2==='-'?'':g.prov2,
-    g.hotel, g.room, g.car, g.time,
-    g.coord1, g.phone, g.coord2, g.driverPhone||'', g.time, g.timeReturn||'', g.note
+  const clean = v => (v==='-'||v==null) ? '' : v;   // '-' (ค่าว่างภายใน) → ช่องว่างในไฟล์ Excel
+  const rows = data.map(g => [
+    clean(g.seq), clean(g.name1), clean(g.dept1), clean(g.prov1),
+    clean(g.type), clean(g.name2), clean(g.dept2), clean(g.prov2),
+    clean(g.hotel), clean(g.room), clean(g.car), clean(g.time),
+    clean(g.coord1), clean(g.phone), clean(g.coord2), clean(g.driverPhone), clean(g.time), clean(g.timeReturn), clean(g.note)
   ]);
 
   // ใช้ SheetJS สร้างไฟล์ Excel
@@ -2011,7 +2016,7 @@ function downloadCurrentExcel(){
   ws['!cols'] = [
     {wch:8},{wch:28},{wch:36},{wch:22},{wch:22},
     {wch:28},{wch:36},{wch:22},{wch:26},{wch:14},
-    {wch:18},{wch:20},{wch:30},{wch:18},{wch:22},{wch:18},{wch:30}
+    {wch:18},{wch:20},{wch:30},{wch:18},{wch:22},{wch:18},{wch:22},{wch:22},{wch:30}
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, 'รายชื่อผู้เข้าพัก');
@@ -2022,7 +2027,14 @@ function downloadCurrentExcel(){
   const filename = `GuestList_${currentEventId||'event'}_${dateStr}.xlsx`;
 
   XLSX.writeFile(wb, filename);
-  showToast('ดาวน์โหลดสำเร็จ ✅',`${filename} — ${guestData.length} รายการ`,'ok');
+  showToast('ดาวน์โหลดสำเร็จ ✅',`${filename} — ${data.length} รายการ`,'ok');
+}
+
+// ดาวน์โหลด Excel จากข้อมูลที่กำลังแก้ในตาราง (ไม่ต้องบันทึกขึ้น Cloud ก่อน)
+function downloadEditTableExcel(){
+  const guests = collectEditTable();
+  if(!guests.length){ showToast('ยังไม่มีข้อมูล','กรุณากรอกอย่างน้อย 1 แถว (ต้องมีชื่อ-สกุล)','err'); return; }
+  downloadCurrentExcel(guests);
 }
 
 
