@@ -122,6 +122,66 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .gear-menu-item:hover{background:var(--surface2)}
 .gear-menu-item span{font-size:17px;flex-shrink:0}
 
+/* ════ CYBERPUNK LANDING ════ */
+.modal-overlay.cyber-landing{background:#05050e;align-items:center;padding:20px;overflow:hidden}
+.cyber-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 15% 0%, rgba(255,43,214,.16), transparent 55%),
+    radial-gradient(120% 80% at 85% 100%, rgba(0,240,255,.16), transparent 55%),
+    linear-gradient(#05050e,#08081a);}
+.cyber-bg::after{content:'';position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(rgba(0,240,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.06) 1px,transparent 1px);
+  background-size:38px 38px;
+  -webkit-mask-image:radial-gradient(75% 65% at 50% 42%,#000,transparent 78%);mask-image:radial-gradient(75% 65% at 50% 42%,#000,transparent 78%);}
+.cyber-scan{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.35;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.35) 2px 3px);}
+.cyber-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;width:100%;max-width:440px;padding:24px 20px}
+.cyber-logo{width:112px;height:112px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:60px;
+  background:rgba(10,12,30,.6);border:1.5px solid rgba(0,240,255,.5);
+  box-shadow:0 0 24px rgba(0,240,255,.35),inset 0 0 24px rgba(0,240,255,.1);overflow:hidden}
+.cyber-logo img{width:100%!important;height:100%!important;object-fit:cover;border-radius:22px!important;box-shadow:none!important}
+.cyber-title{font-family:'IBM Plex Mono',monospace;font-size:34px;font-weight:600;letter-spacing:3px;color:#eafcff;position:relative;line-height:1.1;margin-top:2px;
+  text-shadow:0 0 8px rgba(0,240,255,.7),0 0 20px rgba(0,240,255,.35)}
+.cyber-title::before,.cyber-title::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;overflow:hidden;opacity:.85}
+.cyber-title::before{color:#ff2bd6;transform:translate(-2px,0);clip-path:polygon(0 0,100% 0,100% 45%,0 45%);animation:cyberGlitch 3.2s infinite linear alternate}
+.cyber-title::after{color:#00f0ff;transform:translate(2px,0);clip-path:polygon(0 55%,100% 55%,100% 100%,0 100%);animation:cyberGlitch 2.4s infinite linear alternate-reverse}
+@keyframes cyberGlitch{0%,92%,100%{transform:translate(0,0)}94%{transform:translate(-3px,1px)}96%{transform:translate(3px,-1px)}98%{transform:translate(-2px,0)}}
+.cyber-sub{font-size:14px;color:#9aa0d8;line-height:1.7;max-width:360px}
+.cyber-search-wrap{position:relative;width:100%;margin-top:6px}
+.cyber-search{display:flex;align-items:center;gap:8px;background:rgba(9,11,28,.72);border:1.5px solid rgba(0,240,255,.45);border-radius:14px;padding:6px 6px 6px 14px;
+  box-shadow:0 0 22px rgba(0,240,255,.14),inset 0 0 18px rgba(0,240,255,.05);transition:border-color .2s,box-shadow .2s}
+.cyber-search:focus-within{border-color:#00f0ff;box-shadow:0 0 30px rgba(0,240,255,.4),0 0 60px rgba(255,43,214,.15)}
+.cyber-search-ico{font-size:20px;color:#00f0ff;flex-shrink:0;text-shadow:0 0 8px rgba(0,240,255,.7)}
+.cyber-input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#eafcff;font-size:16px;font-family:'IBM Plex Mono',monospace;padding:12px 4px}
+.cyber-input::placeholder{color:#5b6099;font-family:'Sarabun',sans-serif}
+.cyber-go{flex-shrink:0;width:46px;height:46px;border-radius:11px;border:none;cursor:pointer;color:#05050e;font-size:20px;font-weight:800;
+  background:linear-gradient(135deg,#00f0ff,#ff2bd6);box-shadow:0 0 18px rgba(0,240,255,.5);transition:transform .15s,box-shadow .2s;display:flex;align-items:center;justify-content:center}
+.cyber-go:hover{transform:translateX(2px);box-shadow:0 0 28px rgba(255,43,214,.6)}
+.cyber-results{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:10;text-align:left;
+  background:rgba(9,11,26,.97);border:1.5px solid rgba(0,240,255,.4);border-radius:12px;overflow:hidden;max-height:300px;overflow-y:auto;
+  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 24px rgba(0,240,255,.15);backdrop-filter:blur(6px)}
+.cyber-results.show{display:block}
+.cyber-res-item{display:flex;align-items:center;gap:11px;padding:12px 14px;cursor:pointer;border-bottom:1px solid rgba(0,240,255,.1);transition:background .15s}
+.cyber-res-item:last-child{border-bottom:none}
+.cyber-res-item:hover{background:rgba(0,240,255,.09)}
+.cyber-res-logo{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:linear-gradient(135deg,#0a2a3a,#1a0a2a);border:1px solid rgba(0,240,255,.3);overflow:hidden}
+.cyber-res-logo img{width:34px;height:34px;object-fit:cover;border-radius:8px}
+.cyber-res-name{font-size:14px;font-weight:700;color:#eafcff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cyber-res-sub{font-size:11px;color:#8a90c8}
+.cyber-res-id{color:#00f0ff;font-family:'IBM Plex Mono',monospace}
+.cyber-res-arrow{margin-left:auto;color:#00f0ff;font-size:16px;flex-shrink:0}
+.cyber-err{font-size:13px;color:#ff5c8a;font-family:'IBM Plex Mono',monospace;margin-top:10px;text-shadow:0 0 8px rgba(255,43,138,.4)}
+.cyber-hint{font-size:12px;color:#7b81b8;line-height:1.7;max-width:360px;margin-top:8px}
+.cyber-hint b{color:#00f0ff;font-weight:700}
+/* ปุ่มฟันเฟือง cyber */
+.cyber-gear{position:absolute;top:18px;right:18px;width:46px;height:46px;border-radius:50%;z-index:60;cursor:pointer;
+  background:rgba(9,11,28,.75);border:1.5px solid rgba(0,240,255,.5);color:#00f0ff;font-size:22px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(0,240,255,.3);transition:transform .3s,box-shadow .2s}
+.cyber-gear:hover{transform:rotate(90deg);box-shadow:0 0 26px rgba(0,240,255,.6)}
+.cyber-menu{background:rgba(9,11,26,.97);border:1.5px solid rgba(0,240,255,.4);box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 24px rgba(0,240,255,.15);backdrop-filter:blur(6px)}
+.cyber-menu .gear-menu-item{color:#d6dbff}
+.cyber-menu .gear-menu-item:hover{background:rgba(0,240,255,.1)}
+
 /* EVENT LIST (admin) */
 .event-list{display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px}
 .event-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
@@ -379,41 +439,35 @@ body{transition:background .3s}
 <!-- TOAST -->
 <div class="toast" id="toast"><div class="toast-t" id="toastT"></div><div id="toastM"></div></div>
 
-<!-- ══ MODAL: EVENT LANDING (no event in URL) ══ -->
-<div class="modal-overlay" id="landingModal" style="background:var(--bg);backdrop-filter:none;z-index:50">
+<!-- ══ MODAL: EVENT LANDING (no event in URL) — Cyberpunk ══ -->
+<div class="modal-overlay cyber-landing" id="landingModal">
+  <div class="cyber-bg"></div>
+  <div class="cyber-scan"></div>
 
   <!-- ปุ่มฟันเฟือง (สำหรับเจ้าหน้าที่: เข้าสู่ระบบ/สมัคร + วิธีใช้) -->
-  <button class="gear-btn" onclick="toggleGearMenu(event)" aria-label="เมนูสำหรับเจ้าหน้าที่" title="สำหรับเจ้าหน้าที่">⚙️</button>
-  <div class="gear-menu" id="gearMenu">
+  <button class="cyber-gear" onclick="toggleGearMenu(event)" aria-label="เมนูสำหรับเจ้าหน้าที่" title="สำหรับเจ้าหน้าที่">⚙</button>
+  <div class="gear-menu cyber-menu" id="gearMenu">
     <a class="gear-menu-item" onclick="closeGearMenu();openAuthModal('login')"><span>🔐</span> Admin — เข้าสู่ระบบ / สมัคร</a>
     <a class="gear-menu-item" onclick="closeGearMenu();openModal('landingHelpModal')"><span>📖</span> วิธีใช้งาน / วิธีสมัคร Admin</a>
   </div>
 
-  <div class="landing-wrap">
-    <div class="event-landing-icon" id="landingIcon">🏨</div>
-    <div class="event-landing-title" id="landingTitle">GuestTrack</div>
-    <div class="event-landing-sub" id="landingSubtitle">ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก</div>
+  <div class="cyber-wrap">
+    <div class="cyber-logo" id="landingIcon">🏨</div>
+    <h1 class="cyber-title" id="landingTitle" data-text="GuestTrack">GuestTrack</h1>
+    <div class="cyber-sub" id="landingSubtitle">ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก</div>
 
-    <div class="landing-card">
-      <div class="landing-field-label">🔑 มีรหัสงานแล้ว? ใส่ได้เลย</div>
-      <div class="event-code-box">
-        <input class="event-code-input" id="eventCodeInput" placeholder="เช่น dmsc2025" autocomplete="off">
-        <button class="event-code-btn" onclick="goToEvent()">เข้าดู</button>
+    <div class="cyber-search-wrap">
+      <div class="cyber-search">
+        <span class="cyber-search-ico">⌕</span>
+        <input class="cyber-input" id="eventSearch" placeholder="ใส่รหัสงาน หรือ ชื่องาน..."
+          autocomplete="off" oninput="unifiedSearch(this.value)">
+        <button class="cyber-go" onclick="unifiedGo()" aria-label="ค้นหา">➜</button>
       </div>
-      <div class="event-err" id="eventErr" style="display:none;margin-top:8px">ไม่พบงานนี้ กรุณาตรวจสอบรหัสงาน</div>
-
-      <div class="landing-or"><span>หรือ</span></div>
-
-      <div class="landing-field-label">🔍 ค้นหาจากชื่องาน</div>
-      <div style="position:relative">
-        <input class="event-code-input search" id="eventNameSearch" placeholder="เช่น ประชุมกรม" style="width:100%"
-          autocomplete="off" oninput="searchEventByName(this.value)">
-        <div id="eventSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid #c8d3e0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;max-height:280px;overflow-y:auto;text-align:left"></div>
-      </div>
-      <div class="event-err" id="eventNameErr" style="display:none;margin-top:8px">ไม่พบงานที่ตรงกัน</div>
+      <div id="eventSearchResults" class="cyber-results"></div>
     </div>
+    <div class="cyber-err" id="eventErr" style="display:none">// ไม่พบงานนี้ — ตรวจสอบรหัส/ชื่องานอีกครั้ง</div>
 
-    <div class="landing-hint">พิมพ์รหัสหรือชื่องานที่เจ้าหน้าที่แจ้ง เพื่อเปิดรายชื่อ แล้วค้นหาชื่อของคุณได้เลย</div>
+    <div class="cyber-hint">พิมพ์ <b>รหัสงาน</b> หรือ <b>ชื่องาน</b> ที่เจ้าหน้าที่แจ้ง เพื่อเปิดรายชื่อ แล้วค้นหาชื่อของคุณ</div>
   </div>
 </div>
 
@@ -1206,23 +1260,30 @@ function showEventLanding(){
   }
 }
 
-async function goToEvent(){
-  const code = document.getElementById('eventCodeInput').value.trim();
-  if (!code) return;
+// กด Enter / ปุ่ม ➜ : เปิดงานทันทีถ้าตรงรหัส หรือมีผลลัพธ์เดียว
+async function unifiedGo(){
+  const q = document.getElementById('eventSearch').value.trim();
+  if (!q) return;
   document.getElementById('eventErr').style.display='none';
   showLoading(true,'กำลังค้นหางาน...');
   try {
-    // ค้นหาแบบไม่สนตัวพิมพ์เล็ก-ใหญ่ (case-insensitive) เพราะรหัสงานอาจถูกสร้างด้วยตัวพิมพ์ใหญ่
-    const events = await sb(`/rest/v1/events?id=ilike.${encodeURIComponent(code)}&select=id`);
+    const events = await sb('/rest/v1/events?select=id,name,subtitle&order=created_at.desc&limit=100');
     showLoading(false);
-    if (!events||!events.length){
-      document.getElementById('eventErr').style.display='block';
-      return;
+    const kw = q.toLowerCase();
+    // 1) ตรงรหัสงานเป๊ะ (ไม่สนตัวพิมพ์)
+    let hit = events.find(e=>e.id.toLowerCase()===kw);
+    // 2) ถ้าไม่ตรงเป๊ะ แต่มีผลลัพธ์เดียว → ไปเลย
+    if (!hit){
+      const matched = events.filter(e=>e.name.toLowerCase().includes(kw)||(e.subtitle||'').toLowerCase().includes(kw)||e.id.toLowerCase().includes(kw));
+      if (matched.length===1) hit = matched[0];
     }
-    location.href = location.pathname + '?event=' + encodeURIComponent(events[0].id);
+    if (hit){ selectEvent(hit.id); return; }
+    // ไม่เจอ หรือมีหลายอัน → โชว์ผลลัพธ์/แจ้งเตือน
+    document.getElementById('eventErr').style.display='block';
+    unifiedSearch(q);
   } catch(e){showLoading(false);showToast('เกิดข้อผิดพลาด',e.message,'err');}
 }
-document.getElementById('eventCodeInput').addEventListener('keydown',e=>{if(e.key==='Enter')goToEvent();});
+document.getElementById('eventSearch').addEventListener('keydown',e=>{if(e.key==='Enter')unifiedGo();});
 
 // ════ EVENT SELECT (admin) ════
 async function openEventSelect(){
@@ -2132,7 +2193,7 @@ function applyLandingSettings(appName, appSub){
   const ti = document.getElementById('landingTitle');
   const su = document.getElementById('landingSubtitle');
   const ic = document.getElementById('landingIcon');
-  if(ti && appName) ti.textContent = appName;
+  if(ti && appName){ ti.textContent = appName; ti.setAttribute('data-text', appName); }  // sync ข้อความ glitch
   if(su && appSub)  su.innerHTML  = esc(appSub).replace(/\n/g,'<br>');
   // sync title tag
   if(appName && !document.getElementById('headerTitle').textContent.trim()){
@@ -2251,15 +2312,15 @@ function downloadEditTableExcel(){
 
 // ════ SEARCH EVENT BY NAME ════
 let searchTimer = null;
-async function searchEventByName(q){
+// ค้นหาแบบรวม: พิมพ์ได้ทั้งรหัสงานและชื่องานในช่องเดียว → โชว์ผลลัพธ์สด
+async function unifiedSearch(q){
   const box = document.getElementById('eventSearchResults');
-  const err = document.getElementById('eventNameErr');
+  const err = document.getElementById('eventErr');
   err.style.display='none';
-  if (!q||q.trim().length<2){box.style.display='none';return;}
+  if (!q||q.trim().length<2){box.classList.remove('show');box.innerHTML='';return;}
   clearTimeout(searchTimer);
   searchTimer = setTimeout(async ()=>{
     try {
-      // ดึงงานทั้งหมดแล้ว filter ใน browser (ไม่เกิน 100 งาน)
       const events = await sb('/rest/v1/events?select=id,name,subtitle,logo,logo_img&order=created_at.desc&limit=100');
       const kw = q.trim().toLowerCase();
       const matched = events.filter(ev=>
@@ -2268,34 +2329,34 @@ async function searchEventByName(q){
         ev.id.toLowerCase().includes(kw)
       );
       if (!matched.length){
-        box.style.display='none';
+        box.classList.remove('show'); box.innerHTML='';
         err.style.display='block';
         return;
       }
       box.innerHTML = matched.map(ev=>{
         const logoHtml = ev.logo_img
-          ? `<img src="${esc(ev.logo_img)}" style="width:32px;height:32px;object-fit:cover;border-radius:7px">`
-          : `<div style="width:32px;height:32px;background:linear-gradient(135deg,#1a56db,#0891b2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px">${esc(ev.logo)||'🏨'}</div>`;
-        return `<div onclick="selectEvent('${escJsAttr(ev.id)}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f0f4f8;transition:background .15s" onmouseover="this.style.background='#f0f4f8'" onmouseout="this.style.background=''">
-          ${logoHtml}
+          ? `<img src="${esc(ev.logo_img)}">`
+          : `<span>${esc(ev.logo)||'🏨'}</span>`;
+        return `<div class="cyber-res-item" onclick="selectEvent('${escJsAttr(ev.id)}')">
+          <div class="cyber-res-logo">${logoHtml}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(ev.name)}</div>
-            <div style="font-size:11px;color:#64748b">${esc(ev.subtitle)||''} <span style="color:#94a3b8;font-family:'IBM Plex Mono',monospace">· ${esc(ev.id)}</span></div>
+            <div class="cyber-res-name">${esc(ev.name)}</div>
+            <div class="cyber-res-sub">${esc(ev.subtitle)||''} <span class="cyber-res-id">· ${esc(ev.id)}</span></div>
           </div>
-          <div style="color:#94a3b8;font-size:16px">›</div>
+          <div class="cyber-res-arrow">➜</div>
         </div>`;
       }).join('');
-      box.style.display='block';
-    } catch(e){ box.style.display='none'; }
-  }, 350);
+      box.classList.add('show');
+    } catch(e){ box.classList.remove('show'); }
+  }, 300);
 }
 
 // ปิด dropdown เมื่อกดที่อื่น
 document.addEventListener('click', e=>{
   const box = document.getElementById('eventSearchResults');
-  const inp = document.getElementById('eventNameSearch');
+  const inp = document.getElementById('eventSearch');
   if (box && inp && !box.contains(e.target) && e.target!==inp){
-    box.style.display='none';
+    box.classList.remove('show');
   }
 });
 
