@@ -11,5 +11,10 @@
 # แต่คีย์เหล่านี้เป็น publishable key ฝั่ง client โดยตั้งใจ (ต้องอยู่ในโค้ด
 # ที่รันบนเบราว์เซอร์ ยังไงผู้ใช้ก็เห็นได้) ไม่ใช่ความลับฝั่งเซิร์ฟเวอร์
 # แอพนี้ไม่มี secret ฝั่งเซิร์ฟเวอร์ที่ต้องปกป้อง จึงปิดการสแกนได้อย่างปลอดภัย
+#
+# Netlify มีตัวสแกน 2 ตัว ต้องปิดทั้งคู่:
+#   SECRETS_SCAN_ENABLED                 = การสแกนปกติ (อิงค่า env var)
+#   SECRETS_SCAN_SMART_DETECTION_ENABLED = การตรวจจับอัจฉริยะ (จับรูปแบบ JWT/API key)
 [build.environment]
   SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
