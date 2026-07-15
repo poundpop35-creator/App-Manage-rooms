@@ -102,6 +102,26 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .event-divider{color:var(--text3);font-size:13px;display:flex;align-items:center;gap:10px;width:100%;max-width:360px}
 .event-divider::before,.event-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
+/* LANDING (guest) — สะอาด เน้นค้นหาง่าย */
+.landing-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:44px 20px;text-align:center;gap:12px;width:100%;max-width:440px;margin:0 auto}
+.landing-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 44px rgba(15,23,42,.09);padding:22px 20px;width:100%;margin-top:8px}
+.landing-field-label{font-size:13px;font-weight:700;color:var(--text2);text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.landing-card .event-code-box{max-width:none}
+.landing-card .event-code-input{flex:1;padding:14px;border-radius:11px;font-size:15px}
+.landing-card .event-code-input.search{font-family:'Sarabun',sans-serif}
+.landing-card .event-code-btn{border-radius:11px;padding:14px 22px;font-size:15px}
+.landing-or{display:flex;align-items:center;gap:12px;color:var(--text3);font-size:12px;margin:18px 0}
+.landing-or::before,.landing-or::after{content:'';flex:1;height:1px;background:var(--border)}
+.landing-hint{font-size:12px;color:var(--text3);line-height:1.7;max-width:340px;margin-top:6px}
+/* ปุ่มฟันเฟือง (เมนูสำหรับเจ้าหน้าที่) */
+.gear-btn{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;background:var(--surface);border:1.5px solid var(--border);font-size:20px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;transition:transform .25s,border-color .2s;z-index:60}
+.gear-btn:hover{border-color:var(--accent);transform:rotate(45deg)}
+.gear-menu{position:absolute;top:68px;right:16px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.16);padding:6px;min-width:252px;z-index:60;display:none;flex-direction:column;gap:2px}
+.gear-menu.show{display:flex}
+.gear-menu-item{display:flex;align-items:center;gap:10px;padding:12px;border-radius:8px;font-size:14px;font-weight:600;color:#1e293b;cursor:pointer;text-decoration:none;transition:background .15s;text-align:left}
+.gear-menu-item:hover{background:var(--surface2)}
+.gear-menu-item span{font-size:17px;flex-shrink:0}
+
 /* EVENT LIST (admin) */
 .event-list{display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px}
 .event-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
@@ -361,30 +381,39 @@ body{transition:background .3s}
 
 <!-- ══ MODAL: EVENT LANDING (no event in URL) ══ -->
 <div class="modal-overlay" id="landingModal" style="background:var(--bg);backdrop-filter:none;z-index:50">
-  <div style="width:100%;max-width:480px;padding:0 16px">
-    <div class="event-landing">
-      <div class="event-landing-icon" id="landingIcon">🏨</div>
-      <div class="event-landing-title" id="landingTitle">GuestTrack</div>
-      <div class="event-landing-sub" id="landingSubtitle">ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก<br>หรือเข้าสู่ระบบเพื่อจัดการงานของคุณ</div>
+
+  <!-- ปุ่มฟันเฟือง (สำหรับเจ้าหน้าที่: เข้าสู่ระบบ/สมัคร + วิธีใช้) -->
+  <button class="gear-btn" onclick="toggleGearMenu(event)" aria-label="เมนูสำหรับเจ้าหน้าที่" title="สำหรับเจ้าหน้าที่">⚙️</button>
+  <div class="gear-menu" id="gearMenu">
+    <a class="gear-menu-item" onclick="closeGearMenu();openAuthModal('login')"><span>🔐</span> Admin — เข้าสู่ระบบ / สมัคร</a>
+    <a class="gear-menu-item" onclick="closeGearMenu();openModal('landingHelpModal')"><span>📖</span> วิธีใช้งาน / วิธีสมัคร Admin</a>
+  </div>
+
+  <div class="landing-wrap">
+    <div class="event-landing-icon" id="landingIcon">🏨</div>
+    <div class="event-landing-title" id="landingTitle">GuestTrack</div>
+    <div class="event-landing-sub" id="landingSubtitle">ใส่รหัสงาน (Event Code) เพื่อดูรายชื่อผู้เข้าพัก</div>
+
+    <div class="landing-card">
+      <div class="landing-field-label">🔑 มีรหัสงานแล้ว? ใส่ได้เลย</div>
       <div class="event-code-box">
-        <input class="event-code-input" id="eventCodeInput" placeholder="รหัสงาน เช่น dmsc2025" autocomplete="off">
-        <button class="event-code-btn" style="background:#1a56db" onclick="goToEvent()">เข้าดู</button>
+        <input class="event-code-input" id="eventCodeInput" placeholder="เช่น dmsc2025" autocomplete="off">
+        <button class="event-code-btn" onclick="goToEvent()">เข้าดู</button>
       </div>
-      <div class="event-err" id="eventErr" style="display:none">ไม่พบงานนี้ กรุณาตรวจสอบรหัสงาน</div>
+      <div class="event-err" id="eventErr" style="display:none;margin-top:8px">ไม่พบงานนี้ กรุณาตรวจสอบรหัสงาน</div>
 
-      <!-- ค้นหาจากชื่องาน -->
-      <div style="width:100%;max-width:480px;position:relative">
-        <input class="event-code-input" id="eventNameSearch" placeholder="🔍 หรือค้นหาจากชื่องาน เช่น ประชุมกรม"
-          autocomplete="off" style="width:100%;padding-right:14px"
-          oninput="searchEventByName(this.value)">
-        <div id="eventSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid #c8d3e0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;max-height:280px;overflow-y:auto"></div>
+      <div class="landing-or"><span>หรือ</span></div>
+
+      <div class="landing-field-label">🔍 ค้นหาจากชื่องาน</div>
+      <div style="position:relative">
+        <input class="event-code-input search" id="eventNameSearch" placeholder="เช่น ประชุมกรม" style="width:100%"
+          autocomplete="off" oninput="searchEventByName(this.value)">
+        <div id="eventSearchResults" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1.5px solid #c8d3e0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;max-height:280px;overflow-y:auto;text-align:left"></div>
       </div>
-      <div class="event-err" id="eventNameErr" style="display:none">ไม่พบงานที่ตรงกัน</div>
-
-      <div class="event-divider">หรือ</div>
-      <button class="primary-btn teal" style="max-width:360px;width:100%;background:#1a56db" onclick="openAuthModal('login')">🔐 Admin — เข้าสู่ระบบ / สมัคร</button>
-      <button onclick="openModal('landingHelpModal')" style="max-width:360px;width:100%;background:#fce7f3;border:1.5px solid #f9a8d4;color:#1e293b;padding:11px;border-radius:8px;font-size:14px;font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 6px rgba(249,168,212,.3)" onmouseover="this.style.background='#fbcfe8';this.style.borderColor='#ec4899'" onmouseout="this.style.background='#fce7f3';this.style.borderColor='#f9a8d4'">📖 วิธีใช้งานและวิธีสมัคร Admin</button>
+      <div class="event-err" id="eventNameErr" style="display:none;margin-top:8px">ไม่พบงานที่ตรงกัน</div>
     </div>
+
+    <div class="landing-hint">พิมพ์รหัสหรือชื่องานที่เจ้าหน้าที่แจ้ง เพื่อเปิดรายชื่อ แล้วค้นหาชื่อของคุณได้เลย</div>
   </div>
 </div>
 
@@ -2345,6 +2374,18 @@ function closeAdminMenu(){
   if(m) m.classList.remove('open');
 }
 document.addEventListener('click', ()=>closeAdminMenu());
+
+// ── เมนูฟันเฟือง หน้า landing (สำหรับเจ้าหน้าที่) ──
+function toggleGearMenu(e){
+  if(e) e.stopPropagation();
+  const m=document.getElementById('gearMenu');
+  if(m) m.classList.toggle('show');
+}
+function closeGearMenu(){
+  const m=document.getElementById('gearMenu');
+  if(m) m.classList.remove('show');
+}
+document.addEventListener('click', closeGearMenu);
 
 
 // ════ SUPER ADMIN DASHBOARD ════
