@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RoomFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    :root{--blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;--muted:#64748b;--line:#dbe3ef;--bg:#f3f6fb;--card:#fff;--green:#15803d;--red:#dc2626;--amber:#b45309;--radius:16px}
+    *{box-sizing:border-box}body{margin:0;font-family:Sarabun,sans-serif;background:var(--bg);color:var(--ink)}
+    button,input,select,textarea{font:inherit}.hidden{display:none!important}
+    .topbar{position:sticky;top:0;z-index:20;height:66px;display:flex;align-items:center;gap:14px;padding:0 24px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 12px #0f172a0b}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;cursor:pointer}.brand-logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#dbeafe,#eff6ff);font-size:22px}
+    .grow{flex:1}.top-actions{display:flex;gap:8px}.btn{border:0;border-radius:10px;padding:9px 15px;font-weight:700;cursor:pointer;transition:.18s}.btn:hover{transform:translateY(-1px)}.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue2)}.btn-soft{background:#eff6ff;color:#1d4ed8}.btn-danger{background:#fef2f2;color:var(--red)}.btn-green{background:#dcfce7;color:#166534}.btn-amber{background:#fef3c7;color:#92400e}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    main{max-width:1180px;margin:0 auto;padding:28px 20px 60px}.hero{padding:54px 20px;text-align:center}.hero-icon{font-size:68px}.hero h1{font-size:clamp(32px,6vw,58px);margin:10px 0 4px;letter-spacing:-1px}.hero p{color:var(--muted);font-size:17px;margin:0 auto 24px}
+    .code-box{max-width:520px;margin:0 auto;display:flex;gap:10px;background:#fff;border:1px solid var(--line);padding:9px;border-radius:15px;box-shadow:0 14px 35px #1e3a8a14}.code-box input{min-width:0;flex:1;border:0;outline:0;padding:10px 12px;font-weight:700;text-transform:uppercase}
+    .section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 14px}.section-title h2{margin:0;font-size:22px}.section-title p{margin:3px 0 0;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:17px;box-shadow:0 5px 18px #0f172a0a}
+    .event-card{cursor:pointer;transition:.18s}.event-card:hover{transform:translateY(-3px);border-color:#93c5fd;box-shadow:0 12px 28px #2563eb18}.event-icon{font-size:32px}.event-name{font-weight:800;font-size:17px;margin-top:8px}.sub{color:var(--muted);font-size:13px}
+    .page-head{display:flex;align-items:center;gap:15px;margin-bottom:18px}.page-icon{width:62px;height:62px;display:grid;place-items:center;background:#fff;border:1px solid var(--line);border-radius:17px;font-size:35px}.page-head h1{margin:0;font-size:28px}.page-head p{margin:3px 0;color:var(--muted)}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:15px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.stat b{font-size:26px;color:var(--blue)}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+    .toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}.field{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;outline:none;min-width:160px}.field:focus{border-color:#60a5fa;box-shadow:0 0 0 3px #dbeafe}
+    .guest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:13px}.guest-card{position:relative;border-left:5px solid var(--hotel,#94a3b8)}.seq{position:absolute;top:12px;right:13px;color:#94a3b8;font-weight:800}.guest-name{font-size:18px;font-weight:800;padding-right:42px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}.chip{font-size:11px;font-weight:700;background:#f1f5f9;color:#475569;border-radius:99px;padding:4px 8px}.guest-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:13px}.guest-info div{background:#f8fafc;border-radius:9px;padding:8px}.guest-info small{display:block;color:var(--muted)}
+    .empty{text-align:center;padding:42px 20px;color:var(--muted);background:#fff;border:1px dashed #cbd5e1;border-radius:16px}
+    .dash-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dash-top h1{margin:0}.dash-user{color:var(--muted)}
+    .dash-event{display:flex;flex-direction:column;gap:10px}.dash-event-actions{display:flex;gap:7px;flex-wrap:wrap}
+    .panel{margin-top:22px}.admin-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border-top:1px solid #edf2f7;padding:10px 0}
+    .editor-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}.file-label{display:inline-flex;align-items:center;gap:6px}
+    .table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;max-height:60vh}table{border-collapse:collapse;width:100%;min-width:980px}th,td{border-bottom:1px solid #e8edf5;padding:7px;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#eff6ff;color:#1e3a8a;z-index:2;font-size:12px}td input,td select{width:100%;min-width:90px;border:1px solid #dbe3ef;border-radius:7px;padding:7px;background:#fff}.col-name{min-width:190px}.col-dept{min-width:180px}.col-note{min-width:180px}
+    dialog{border:0;border-radius:18px;padding:0;width:min(92vw,470px);box-shadow:0 30px 90px #0f172a55}dialog::backdrop{background:#0f172a88}.modal{padding:23px}.modal h2{margin:0 0 4px}.modal p{color:var(--muted);margin:0 0 16px}.form-group{margin:11px 0}.form-group label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}.form-group .field{width:100%}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}.tabs{display:flex;gap:6px;margin-bottom:15px}.tabs button{flex:1}
+    .loading{position:fixed;inset:0;z-index:100;background:#0f172a99;display:grid;place-items:center}.loading-box{background:#fff;border-radius:15px;padding:22px 28px;font-weight:700}.spinner{width:26px;height:26px;border:3px solid #dbeafe;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 9px}@keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;right:18px;bottom:18px;z-index:120;background:#0f172a;color:#fff;border-radius:12px;padding:12px 16px;max-width:360px;box-shadow:0 12px 35px #0f172a55}.toast.err{background:#991b1b}.toast.ok{background:#166534}
+    @media(max-width:640px){.topbar{padding:0 13px}.brand span:last-child{display:none}main{padding:18px 12px 50px}.hero{padding:35px 4px}.code-box{flex-direction:column}.page-head h1{font-size:22px}.guest-grid{grid-template-columns:1fr}.guest-info{grid-template-columns:1fr}.hide-mobile{display:none}}
+    @media print{.topbar,.toolbar,.no-print{display:none!important}main{max-width:none;padding:0}.guest-grid{grid-template-columns:1fr 1fr}.guest-card{break-inside:avoid;box-shadow:none}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" onclick="showLanding()"><div class="brand-logo" id="brandLogo">🏨</div><span id="brandName">RoomFlow</span></div>
+    <div class="grow"></div>
+    <div class="top-actions">
+      <button class="btn btn-soft hidden" id="homeBtn" onclick="showLanding()">หน้าหลัก</button>
+      <button class="btn btn-primary" id="adminBtn" onclick="openAuth()">เจ้าหน้าที่</button>
+      <button class="btn btn-danger hidden" id="logoutBtn" onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="landingView">
+      <div class="hero">
+        <div class="hero-icon" id="heroLogo">🏨</div>
+        <h1 id="heroName">RoomFlow</h1>
+        <p id="heroSub">ค้นหาข้อมูลผู้เข้าพักด้วยรหัสงาน</p>
+        <div class="code-box">
+          <input id="eventCode" placeholder="ใส่รหัสงาน เช่น DMSC2026" onkeydown="if(event.key==='Enter')openByCode()">
+          <button class="btn btn-primary" onclick="openByCode()">เปิดงาน</button>
+        </div>
+      </div>
+      <div class="section-title"><div><h2>งานที่เปิดใช้งาน</h2><p>เลือกงานเพื่อดูรายชื่อผู้เข้าพัก</p></div></div>
+      <div class="grid" id="publicEvents"></div>
+    </section>
+
+    <section id="guestView" class="hidden">
+      <div class="page-head">
+        <div class="page-icon" id="eventLogo">🏨</div>
+        <div><h1 id="eventName"></h1><p id="eventSub"></p></div>
+      </div>
+      <div class="stats" id="guestStats"></div>
+      <div class="toolbar no-print">
+        <input class="field grow" id="guestSearch" placeholder="ค้นหาชื่อ หน่วยงาน โรงแรม ห้อง..." oninput="renderGuests()">
+        <select class="field" id="hotelFilter" onchange="renderGuests()"><option value="">ทุกโรงแรม</option></select>
+        <select class="field" id="typeFilter" onchange="renderGuests()"><option value="">ทุกประเภท</option></select>
+        <button class="btn btn-soft" onclick="window.print()">พิมพ์</button>
+      </div>
+      <div class="guest-grid" id="guestGrid"></div>
+    </section>
+
+    <section id="dashboardView" class="hidden">
+      <div class="dash-top">
+        <div><h1>จัดการงาน</h1><div class="dash-user" id="dashUser"></div></div>
+        <div class="grow"></div>
+        <button class="btn btn-primary" onclick="openCreateEvent()">+ สร้างงาน</button>
+      </div>
+      <div class="stats" id="dashStats"></div>
+      <div class="section-title"><div><h2>รายการงาน</h2><p>นำเข้าข้อมูลและจัดห้องพัก</p></div></div>
+      <div class="grid" id="dashEvents"></div>
+      <div class="panel card hidden" id="settingsPanel">
+        <h2 style="margin-top:0">ตั้งค่าหน้าแอพ</h2>
+        <div class="toolbar">
+          <input class="field" id="settingLogo" placeholder="โลโก้ เช่น 🏨" style="max-width:130px">
+          <input class="field grow" id="settingName" placeholder="ชื่อแอพ">
+          <input class="field grow" id="settingSub" placeholder="คำอธิบาย">
+          <button class="btn btn-primary" onclick="saveSettings()">บันทึก</button>
+        </div>
+      </div>
+      <div class="panel card hidden" id="adminsPanel">
+        <h2 style="margin-top:0">บัญชีเจ้าหน้าที่</h2>
+        <div id="adminList"></div>
+      </div>
+    </section>
+
+    <section id="editorView" class="hidden">
+      <div class="page-head">
+        <div class="page-icon" id="editorLogo">🏨</div>
+        <div><h1 id="editorName"></h1><p>นำเข้า ตรวจสอบ และแก้ไขข้อมูลก่อนบันทึกลง Google Sheets</p></div>
+      </div>
+      <div class="editor-bar no-print">
+        <label class="btn btn-soft file-label">📂 นำเข้า Excel<input type="file" id="excelFile" accept=".xlsx" hidden onchange="importExcel(this.files[0])"></label>
+        <button class="btn btn-soft" onclick="downloadTemplate()">ดาวน์โหลด Template</button>
+        <button class="btn btn-soft" onclick="exportEditor()">ส่งออก Excel</button>
+        <button class="btn btn-green" onclick="addGuestRow()">+ เพิ่มแถว</button>
+        <div class="grow"></div>
+        <span class="sub" id="editorStatus"></span>
+        <button class="btn btn-primary" onclick="saveEditor()">บันทึกลง Google Sheets</button>
+      </div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>ลำดับ</th><th class="col-name">ชื่อ-สกุล</th><th class="col-dept">หน่วยงาน</th><th>ประเภทพัก</th><th class="col-name">ผู้พักร่วม</th><th>โรงแรม</th><th>ห้อง</th><th class="col-note">หมายเหตุ</th><th></th>
+      </tr></thead><tbody id="editorBody"></tbody></table></div>
+    </section>
+  </main>
+
+  <dialog id="authDialog"><div class="modal">
+    <h2>สำหรับเจ้าหน้าที่</h2><p>เข้าสู่ระบบหรือสมัครบัญชีใหม่</p>
+    <div class="tabs"><button class="btn btn-primary" id="loginTab" onclick="authTab('login')">เข้าสู่ระบบ</button><button class="btn btn-soft" id="registerTab" onclick="authTab('register')">สมัคร</button></div>
+    <div id="loginForm">
+      <div class="form-group"><label>Username</label><input class="field" id="loginUser" autocomplete="username"></div>
+      <div class="form-group"><label>Password</label><input class="field" id="loginPass" type="password" autocomplete="current-password"></div>
+      <div class="modal-actions"><button class="btn btn-soft" onclick="authDialog.close()">ยกเลิก</button><button class="btn btn-primary" onclick="doLogin()">เข้าสู่ระบบ</button></div>
+    </div>
+    <div id="registerForm" class="hidden">
+      <div class="form-group"><label>Username</label><input class="field" id="regUser" autocomplete="username"></div>
+      <div class="form-group"><label>Password</label><input class="field" id="regPass" type="password" autocomplete="new-password"></div>
+      <div class="modal-actions"><button class="btn btn-soft" onclick="authDialog.close()">ยกเลิก</button><button class="btn btn-primary" onclick="doRegister()">ส่งคำขอสมัคร</button></div>
+    </div>
+  </div></dialog>
+
+  <dialog id="eventDialog"><div class="modal">
+    <h2>สร้างงานใหม่</h2><p>รหัสงานใช้ในลิงก์และหน้าค้นหา</p>
+    <div class="form-group"><label>รหัสงาน</label><input class="field" id="newEventId" placeholder="DMSC2026"></div>
+    <div class="form-group"><label>ชื่องาน</label><input class="field" id="newEventName"></div>
+    <div class="form-group"><label>คำอธิบาย</label><input class="field" id="newEventSub" value="รายชื่อผู้เข้าพัก"></div>
+    <div class="form-group"><label>ไอคอน</label><input class="field" id="newEventLogo" value="🏨"></div>
+    <div class="modal-actions"><button class="btn btn-soft" onclick="eventDialog.close()">ยกเลิก</button><button class="btn btn-primary" onclick="submitCreateEvent()">สร้างงาน</button></div>
+  </div></dialog>
+
+  <div class="loading hidden" id="loading"><div class="loading-box"><div class="spinner"></div><div id="loadingText">กำลังโหลด...</div></div></div>
+  <div class="toast hidden" id="toast"></div>
+
+<script>
+const PALETTE=['#2563eb','#0891b2','#16a34a','#b45309','#7c3aed','#dc2626','#0f766e','#be185d'];
+const COL={
+  seq:['ลำดับ','ลำดับที่'],
+  name1:['ชื่อ - สกุล','ชื่อ-สกุล','ชื่อสกุล','ชื่อ','โปรดระบุ ชื่อ-สกุล','ชื่อ-สกุล (กรุณากรอกคำนำหน้า นาย-นาง-นางสาว)'],
+  title1:['คำนำหน้า'],executive:['ผู้บริหาร'],participantType:['ประเภทผู้เข้าร่วม','ระดับ'],
+  dept1:['หน่วยงาน'],prov1:['จังหวัดที่ตั้งของหน่วยงาน','จังหวัด'],
+  type:['ประเภทการเข้าพัก','ประเภท','การเข้าพัก'],noStayHint:['วันที่เดินทาง (ขาไป)'],
+  name2:['ชื่อ - สกุล__1','ชื่อ-สกุล__1','ชื่อสกุล__1','ชื่อ__1','ชื่อ-สกุล ผู้พักร่วม','ระบุชื่อผู้เข้าพักร่วม (หากเลือกกรมเป็นผู้จัดหาผู้เข้าพักร่วมให้ไม่ต้องระบุชื่อ)'],
+  title2:['คำนำหน้า ผู้พักร่วม'],dept2:['หน่วยงาน__1'],prov2:['จังหวัดที่ตั้งของหน่วยงาน__1','จังหวัด__1'],
+  hotel:['โรงแรม'],room:['เลขห้อง','ห้อง'],car:['ทะเบียนรถรับส่ง','ทะเบียนรถ','รถรับส่ง'],
+  time:['เวลาออกเดินทาง (ขาไป)','เวลา','เวลาออกเดินทาง'],timeReturn:['เวลาออกเดินทาง (ขากลับ)','เวลากลับ','เวลาขากลับ'],
+  coord1:['ผู้ประสานงาน (เจ้าหน้าที่กรม)','ผู้ประสานงาน ที่ โรงแรม','ผู้ประสานงานโรงแรม'],
+  phone:['ติดต่อ','เบอร์','โทร'],coord2:['ชื่อผู้ขับรถ','ผู้ประสานงาน ที่ กรม','ผู้ประสานงานกรม'],
+  driverPhone:['เบอร์โทรคนขับ','เบอร์โทรผู้ขับรถ'],note:['หมายเหตุ']
+};
+const state={bootstrap:null,session:null,event:null,guests:[],colors:{},dashboard:null,editorEvent:null,editorGuests:[],editorColors:{}};
+
+function rpc(name){
+  const args=[].slice.call(arguments,1);
+  return new Promise(function(resolve,reject){
+    const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(function(error){reject(new Error(error&&error.message?error.message:String(error)))});
+    runner[name].apply(runner,args);
+  });
+}
+function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+function attr(value){return esc(value).replace(/\n/g,' ')}
+function showLoading(text){loadingText.textContent=text||'กำลังโหลด...';loading.classList.remove('hidden')}
+function hideLoading(){loading.classList.add('hidden')}
+function toastMsg(text,type){toast.textContent=text;toast.className='toast '+(type||'');setTimeout(function(){toast.classList.add('hidden')},3200)}
+function showView(id){['landingView','guestView','dashboardView','editorView'].forEach(function(view){document.getElementById(view).classList.toggle('hidden',view!==id)});homeBtn.classList.toggle('hidden',id==='landingView')}
+function saveSession(value){state.session=value;if(value)sessionStorage.setItem('roomflow_session',JSON.stringify(value));else sessionStorage.removeItem('roomflow_session');syncHeader()}
+function syncHeader(){const logged=!!state.session;adminBtn.classList.toggle('hidden',logged);logoutBtn.classList.toggle('hidden',!logged)}
+function applySettings(settings){settings=settings||{};brandLogo.textContent=settings.logo||'🏨';heroLogo.textContent=settings.logo||'🏨';brandName.textContent=settings.appName||'RoomFlow';heroName.textContent=settings.appName||'RoomFlow';heroSub.textContent=settings.appSub||'ค้นหาข้อมูลผู้เข้าพัก'}
+async function init(){
+  try{const saved=sessionStorage.getItem('roomflow_session');if(saved)state.session=JSON.parse(saved)}catch(error){}
+  syncHeader();showLoading('กำลังเปิดแอพ...');
+  try{state.bootstrap=await rpc('getPublicBootstrap');applySettings(state.bootstrap.settings);renderPublicEvents()}catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
+function showLanding(){showView('landingView');state.event=null;window.scrollTo(0,0)}
+function renderPublicEvents(){
+  const events=(state.bootstrap&&state.bootstrap.events)||[];
+  publicEvents.innerHTML=events.length?events.map(function(event){return '<article class="card event-card" onclick="openPublicEvent(\''+event.id+'\')"><div class="event-icon">'+esc(event.logo||'🏨')+'</div><div class="event-name">'+esc(event.name)+'</div><div class="sub">'+esc(event.subtitle||event.id)+'</div><div class="chip" style="display:inline-block;margin-top:10px">'+esc(event.id)+'</div></article>'}).join(''):'<div class="empty" style="grid-column:1/-1">ยังไม่มีงาน เจ้าหน้าที่สามารถเข้าสู่ระบบเพื่อสร้างงานแรก</div>';
+}
+function openByCode(){const id=eventCode.value.trim();if(!id)return toastMsg('กรุณาใส่รหัสงาน','err');openPublicEvent(id)}
+async function openPublicEvent(id){
+  showLoading('กำลังโหลดรายชื่อ...');
+  try{const data=await rpc('getPublicEvent',id);state.event=data.event;state.guests=data.guests||[];state.colors=data.colors||{};renderEventHeader();renderGuestFilters();renderGuests();showView('guestView');window.scrollTo(0,0)}
+  catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
+function renderEventHeader(){eventLogo.textContent=state.event.logo||'🏨';eventName.textContent=state.event.name;eventSub.textContent=state.event.subtitle||state.event.id}
+function renderGuestFilters(){
+  const hotels=[...new Set(state.guests.map(function(g){return g.hotel}).filter(function(v){return v&&v!=='-'}))].sort();
+  const types=[...new Set(state.guests.map(function(g){return g.type}).filter(function(v){return v&&v!=='-'}))].sort();
+  hotelFilter.innerHTML='<option value="">ทุกโรงแรม</option>'+hotels.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
+  typeFilter.innerHTML='<option value="">ทุกประเภท</option>'+types.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
+}
+function filteredGuests(){
+  const q=guestSearch.value.trim().toLocaleLowerCase('th-TH'),hotel=hotelFilter.value,type=typeFilter.value;
+  return state.guests.filter(function(g){const hay=Object.values(g).join(' ').toLocaleLowerCase('th-TH');return(!q||hay.includes(q))&&(!hotel||g.hotel===hotel)&&(!type||g.type===type)});
+}
+function renderGuests(){
+  const rows=filteredGuests(),rooms=rows.filter(function(g){return g.room&&g.room!=='-'}).length,people=rows.reduce(function(sum,g){return sum+(g.type==='พักคู่'&&g.name2&&g.name2!=='-'?2:1)},0);
+  guestStats.innerHTML=statHtml(rows.length,'รายการ')+statHtml(people,'ผู้เข้าพัก')+statHtml(rooms,'มีเลขห้อง')+statHtml(new Set(rows.map(function(g){return g.hotel}).filter(function(v){return v&&v!=='-'})).size,'โรงแรม');
+  guestGrid.innerHTML=rows.length?rows.map(guestCardHtml).join(''):'<div class="empty" style="grid-column:1/-1">ไม่พบข้อมูลที่ค้นหา</div>';
+}
+function statHtml(value,label){return '<div class="stat"><b>'+value+'</b><span>'+label+'</span></div>'}
+function guestCardHtml(g){
+  const color=state.colors[g.hotel]||'#94a3b8';
+  return '<article class="card guest-card" style="--hotel:'+color+'"><div class="seq">#'+esc(g.seq)+'</div><div class="guest-name">'+esc(g.name1)+'</div><div class="sub">'+esc(g.dept1||'-')+'</div><div class="chips"><span class="chip">'+esc(g.type||'-')+'</span><span class="chip">'+esc(g.hotel||'ยังไม่ระบุโรงแรม')+'</span></div><div class="guest-info"><div><small>เลขห้อง</small><b>'+esc(g.room||'-')+'</b></div><div><small>ผู้พักร่วม</small><b>'+esc(g.name2||'-')+'</b></div></div>'+(g.note&&g.note!=='-'?'<div class="sub" style="margin-top:9px">หมายเหตุ: '+esc(g.note)+'</div>':'')+'</article>';
+}
+
+function openAuth(){authTab('login');authDialog.showModal()}
+function authTab(tab){loginForm.classList.toggle('hidden',tab!=='login');registerForm.classList.toggle('hidden',tab!=='register');loginTab.className='btn '+(tab==='login'?'btn-primary':'btn-soft');registerTab.className='btn '+(tab==='register'?'btn-primary':'btn-soft')}
+async function doLogin(){
+  showLoading('กำลังเข้าสู่ระบบ...');
+  try{const result=await rpc('login',loginUser.value.trim(),loginPass.value);saveSession(result);authDialog.close();await openDashboard();toastMsg('เข้าสู่ระบบสำเร็จ','ok')}
+  catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
+async function doRegister(){
+  showLoading('กำลังส่งคำขอ...');
+  try{await rpc('register',regUser.value.trim(),regPass.value);authTab('login');toastMsg('สมัครแล้ว กรุณารอ Super Admin อนุมัติ','ok')}
+  catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
+function logout(){saveSession(null);state.dashboard=null;showLanding();toastMsg('ออกจากระบบแล้ว','ok')}
+async function openDashboard(){
+  if(!state.session)return openAuth();showLoading('กำลังโหลด Dashboard...');
+  try{state.dashboard=await rpc('getAdminDashboard',state.session.token);renderDashboard();showView('dashboardView');window.scrollTo(0,0)}
+  catch(error){toastMsg(error.message,'err');if(error.message.includes('Session'))logout()}finally{hideLoading()}
+}
+function renderDashboard(){
+  const d=state.dashboard,user=d.user,events=d.events||[],admins=d.admins||[];
+  dashUser.textContent=user.username+' · '+(user.role==='super'?'Super Admin':'Admin');
+  dashStats.innerHTML=statHtml(events.length,'งานที่ดูแล')+statHtml(events.reduce(function(s,e){return s+Number(e.guest_count||0)},0),'ผู้เข้าพัก')+(user.role==='super'?statHtml(admins.filter(function(a){return a.status==='pending'}).length,'รออนุมัติ'):'');
+  dashEvents.innerHTML=events.length?events.map(function(e){return '<article class="card dash-event"><div><div class="event-name">'+esc(e.logo||'🏨')+' '+esc(e.name)+'</div><div class="sub">'+esc(e.id)+' · '+Number(e.guest_count||0)+' รายการ</div></div><div class="dash-event-actions"><button class="btn btn-primary" onclick="openEditor(\''+e.id+'\')">จัดการข้อมูล</button><button class="btn btn-soft" onclick="openPublicEvent(\''+e.id+'\')">ดูหน้าเว็บ</button><button class="btn btn-danger" onclick="removeEvent(\''+e.id+'\')">ลบ</button></div></article>'}).join(''):'<div class="empty" style="grid-column:1/-1">ยังไม่มีงาน กด “สร้างงาน” เพื่อเริ่มต้น</div>';
+  const isSuper=user.role==='super';settingsPanel.classList.toggle('hidden',!isSuper);adminsPanel.classList.toggle('hidden',!isSuper);
+  if(isSuper){settingLogo.value=d.settings.logo||'🏨';settingName.value=d.settings.appName||'';settingSub.value=d.settings.appSub||'';renderAdmins(admins)}
+}
+function renderAdmins(rows){
+  adminList.innerHTML=rows.map(function(a){return '<div class="admin-row"><div><b>'+esc(a.username)+'</b><div class="sub">'+esc(a.role)+' · '+esc(a.status)+'</div></div>'+(a.status==='pending'?'<button class="btn btn-green" onclick="approveUser(\''+a.id+'\')">อนุมัติ</button>':'<span></span>')+(a.role!=='super'?'<button class="btn btn-danger" onclick="removeAdmin(\''+a.id+'\')">ลบ</button>':'<span></span>')+'</div>'}).join('');
+}
+function openCreateEvent(){eventDialog.showModal()}
+async function submitCreateEvent(){
+  showLoading('กำลังสร้างงาน...');
+  try{await rpc('createEvent',state.session.token,{id:newEventId.value.trim(),name:newEventName.value.trim(),subtitle:newEventSub.value.trim(),logo:newEventLogo.value.trim()});eventDialog.close();await openDashboard();state.bootstrap=await rpc('getPublicBootstrap');renderPublicEvents();toastMsg('สร้างงานสำเร็จ','ok')}
+  catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
+async function removeEvent(id){if(!confirm('ลบงาน '+id+' และข้อมูลผู้เข้าพักทั้งหมด?'))return;showLoading('กำลังลบ...');try{await rpc('deleteEvent',state.session.token,id);await openDashboard();state.bootstrap=await rpc('getPublicBootstrap');renderPublicEvents();toastMsg('ลบงานแล้ว','ok')}catch(error){toastMsg(error.message,'err')}finally{hideLoading()}}
+async function approveUser(id){showLoading('กำลังอนุมัติ...');try{await rpc('approveAdmin',state.session.token,id);await openDashboard();toastMsg('อนุมัติแล้ว','ok')}catch(error){toastMsg(error.message,'err')}finally{hideLoading()}}
+async function removeAdmin(id){if(!confirm('ลบบัญชีนี้?'))return;showLoading('กำลังลบ...');try{await rpc('deleteAdmin',state.session.token,id);await openDashboard()}catch(error){toastMsg(error.message,'err')}finally{hideLoading()}}
+async function saveSettings(){showLoading('กำลังบันทึก...');try{const value=await rpc('saveAppSettings',state.session.token,{logo:settingLogo.value,appName:settingName.value,appSub:settingSub.value});applySettings(value);state.bootstrap.settings=value;toastMsg('บันทึกการตั้งค่าแล้ว','ok')}catch(error){toastMsg(error.message,'err')}finally{hideLoading()}}
+
+async function openEditor(id){
+  showLoading('กำลังโหลดข้อมูล...');
+  try{const data=await rpc('getEventForAdmin',state.session.token,id);state.editorEvent=data.event;state.editorGuests=data.guests||[];state.editorColors=data.colors||{};editorLogo.textContent=data.event.logo||'🏨';editorName.textContent=data.event.name;renderEditor();showView('editorView');window.scrollTo(0,0)}
+  catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
+function renderEditor(){
+  editorStatus.textContent=state.editorGuests.length+' รายการ';
+  editorBody.innerHTML=state.editorGuests.length?state.editorGuests.map(function(g,i){return '<tr><td><input value="'+attr(g.seq)+'" oninput="editCell('+i+',\'seq\',this.value)" style="width:65px"></td><td><input class="col-name" value="'+attr(g.name1)+'" oninput="editCell('+i+',\'name1\',this.value)"></td><td><input class="col-dept" value="'+attr(g.dept1)+'" oninput="editCell('+i+',\'dept1\',this.value)"></td><td><select onchange="editCell('+i+',\'type\',this.value)">'+stayOptions(g.type)+'</select></td><td><input class="col-name" value="'+attr(g.name2)+'" oninput="editCell('+i+',\'name2\',this.value)"></td><td><input value="'+attr(g.hotel)+'" oninput="editCell('+i+',\'hotel\',this.value)"></td><td><input value="'+attr(g.room)+'" oninput="editCell('+i+',\'room\',this.value)"></td><td><input class="col-note" value="'+attr(g.note)+'" oninput="editCell('+i+',\'note\',this.value)"></td><td><button class="btn btn-danger" onclick="deleteGuestRow('+i+')">ลบ</button></td></tr>'}).join(''):'<tr><td colspan="9"><div class="empty">ยังไม่มีข้อมูล นำเข้า Excel หรือเพิ่มแถวใหม่</div></td></tr>';
+}
+function stayOptions(selected){return['พักเดี่ยว','พักคู่','พักเดี่ยว (จ่ายส่วนต่าง)','-'].map(function(v){return '<option'+(v===selected?' selected':'')+'>'+v+'</option>'}).join('')}
+function editCell(index,field,value){state.editorGuests[index][field]=value}
+function addGuestRow(){const seq=state.editorGuests.length+1;state.editorGuests.push({seq:String(seq),name1:'',dept1:'-',prov1:'-',type:'พักเดี่ยว',name2:'-',dept2:'-',prov2:'-',hotel:'-',room:'-',car:'-',time:'-',timeReturn:'-',coord1:'-',phone:'-',coord2:'-',driverPhone:'-',note:'-'});renderEditor()}
+function deleteGuestRow(index){state.editorGuests.splice(index,1);renderEditor()}
+async function saveEditor(){
+  const rows=state.editorGuests.filter(function(g){return g.name1&&g.name1!=='-'});
+  const hotels=[...new Set(rows.map(function(g){return g.hotel}).filter(function(h){return h&&h!=='-'}))];
+  hotels.forEach(function(h,i){if(!state.editorColors[h])state.editorColors[h]=PALETTE[i%PALETTE.length]});
+  showLoading('กำลังบันทึกลง Google Sheets...');
+  try{const result=await rpc('saveGuests',state.session.token,state.editorEvent.id,rows,state.editorColors);state.editorGuests=rows;renderEditor();toastMsg('บันทึก '+result.count+' รายการแล้ว','ok')}
+  catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
+function normalizeHeader(value){return String(value==null?'':value).replace(/[\u200B-\u200D\uFEFF]/g,'').replace(/\r?\n/g,' ').replace(/_+/g,' ').replace(/\s+/g,' ').trim().toLocaleLowerCase('th-TH')}
+function getVal(row,keys,fallback){
+  fallback=fallback===undefined?'-':fallback;
+  for(const key of keys)if(row[key]!==undefined&&row[key]!==null&&row[key]!=='')return String(row[key]).trim();
+  const wanted=new Set(keys.map(normalizeHeader));
+  for(const pair of Object.entries(row))if(pair[1]!==undefined&&pair[1]!==null&&pair[1]!==''&&wanted.has(normalizeHeader(pair[0])))return String(pair[1]).trim();
+  return fallback;
+}
+function extractExecutiveName(value){const text=String(value||'').trim(),matches=[...text.matchAll(/\(([^()]*)\)/g)],candidate=(matches.length?matches[matches.length-1][1]:text).trim();return candidate||text}
+function addPersonTitle(name,title){const person=String(name||'').trim(),prefix=String(title||'').trim();if(!person||!prefix||/^(นายแพทย์|แพทย์หญิง|นางสาว|นาง|นาย|น\.ส\.|นพ\.|พญ\.)/.test(person))return person;return prefix+person}
+function normalizeStay(value){const text=String(value||'').trim();if(!text)return'-';if(text.includes('ไม่เข้าพัก'))return'ไม่เข้าพัก';if(text.includes('พักคู่'))return'พักคู่';if(text.includes('พักเดี่ยว')&&(text.includes('ส่วนต่าง')||text.includes('ขอจ่าย')))return'พักเดี่ยว (จ่ายส่วนต่าง)';if(text.includes('พักเดี่ยว'))return'พักเดี่ยว';return text}
+function hasColumn(row,keys){const wanted=new Set(keys.map(normalizeHeader));return Object.keys(row).some(function(header){return wanted.has(normalizeHeader(header))})}
+function mapImportRow(row){
+  const title1=getVal(row,COL.title1,''),title2=getVal(row,COL.title2,'');let name1=getVal(row,COL.name1,'');
+  if(!name1)name1=extractExecutiveName(getVal(row,COL.executive,''));
+  name1=addPersonTitle(name1,title1)||'-';const name2=addPersonTitle(getVal(row,COL.name2,''),title2)||'-';
+  let stay=getVal(row,COL.type,'');if(!stay&&getVal(row,COL.noStayHint,'').includes('ไม่เข้าพัก'))stay='ไม่เข้าพัก';
+  const participant=getVal(row,COL.participantType,'');
+  return{seq:getVal(row,COL.seq,''),name1:name1,dept1:getVal(row,COL.dept1,participant||'-'),prov1:getVal(row,COL.prov1),type:normalizeStay(stay),name2:name2,dept2:getVal(row,COL.dept2),prov2:getVal(row,COL.prov2),hotel:getVal(row,COL.hotel),room:getVal(row,COL.room),car:getVal(row,COL.car),time:getVal(row,COL.time),timeReturn:getVal(row,COL.timeReturn),coord1:getVal(row,COL.coord1),phone:getVal(row,COL.phone),coord2:getVal(row,COL.coord2),driverPhone:getVal(row,COL.driverPhone),note:getVal(row,COL.note)};
+}
+function prepareImportedRows(rows){
+  const mapped=rows.map(function(row){return{row:row,data:mapImportRow(row)}}).filter(function(item){const d=item.data;return d.name1&&d.name1!=='-'&&!d.name1.includes('ยังไม่ลงทะเบียน')&&d.type!=='ไม่เข้าพัก'&&!(hasColumn(item.row,['การเข้าพัก'])&&d.type==='-')}).map(function(item){return item.data});
+  const used=new Set(mapped.map(function(r){return String(r.seq||'').trim()}).filter(function(v){return v&&v!=='-'}));let next=1;
+  mapped.forEach(function(r){if(r.seq&&r.seq!=='-')return;while(used.has(String(next)))next++;r.seq=String(next++);used.add(r.seq)});
+  return mapped.sort(function(a,b){return(parseInt(a.seq)||999999)-(parseInt(b.seq)||999999)});
+}
+function importExcel(file){
+  if(!file)return;showLoading('กำลังอ่าน Excel...');
+  const reader=new FileReader();
+  reader.onload=function(event){try{const wb=XLSX.read(new Uint8Array(event.target.result),{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});const mapped=prepareImportedRows(rows);if(!mapped.length)throw new Error('ไม่พบผู้เข้าพักจากไฟล์นี้');state.editorGuests=mapped;state.editorColors={};renderEditor();toastMsg('นำเข้าสำเร็จ '+mapped.length+' รายการ','ok')}catch(error){toastMsg(error.message,'err')}finally{hideLoading();excelFile.value=''}};
+  reader.readAsArrayBuffer(file);
+}
+function downloadTemplate(){
+  const headers=['ลำดับ','ชื่อ - สกุล','หน่วยงาน','จังหวัด','ประเภทการเข้าพัก','ชื่อ - สกุล__1','หน่วยงาน__1','จังหวัด__1','โรงแรม','เลขห้อง','ทะเบียนรถรับส่ง','เวลาออกเดินทาง (ขาไป)','เวลาออกเดินทาง (ขากลับ)','ผู้ประสานงานโรงแรม','ติดต่อ','ผู้ประสานงานกรม','เบอร์โทรผู้ขับรถ','หมายเหตุ'];
+  const sample=['1','สมชาย ตัวอย่าง','หน่วยงานตัวอย่าง','กรุงเทพมหานคร','พักเดี่ยว','-','-','-','โรงแรมตัวอย่าง','101','-','-','-','-','-','-','-','-'];
+  const ws=XLSX.utils.aoa_to_sheet([headers,sample]),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Guests');XLSX.writeFile(wb,'RoomFlow_Template.xlsx');
+}
+function exportEditor(){
+  if(!state.editorGuests.length)return toastMsg('ยังไม่มีข้อมูล','err');
+  const rows=state.editorGuests.map(function(g){return{'ลำดับ':g.seq,'ชื่อ - สกุล':g.name1,'หน่วยงาน':g.dept1,'จังหวัด':g.prov1,'ประเภทการเข้าพัก':g.type,'ชื่อ - สกุล__1':g.name2,'หน่วยงาน__1':g.dept2,'จังหวัด__1':g.prov2,'โรงแรม':g.hotel,'เลขห้อง':g.room,'ทะเบียนรถรับส่ง':g.car,'เวลาออกเดินทาง (ขาไป)':g.time,'เวลาออกเดินทาง (ขากลับ)':g.timeReturn,'ผู้ประสานงานโรงแรม':g.coord1,'ติดต่อ':g.phone,'ผู้ประสานงานกรม':g.coord2,'เบอร์โทรผู้ขับรถ':g.driverPhone,'หมายเหตุ':g.note}});
+  const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Guests');XLSX.writeFile(wb,(state.editorEvent.id||'RoomFlow')+'_Guests.xlsx');
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
