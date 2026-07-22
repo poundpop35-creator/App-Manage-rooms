@@ -81,6 +81,7 @@
       <div class="dash-top">
         <div><h1>จัดการงาน</h1><div class="dash-user" id="dashUser"></div></div>
         <div class="grow"></div>
+        <button class="btn btn-soft" onclick="passwordDialog.showModal()">เปลี่ยนรหัสผ่าน</button>
         <button class="btn btn-primary" onclick="openCreateEvent()">+ สร้างงาน</button>
       </div>
       <div class="stats" id="dashStats"></div>
@@ -134,6 +135,12 @@
       <div class="form-group"><label>Password</label><input class="field" id="regPass" type="password" autocomplete="new-password"></div>
       <div class="modal-actions"><button class="btn btn-soft" onclick="authDialog.close()">ยกเลิก</button><button class="btn btn-primary" onclick="doRegister()">ส่งคำขอสมัคร</button></div>
     </div>
+  </div></dialog>
+
+  <dialog id="passwordDialog"><div class="modal">
+    <h2>เปลี่ยนรหัสผ่าน</h2><p>ตั้งรหัสผ่านใหม่อย่างน้อย 6 ตัวอักษร</p>
+    <div class="form-group"><label>Password ใหม่</label><input class="field" id="newPassword" type="password" autocomplete="new-password"></div>
+    <div class="modal-actions"><button class="btn btn-soft" onclick="passwordDialog.close()">ยกเลิก</button><button class="btn btn-primary" onclick="submitPassword()">บันทึก</button></div>
   </div></dialog>
 
   <dialog id="eventDialog"><div class="modal">
@@ -233,6 +240,11 @@ async function doRegister(){
   catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
 }
 function logout(){saveSession(null);state.dashboard=null;showLanding();toastMsg('ออกจากระบบแล้ว','ok')}
+async function submitPassword(){
+  const password=newPassword.value;showLoading('กำลังเปลี่ยนรหัสผ่าน...');
+  try{await rpc('changeAdminPassword',state.session.token,state.dashboard.user.id,password);newPassword.value='';passwordDialog.close();toastMsg('เปลี่ยนรหัสผ่านแล้ว','ok')}
+  catch(error){toastMsg(error.message,'err')}finally{hideLoading()}
+}
 async function openDashboard(){
   if(!state.session)return openAuth();showLoading('กำลังโหลด Dashboard...');
   try{state.dashboard=await rpc('getAdminDashboard',state.session.token);renderDashboard();showView('dashboardView');window.scrollTo(0,0)}
